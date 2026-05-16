@@ -313,6 +313,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
     <div class="nav-right">
       <div class="nav-user" id="navUser"></div>
       <button class="btn btn-ghost btn-sm" onclick="exportCSV()">⬇️ CSV</button>
+      <button class="btn btn-gold btn-sm" onclick="importJSON()">📂 นำเข้า JSON</button>
       <button class="btn btn-ghost btn-sm" onclick="manualSync()" id="btnSync">🔄 Sync</button>
       <button class="btn btn-dark btn-sm" onclick="newLead()" id="btnNew">+ Lead ใหม่</button>
       <button class="btn btn-ghost btn-sm" onclick="doLogout()">ออก</button>
@@ -1343,6 +1344,39 @@ window.exportCSV=function(){
   const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
   a.download=`NMS_CRM_${today()}.csv`; a.click(); URL.revokeObjectURL(a.href);
   toast('Export CSV ✓','ok');
+};
+
+// ── Import JSON ──────────────────────────────────────
+window.importJSON=function(){
+  const input=document.createElement('input');
+  input.type='file'; input.accept='.json';
+  input.onchange=async e=>{
+    const file=e.target.files[0]; if(!file)return;
+    const reader=new FileReader();
+    reader.onload=async ev=>{
+      try{
+        const parsed=JSON.parse(ev.target.result);
+        const arr=Array.isArray(parsed)?parsed:(parsed.leads||[]);
+        if(!arr.length){toast('ไฟล์ว่างเปล่า','err');return;}
+        const DEMO=['s1','s2','s3','s4','s5','d1','d2','d3','d4'];
+        const toImport=arr.filter(l=>l.id&&!DEMO.includes(l.id));
+        if(!confirm('นำเข้า '+toImport.length+' Lead ขึ้น Cloud?
+ข้อมูลที่มี ID ซ้ำจะถูกอัปเดต'))return;
+        const btn=document.querySelector('[onclick="importJSON()"]');
+        if(btn){btn.textContent='⏳ กำลังนำเข้า...';btn.disabled=true;}
+        let added=0;
+        for(const l of toImport){
+          if(!l.checklist) l.checklist=DEFAULT_CHECKLIST.map(c=>({...c}));
+          if(!l.activities) l.activities=[];
+          await saveToCloud(l); added++;
+        }
+        if(btn){btn.textContent='📂 นำเข้า JSON';btn.disabled=false;}
+        toast('✅ นำเข้า '+added+' Lead ขึ้น Cloud แล้ว!','ok');
+      }catch(err){toast('อ่านไฟล์ไม่ได้: '+err.message,'err');}
+    };
+    reader.readAsText(file);
+  };
+  input.click();
 };
 
 // ── Init ──────────────────────────────────────────────

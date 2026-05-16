@@ -1360,8 +1360,7 @@ window.importJSON=function(){
         if(!arr.length){toast('ไฟล์ว่างเปล่า','err');return;}
         const DEMO=['s1','s2','s3','s4','s5','d1','d2','d3','d4'];
         const toImport=arr.filter(l=>l.id&&!DEMO.includes(l.id));
-        if(!confirm('นำเข้า '+toImport.length+' Lead ขึ้น Cloud?
-ข้อมูลที่มี ID ซ้ำจะถูกอัปเดต'))return;
+        if(!confirm('นำเข้า '+toImport.length+' Lead ขึ้น Cloud? ข้อมูลที่มี ID ซ้ำจะถูกอัปเดต'))return;
         const btn=document.querySelector('[onclick="importJSON()"]');
         if(btn){btn.textContent='⏳ กำลังนำเข้า...';btn.disabled=true;}
         let added=0;

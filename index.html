@@ -1668,8 +1668,25 @@ async function loadUsers(){
   try{
     const snap=await getDoc(doc(db,'config','users'));
     if(snap.exists()&&snap.data().list){
-      users={...DEFAULT_USERS,...snap.data().list};
+      const cloud=snap.data().list;
+      // Merge แต่ป้องกัน owner ถูก downgrade เป็น admin โดย Firestore เก่า
+      users={...DEFAULT_USERS};
+      let needsResave=false;
+      Object.entries(cloud).forEach(([uid,u])=>{
+        const defaultRole=DEFAULT_USERS[uid]?.role;
+        if(defaultRole==='owner'&&u.role==='admin'){
+          // อัปเกรดอัตโนมัติ — ไม่ให้ Firestore เก่า override role ที่กำหนดใน DEFAULT_USERS
+          users[uid]={...DEFAULT_USERS[uid],...u,role:'owner'};
+          needsResave=true;
+        } else {
+          users[uid]={...(DEFAULT_USERS[uid]||{}),...u};
+        }
+      });
       localStorage.setItem('nms_users_cache',JSON.stringify(users));
+      if(needsResave){
+        // บันทึกกลับ Firestore ทันที เพื่อให้ตรงกัน
+        try{await setDoc(doc(db,'config','users'),{list:users,updatedAt:new Date().toISOString()});}catch(_){}
+      }
     }
   }catch(e){
     const c=localStorage.getItem('nms_users_cache');
@@ -1687,6 +1704,14 @@ async function startApp(){
   document.getElementById('loginScreen').className='';
   document.getElementById('appScreen').className='active';
   await loadUsers();
+  // อัปเดต session ถ้า role ใน users object ต่างจาก session ที่บันทึกไว้
+  if(currentUser&&users[currentUser.user]){
+    const freshRole=users[currentUser.user].role;
+    if(freshRole!==currentUser.role){
+      currentUser={...currentUser,role:freshRole};
+      saveSession(currentUser);
+    }
+  }
   setupNavUI();
   startSync();
   setTimeout(()=>{if(document.getElementById('page-cal')?.classList.contains('on'))calStartSync();},1000);

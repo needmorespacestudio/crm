@@ -713,6 +713,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
       <button class="ntab" id="tabFin" onclick="showPage('finance',this)">💰 การเงิน</button>
       <button class="ntab" id="tabAdmin" onclick="showPage('admin',this)" style="display:none">⚙️ Admin</button>
       <button class="ntab" id="tabAccDocs" onclick="showPage('accdocs',this)" style="display:none">📂 เอกสารบัญชี</button>
+      <button class="ntab" id="tabClients" onclick="showPage('clients',this)" style="display:none">🪪 รหัสลูกค้า</button>
     </div>
     <div class="nav-right">
       <div class="nav-user" id="navUser"></div>
@@ -723,6 +724,59 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
       <button class="btn btn-ghost btn-sm" onclick="doLogout()">ออก</button>
     </div>
   </nav>
+
+<!-- BOTTOM NAV (mobile) -->
+<div class="bottom-nav" id="bottomNav">
+  <button class="bnav-btn on" id="bnavHome" onclick="showPage('home',document.getElementById('tabHome'));updateBNav('home')">
+    <span class="bnav-icon">🏠</span>หน้าแรก
+  </button>
+  <button class="bnav-btn" id="bnavPipeline" onclick="showPage('pipeline',document.getElementById('tabPipeline'));updateBNav('pipeline')">
+    <span class="bnav-icon">📋</span>Lead CRM
+  </button>
+  <button class="bnav-fab" onclick="newLead()" title="Lead ใหม่">
+    <div class="bnav-fab-circle">+</div>
+  </button>
+  <button class="bnav-btn" id="bnavProjects" onclick="showPage('projects',document.getElementById('tabProjects'));updateBNav('projects')">
+    <span class="bnav-icon">🗂️</span>โปรเจกต์
+  </button>
+  <button class="bnav-btn" id="bnavMore" onclick="toggleMobileMenu()">
+    <span class="bnav-icon">☰</span>เมนู
+  </button>
+</div>
+
+<!-- MOBILE MORE MENU -->
+<div class="modal-ov" id="mobileMoreModal" onclick="if(event.target===this)closeMobileMenu()">
+  <div class="modal">
+    <div style="font-size:16px;font-weight:700;color:var(--gray-800);margin-bottom:16px">เมนูทั้งหมด</div>
+    <div class="more-menu-grid">
+      <button class="more-menu-item" onclick="showPage('analytics',document.getElementById('tabAnalytics'));closeMobileMenu();updateBNav('analytics')">
+        <span class="more-menu-item-icon">📊</span>Analytics
+      </button>
+      <button class="more-menu-item" onclick="showPage('finance',document.getElementById('tabFin'));closeMobileMenu();updateBNav('finance')" id="bnavFinBtn" style="display:none">
+        <span class="more-menu-item-icon">💰</span>การเงิน
+      </button>
+      <button class="more-menu-item" onclick="showPage('docs',document.getElementById('tabDocs'));closeMobileMenu();updateBNav('docs')" id="bnavDocsBtn" style="display:none">
+        <span class="more-menu-item-icon">📄</span>เอกสาร
+      </button>
+      <button class="more-menu-item" onclick="showPage('accdocs',document.getElementById('tabAccDocs'));closeMobileMenu();updateBNav('accdocs')" id="bnavAccDocsBtn" style="display:none">
+        <span class="more-menu-item-icon">📂</span>เอกสารบัญชี
+      </button>
+      <button class="more-menu-item" onclick="showPage('clients',document.getElementById('tabClients'));closeMobileMenu();updateBNav('clients')" id="bnavClientsBtn" style="display:none">
+        <span class="more-menu-item-icon">🪪</span>รหัสลูกค้า
+      </button>
+      <button class="more-menu-item" onclick="showPage('cal',document.getElementById('tabCal'));closeMobileMenu();updateBNav('cal')">
+        <span class="more-menu-item-icon">📅</span>ปฏิทิน
+      </button>
+      <button class="more-menu-item" onclick="showPage('upload',document.getElementById('tabUpload'));closeMobileMenu();updateBNav('upload')">
+        <span class="more-menu-item-icon">☁️</span>อัปโหลด
+      </button>
+      <button class="more-menu-item" onclick="showPage('admin',document.getElementById('tabAdmin'));closeMobileMenu();updateBNav('admin')" id="bnavAdminBtn" style="display:none">
+        <span class="more-menu-item-icon">⚙️</span>Admin
+      </button>
+    </div>
+    <button class="btn btn-ghost" style="width:100%;margin-top:12px;justify-content:center" onclick="doLogout()">🚪 ออกจากระบบ</button>
+  </div>
+</div>
 
   <!-- HOME -->
   <div class="page on" id="page-home">
@@ -1154,6 +1208,22 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
       <div id="accMonthGrid" class="acc-month-grid">
         <div style="text-align:center;padding:60px;color:var(--gray-400)">โหลดข้อมูล...</div>
       </div>
+    </div>
+  </div>
+
+  <!-- CLIENT CODES -->
+  <div class="page" id="page-clients">
+    <div class="acc-wrap">
+      <div class="acc-hdr">
+        <div>
+          <div class="a-title">🪪 รหัสลูกค้า</div>
+          <div class="a-sub">รหัสลูกค้าและรหัสโปรเจกต์ — ใช้อ้างอิงในเอกสารเท่านั้น</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input type="text" id="clientSearchInput" placeholder="🔍 ค้นหา ชื่อ / รหัส / เบอร์..." style="padding:6px 12px;border:1px solid var(--border);border-radius:var(--r);font-size:13px;width:220px;font-family:inherit" oninput="renderClientCodes()">
+        </div>
+      </div>
+      <div id="clientCodesTable"></div>
     </div>
   </div>
 
@@ -1725,11 +1795,25 @@ function setupNavUI(){
     <div class="nav-avatar">${(currentUser.name||'?')[0]}</div>
     <span class="nav-uname">${currentUser.display||currentUser.name}</span>
     <span class="rbadge" style="background:${rc}20;color:${rc}">${ROLE_LABEL[currentUser.role]||currentUser.role.toUpperCase()}</span>`;
+  const role = currentUser?.role || '';
+  const canSeeDocs = ['owner','admin','sales'].includes(role);
+  const canSeeClients = ['owner','admin','sales'].includes(role);
   document.getElementById('tabFin').style.display=canSeeFin()?'':'none';
-  document.getElementById('tabDocs').style.display=(canSeeFin()||isAdmin())?'':'none';
+  document.getElementById('tabDocs').style.display=canSeeDocs?'':'none';
   document.getElementById('tabAdmin').style.display=isAdmin()?'':'none';
   document.getElementById('btnNew').style.display=canAdd()?'':'none';
   document.getElementById('tabAccDocs').style.display=canSeeFin()?'':'none';
+  document.getElementById('tabClients').style.display=canSeeClients?'':'none';
+  const bnavFinBtn = document.getElementById('bnavFinBtn');
+  if(bnavFinBtn) bnavFinBtn.style.display = canSeeFin()?'':'none';
+  const bnavAdminBtn = document.getElementById('bnavAdminBtn');
+  if(bnavAdminBtn) bnavAdminBtn.style.display = isAdmin()?'':'none';
+  const bnavDocsBtn = document.getElementById('bnavDocsBtn');
+  if(bnavDocsBtn) bnavDocsBtn.style.display = canSeeDocs?'':'none';
+  const bnavAccDocsBtn = document.getElementById('bnavAccDocsBtn');
+  if(bnavAccDocsBtn) bnavAccDocsBtn.style.display = canSeeFin()?'':'none';
+  const bnavClientsBtn = document.getElementById('bnavClientsBtn');
+  if(bnavClientsBtn) bnavClientsBtn.style.display = canSeeClients?'':'none';
   // Greeting
   const now=new Date();
   const hr=now.getHours();
@@ -1740,6 +1824,11 @@ function setupNavUI(){
 
 // ── Page Nav ──
 window.showPage=function(id,el){
+  const role=currentUser?.role||'';
+  // Access guards
+  if(id==='docs'&&!['owner','admin','sales'].includes(role)){toast('ไม่มีสิทธิ์เข้าถึงหน้านี้','err');return;}
+  if(id==='clients'&&!['owner','admin','sales'].includes(role)){toast('ไม่มีสิทธิ์เข้าถึงหน้านี้','err');return;}
+  if(id==='accdocs'&&!canSeeFin()){toast('ไม่มีสิทธิ์เข้าถึงหน้านี้','err');return;}
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
   document.getElementById('page-'+id).classList.add('on');
   document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('on'));
@@ -1749,6 +1838,9 @@ window.showPage=function(id,el){
   else if(id==='admin')renderAdmin();
   else if(id==='home')renderHome();
   else if(id==='accdocs'){startAccSync();}
+  else if(id==='clients'){renderClientCodes();}
+  // sync bottom nav
+  if(window.updateBNav) updateBNav(id);
 };
 
 function showClanding(){
@@ -2918,8 +3010,13 @@ window.createProject = async function() {
   let projId = '';
   try { const seq = await getNextSeq('project'); projId = 'NMS-P-'+ID_YEAR()+'-'+seq+'-D'; }
   catch(e) { projId = 'NMS-P-'+ID_YEAR()+'-'+Math.floor(Math.random()*900+100)+'-D'; }
+  let clientId = leadRef?.clientId || '';
+  if (!clientId) {
+    try { clientId = await genClientId(); }
+    catch(e) { clientId = 'NMS-C-'+ID_YEAR()+'-'+Math.floor(Math.random()*900+100); }
+  }
   const newProj = {
-    id:pid, projId, name, client:client||leadRef?.name||'',
+    id:pid, projId, clientId, name, client:client||leadRef?.name||'',
     phone:document.getElementById('np-phone').value.trim()||leadRef?.phone||'',
     size:document.getElementById('np-size').value.trim(),
     budget:document.getElementById('np-budget').value.trim(),
@@ -2934,6 +3031,12 @@ window.createProject = async function() {
   };
   try {
     await saveProjToCloud(newProj);
+    if (leadId) {
+      const lRef = leads.find(x=>x.id===leadId);
+      if (lRef) {
+        await saveToCloud({...lRef, linkedProjectId: pid, clientId: clientId||lRef.clientId||'', updatedBy: currentUser.name, updated: new Date().toISOString()});
+      }
+    }
     document.getElementById('newProjModal').classList.remove('show');
     toast('สร้างโปรเจกต์ใหม่ ✓','ok');
     setTimeout(()=>openProjDetail(pid),400);
@@ -2969,7 +3072,7 @@ window.openProjDetail = function(pid) {
   document.getElementById('projListWrap').style.display='none';
   document.getElementById('projDetail').style.display='block';
   document.getElementById('pdTitle').textContent=p.name||'—';
-  document.getElementById('pdSub').textContent=(p.projId||'')+(p.client?' · '+p.client:'');
+  document.getElementById('pdSub').textContent=(p.projId||'')+(p.clientId?' · '+p.clientId:'')+(p.client?' · '+p.client:'');
   const fields={
     'pd-client':p.client,'pd-phone':p.phone,'pd-line':p.line,'pd-email':p.email,
     'pd-pain':p.pain,'pd-name':p.name,'pd-size':p.size,'pd-loc':p.loc,
@@ -3179,6 +3282,65 @@ const DOC_TYPE_LABEL={
 };
 const DOC_STATUS_LABEL={draft:'📝 Draft',sent:'📤 ส่งแล้ว',approved:'✅ อนุมัติ',paid:'💰 ชำระแล้ว',cancelled:'❌ ยกเลิก'};
 
+// Who can CREATE, EDIT, VIEW each document type
+const DOC_ACCESS = {
+  'quotation_design':       { create:['owner','admin','sales'], edit:['owner','admin','sales'],        view:['owner','admin','sales'] },
+  'quotation_construction': { create:['owner','admin','sales'], edit:['owner','admin','sales'],        view:['owner','admin','sales'] },
+  'contract_design':        { create:['owner','admin'],         edit:['owner','admin'],                view:['owner','admin','sales'] },
+  'contract_construction':  { create:['owner','admin'],         edit:['owner','admin'],                view:['owner','admin','sales'] },
+  'invoice':                { create:['owner','admin','sales'], edit:['owner','admin','sales'],        view:['owner','admin','sales'] },
+  'payment_request':        { create:['owner','admin','sales'], edit:['owner','admin','sales'],        view:['owner','admin','sales'] },
+  'receipt':                { create:['owner','admin','sales'], edit:['owner','admin','sales'],        view:['owner','admin','sales'] },
+  'delivery':               { create:['owner','admin','sales'], edit:['owner','admin','sales'],        view:['owner','admin','sales'] },
+  'boq':                    { create:['owner','admin','sales'], edit:['owner','admin','sales'],        view:['owner','admin','sales'] },
+};
+
+function canAccessDoc(type, action) {
+  const role = currentUser?.role || '';
+  const access = DOC_ACCESS[type] || DOC_ACCESS['boq'];
+  return (access[action] || []).includes(role);
+}
+
+const DOC_PREFIX = {
+  'quotation_design':'QT-D','quotation_construction':'QT-C',
+  'contract_design':'CD','contract_construction':'CC',
+  'invoice':'IV','payment_request':'PR','receipt':'RC',
+  'delivery':'DL','boq':'BOQ',
+  'quotation':'QT','contract':'CT',
+};
+
+function getDefaultItems(type) {
+  if(type==='quotation_design') return [{id:'1',desc:'ค่าบริการออกแบบภายใน',qty:1,unit:'งาน',price:0,total:0}];
+  if(type==='quotation_construction') return [{id:'1',desc:'ค่าก่อสร้าง',qty:1,unit:'งาน',price:0,total:0}];
+  if(type==='invoice'||type==='receipt') return [{id:'1',desc:'ค่าบริการตามสัญญา งวดที่',qty:1,unit:'งาน',price:0,total:0}];
+  if(type==='delivery') return [{id:'1',desc:'แบบ Concept Design',qty:1,unit:'ชุด',price:0,total:0}];
+  return [{id:'1',desc:'รายการ',qty:1,unit:'งาน',price:0,total:0}];
+}
+
+function getDefaultInstallments(type) {
+  if(type==='quotation_design'||type==='contract_design') return [
+    {id:'1',label:'งวดที่ 1',desc:'เซ็นสัญญา',pct:30,amount:0,status:'pending'},
+    {id:'2',label:'งวดที่ 2',desc:'Concept อนุมัติ',pct:30,amount:0,status:'pending'},
+    {id:'3',label:'งวดที่ 3',desc:'Shop Drawing ครบ',pct:30,amount:0,status:'pending'},
+    {id:'4',label:'งวดที่ 4',desc:'ส่งมอบงาน',pct:10,amount:0,status:'pending'},
+  ];
+  if(type==='quotation_construction'||type==='contract_construction') return [
+    {id:'1',label:'งวดที่ 1',desc:'เซ็นสัญญา + วางมัดจำ',pct:25,amount:0,status:'pending'},
+    {id:'2',label:'งวดที่ 2',desc:'โครงสร้างเสร็จ',pct:25,amount:0,status:'pending'},
+    {id:'3',label:'งวดที่ 3',desc:'งานระบบ + ผนังเสร็จ',pct:25,amount:0,status:'pending'},
+    {id:'4',label:'งวดที่ 4',desc:'งาน Finishing เสร็จ',pct:20,amount:0,status:'pending'},
+    {id:'5',label:'งวดที่ 5',desc:'ส่งมอบ + ประกัน 1 ปี',pct:5,amount:0,status:'pending'},
+  ];
+  return [];
+}
+
+function getDefaultNotes(type) {
+  if(type==='quotation_design'||type==='quotation_construction') return 'ใบเสนอราคานี้มีอายุ 30 วัน\nชำระเงินโอนเข้าบัญชี ธ.กสิกรไทย';
+  if(type==='invoice') return 'กรุณาชำระภายใน 7 วัน\nโอนเข้าบัญชี ธ.กสิกรไทย สาขา...';
+  if(type==='contract_design') return 'สัญญาฉบับนี้มีผลบังคับใช้ตั้งแต่วันที่ลงนาม';
+  return 'ชำระภายใน 30 วัน · โอนเข้าบัญชี ธ.กสิกรไทย';
+}
+
 function startDocSync(){
   if(docUnsubscribe)docUnsubscribe();
   docUnsubscribe=onSnapshot(collection(db,'documents'),
@@ -3379,6 +3541,92 @@ function startAccSync(){
 function accTypeLabel(t){return{revenue:'รายรับ',expense:'รายจ่าย',invoice:'ใบแจ้งหนี้',receipt:'ใบเสร็จ',other:'อื่นๆ'}[t]||t;}
 
 function fmtAccAmt(n){if(!n&&n!==0)return'—';const v=parseFloat(n);if(isNaN(v))return'—';return v.toLocaleString('th-TH',{minimumFractionDigits:0,maximumFractionDigits:2})+'฿';}
+
+function renderClientCodes(){
+  const el=document.getElementById('clientCodesTable');
+  if(!el)return;
+  const q=(document.getElementById('clientSearchInput')?.value||'').toLowerCase().trim();
+
+  // Build merged list: leads with clientId + projects with clientId
+  const rows=[];
+  const seenClientIds=new Set();
+
+  projects.forEach(p=>{
+    if(!p.clientId)return;
+    const lead=p.leadId?leads.find(l=>l.id===p.leadId):null;
+    rows.push({
+      clientId:p.clientId,
+      projId:p.projId||'—',
+      name:p.name||p.client||'—',
+      client:p.client||lead?.name||'—',
+      phone:p.phone||lead?.phone||'—',
+      source:'project',
+      status:p.status||'active',
+      pid:p.id,
+    });
+    seenClientIds.add(p.clientId);
+  });
+
+  leads.forEach(l=>{
+    if(!l.clientId||seenClientIds.has(l.clientId))return;
+    rows.push({
+      clientId:l.clientId,
+      projId:'—',
+      name:l.name||'—',
+      client:l.name||'—',
+      phone:l.phone||'—',
+      source:'lead',
+      status:l.status||'new',
+      lid:l.id,
+    });
+  });
+
+  const filtered=q?rows.filter(r=>
+    r.clientId.toLowerCase().includes(q)||
+    r.projId.toLowerCase().includes(q)||
+    r.name.toLowerCase().includes(q)||
+    r.client.toLowerCase().includes(q)||
+    r.phone.toLowerCase().includes(q)
+  ):rows;
+
+  if(!filtered.length){
+    el.innerHTML='<div style="text-align:center;padding:60px;color:var(--gray-400);font-size:13px">ไม่พบข้อมูล</div>';
+    return;
+  }
+
+  const statusLabel={active:'🟡 ดำเนินการ',completed:'✅ เสร็จสิ้น',paused:'⏸️ หยุด',cancelled:'❌ ยกเลิก',new:'🔵 ใหม่',contacted:'📞 ติดต่อแล้ว',quoted:'📋 เสนอราคา',won:'✅ ปิดได้',lost:'❌ ปิดไม่ได้'};
+
+  el.innerHTML=`
+  <div style="overflow-x:auto;margin-top:8px">
+  <table style="width:100%;border-collapse:collapse;font-size:13px">
+    <thead>
+      <tr style="background:var(--gray-50);border-bottom:2px solid var(--border)">
+        <th style="padding:10px 12px;text-align:left;font-weight:600;color:var(--gray-600);white-space:nowrap">รหัสลูกค้า</th>
+        <th style="padding:10px 12px;text-align:left;font-weight:600;color:var(--gray-600);white-space:nowrap">รหัสโปรเจกต์</th>
+        <th style="padding:10px 12px;text-align:left;font-weight:600;color:var(--gray-600)">ชื่อ / ลูกค้า</th>
+        <th style="padding:10px 12px;text-align:left;font-weight:600;color:var(--gray-600)">เบอร์</th>
+        <th style="padding:10px 12px;text-align:left;font-weight:600;color:var(--gray-600)">สถานะ</th>
+      </tr>
+    </thead>
+    <tbody>
+    ${filtered.map(r=>`
+      <tr style="border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s"
+          onmouseover="this.style.background='var(--gray-50)'" onmouseout="this.style.background=''"
+          onclick="${r.pid?`openProjDetail('${r.pid}')`:r.lid?`openLead('${r.lid}')`:''}" >
+        <td style="padding:10px 12px;font-family:monospace;font-weight:600;color:var(--blue);white-space:nowrap">${r.clientId}</td>
+        <td style="padding:10px 12px;font-family:monospace;font-size:12px;color:var(--gray-600);white-space:nowrap">${r.projId}</td>
+        <td style="padding:10px 12px">
+          <div style="font-weight:500">${r.name}</div>
+          ${r.client!==r.name?`<div style="font-size:11px;color:var(--gray-400)">${r.client}</div>`:''}
+        </td>
+        <td style="padding:10px 12px;color:var(--gray-600)">${r.phone}</td>
+        <td style="padding:10px 12px"><span style="font-size:12px">${statusLabel[r.status]||r.status}</span></td>
+      </tr>`).join('')}
+    </tbody>
+  </table>
+  </div>
+  <div style="font-size:11px;color:var(--gray-400);margin-top:10px;text-align:right">${filtered.length} รายการ · รหัสลูกค้าใช้อ้างอิงในเอกสารเท่านั้น</div>`;
+}
 
 function renderAccDocs(){
   const grid=document.getElementById('accMonthGrid');

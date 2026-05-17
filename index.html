@@ -638,16 +638,65 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
 .acc-sum-lbl{font-size:10px;color:var(--gray-400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
 .acc-sum-val{font-size:16px;font-weight:600}
 
+/* ── TABLET (iPad ≤ 1024px) ── */
+@media(max-width:1024px){
+  .analytics-v2,.fin-dash,.proj-list-wrap,.proj-detail,.doc-wrap,.admin-wrap,.cal-page,.acc-wrap,.home-wrap{padding:16px}
+  .a2-grid{grid-template-columns:1fr 1fr}
+  .fin-kpi-grid{grid-template-columns:repeat(3,1fr)}
+  .kpi-cards-row{grid-template-columns:repeat(3,1fr)}
+}
+/* ── MOBILE (≤ 768px) ── */
 @media(max-width:768px){
-  .stats{grid-template-columns:repeat(3,1fr)}
+  .stats{grid-template-columns:repeat(2,1fr)}
   .panel{width:100vw}
   .a-grid{grid-template-columns:1fr}
   .fin-summary-cards{grid-template-columns:1fr 1fr}
   .nav-tabs{display:none}
   .home-grid{grid-template-columns:1fr 1fr}
   .home-cols{grid-template-columns:1fr}
-  .menu-grid{grid-template-columns:1fr}
+  .menu-grid{grid-template-columns:1fr 1fr}
   .imper-bar{flex-direction:column;gap:6px;text-align:center}
+  /* Project detail */
+  .proj-tabs{overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .proj-tabs::-webkit-scrollbar{display:none}
+  .info-grid{grid-template-columns:1fr!important}
+  .prow2{grid-template-columns:1fr!important}
+  /* Analytics */
+  .a2-grid{grid-template-columns:1fr!important}
+  .analytics-kpi-row{grid-template-columns:1fr 1fr!important}
+  .funnel-v2-lbl{width:70px!important;font-size:11px!important}
+  /* Finance */
+  .fin-kpi-grid{grid-template-columns:1fr 1fr!important}
+  .fin-dash{padding:12px}
+  /* Modals */
+  .modal-ov{align-items:flex-end!important}
+  .modal{border-radius:16px 16px 0 0!important;max-width:100%!important;width:100%!important;max-height:92vh!important;margin:0!important}
+  /* Nav right buttons — hide non-essential */
+  .nav-right .btn-ghost:not(#btnLogout){font-size:0}
+  /* Toast bottom */
+  .toast{bottom:80px!important;right:12px!important;left:12px!important;max-width:unset!important}
+  /* proj grid */
+  .proj-grid{grid-template-columns:1fr!important}
+  /* Fin table scroll */
+  #finTableWrap{overflow-x:auto}
+  .fin-table{min-width:600px}
+  /* Calendar */
+  .cal-grid{font-size:11px}
+  /* Home stats */
+  .home-grid{grid-template-columns:1fr 1fr}
+  /* Boards horizontal scroll */
+  .board-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  /* KPI cards */
+  #analyticsKpiRow{grid-template-columns:1fr 1fr!important}
+}
+/* ── SMALL MOBILE (≤ 480px) ── */
+@media(max-width:480px){
+  .clanding-cards{grid-template-columns:1fr}
+  .home-grid{grid-template-columns:1fr}
+  #analyticsKpiRow{grid-template-columns:1fr!important}
+  .stats{grid-template-columns:1fr 1fr}
+  .nav-right{gap:4px}
+  .btn-sm{padding:5px 8px;font-size:11px}
 }
 
 /* ── IMPERSONATE BAR ── */
@@ -661,6 +710,16 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
 .imper-back:hover{background:rgba(255,255,255,.35)}
 .imper-spacer{height:56px;display:none}
 .imper-spacer.show{display:block}
+
+/* ── BOTTOM NAV (mobile only) ── */
+.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:100;background:var(--white);border-top:1px solid var(--border);padding:6px 0 env(safe-area-inset-bottom,6px);justify-content:space-around;align-items:center;box-shadow:0 -2px 12px rgba(0,0,0,.08)}
+.bnav-btn{display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 8px;border:none;background:none;color:var(--gray-400);cursor:pointer;font-size:9px;font-weight:500;transition:color .15s;min-width:44px;font-family:inherit}
+.bnav-btn.on{color:var(--gold)}
+.bnav-btn .bnav-icon{font-size:20px;line-height:1}
+@media(max-width:768px){
+  .bottom-nav{display:flex}
+  .page,.analytics-v2,.fin-dash,.proj-list-wrap,.proj-detail,.doc-wrap,.admin-wrap,.cal-page,.acc-wrap,.home-wrap{padding-bottom:80px!important}
+}
 </style>
 </head>
 <body>
@@ -723,6 +782,40 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
       <button class="btn btn-ghost btn-sm" onclick="doLogout()">ออก</button>
     </div>
   </nav>
+
+<!-- BOTTOM NAV (mobile) -->
+<div class="bottom-nav" id="bottomNav">
+  <button class="bnav-btn on" id="bnavHome" onclick="showPage('home',document.getElementById('tabHome'));updateBNav('home')">
+    <span class="bnav-icon">🏠</span>Home
+  </button>
+  <button class="bnav-btn" id="bnavPipeline" onclick="showPage('pipeline',document.getElementById('tabPipeline'));updateBNav('pipeline')">
+    <span class="bnav-icon">📋</span>Lead
+  </button>
+  <button class="bnav-btn" id="bnavProjects" onclick="showPage('projects',document.getElementById('tabProjects'));updateBNav('projects')">
+    <span class="bnav-icon">🗂️</span>โปรเจกต์
+  </button>
+  <button class="bnav-btn" id="bnavAnalytics" onclick="showPage('analytics',document.getElementById('tabAnalytics'));updateBNav('analytics')">
+    <span class="bnav-icon">📊</span>Analytics
+  </button>
+  <button class="bnav-btn" id="bnavMore" onclick="toggleMobileMenu()">
+    <span class="bnav-icon">☰</span>เพิ่มเติม
+  </button>
+</div>
+<!-- MOBILE MORE MENU -->
+<div class="modal-ov" id="mobileMoreModal" onclick="if(event.target===this)closeMobileMenu()">
+  <div class="modal" style="padding:20px">
+    <div style="font-size:14px;font-weight:600;color:var(--gray-700);margin-bottom:14px">เมนูเพิ่มเติม</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <button class="btn btn-ghost" onclick="showPage('finance',document.getElementById('tabFin'));closeMobileMenu();updateBNav('finance')" id="bnavFinBtn" style="display:none">💰 การเงิน</button>
+      <button class="btn btn-ghost" onclick="showPage('docs',document.getElementById('tabDocs'));closeMobileMenu();updateBNav('docs')">📄 เอกสาร</button>
+      <button class="btn btn-ghost" onclick="showPage('cal',document.getElementById('tabCal'));closeMobileMenu();updateBNav('cal')">📅 ปฏิทิน</button>
+      <button class="btn btn-ghost" onclick="showPage('upload',document.getElementById('tabUpload'));closeMobileMenu();updateBNav('upload')">☁️ อัปโหลด</button>
+      <button class="btn btn-ghost" onclick="showPage('admin',document.getElementById('tabAdmin'));closeMobileMenu();updateBNav('admin')" id="bnavAdminBtn" style="display:none">⚙️ Admin</button>
+      <button class="btn btn-ghost" onclick="newLead();closeMobileMenu()">+ Lead ใหม่</button>
+      <button class="btn btn-ghost" onclick="doLogout()">🚪 ออกจากระบบ</button>
+    </div>
+  </div>
+</div>
 
   <!-- HOME -->
   <div class="page on" id="page-home">
@@ -798,6 +891,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
           <button class="btn btn-ghost btn-sm" onclick="closeProjDetail()" style="margin-bottom:10px">← กลับ</button>
           <div class="proj-detail-title" id="pdTitle">ชื่อโปรเจกต์</div>
           <div class="proj-detail-sub" id="pdSub">ข้อมูลโปรเจกต์</div>
+          <div id="pdLeadLink" style="margin-top:6px"></div>
         </div>
         <div style="display:flex;gap:8px">
           <button class="btn btn-ghost btn-sm" onclick="convertProjToLead()">↔️ ดู Lead</button>
@@ -873,6 +967,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
       </div>
       <!-- FINANCE TAB -->
       <div class="ptab-content" id="ptab-finance">
+        <div id="ptabFinReadNote" style="display:none;background:#fef3c7;border:1px solid #fbbf24;border-radius:6px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:#92400e">⚠️ คุณมีสิทธิ์ดูเท่านั้น — ติดต่อ Admin เพื่อแก้ไขข้อมูลการเงิน</div>
         <div class="info-grid">
           <div class="info-card">
             <div class="info-card-title">งบประมาณ</div>
@@ -1514,7 +1609,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
       <div class="field"><label>วันส่งมอบ (เป้าหมาย)</label><input id="np-deadline" type="date"></div>
     </div>
     <div class="prow2">
-      <div class="field"><label>มาจาก Lead</label><select id="np-lead"><option value="">— สร้างใหม่ —</option></select></div>
+      <div class="field"><label>มาจาก Lead</label><select id="np-lead" onchange="npLeadChanged()"><option value="">— สร้างใหม่ —</option></select></div>
       <div class="field"><label>ดีไซเนอร์</label><select id="np-designer"><option value="">— ไม่ระบุ —</option></select></div>
     </div>
     <div class="modal-foot">
@@ -2193,6 +2288,7 @@ function renderLeadIds(l){
     ${l.clientId?`<span class="id-badge id-client">👤 ${l.clientId}</span>`:''}
     ${l.projId?`<span class="id-badge id-proj">📁 ${l.projId}</span>`:''}
     ${l.docRef?`<span class="id-badge id-doc">📄 ${l.docRef}</span>`:''}
+    ${l.linkedProjectId ? `<span class="id-badge id-proj" style="cursor:pointer" onclick="goToLinkedProject('${l.linkedProjectId}')">📁 โปรเจกต์ที่เชื่อมโยง</span>` : ''}
   </div>`;
 }
 
@@ -2876,6 +2972,18 @@ function populateProjModal() {
   const st = document.getElementById('np-start'); if(st) st.value=today();
 }
 
+window.npLeadChanged = function() {
+  const leadId = document.getElementById('np-lead').value;
+  if (!leadId) return;
+  const l = leads.find(x=>x.id===leadId); if(!l) return;
+  const sv = (id,v) => { const el=document.getElementById(id); if(el&&!el.value) el.value=v||''; };
+  sv('np-client', l.name);
+  sv('np-phone', l.phone);
+  sv('np-budget', l.budget);
+  sv('np-size', l.size);
+  if(!document.getElementById('np-name').value) document.getElementById('np-name').value = (l.proj||l.name||'');
+};
+
 window.openNewProjModal = function() {
   populateProjModal();
   document.getElementById('newProjModal').classList.add('show');
@@ -2928,6 +3036,7 @@ function renderProjGrid() {
       <div class="proj-card-id">${p.projId||p.id}</div>
       <div class="proj-card-name">${p.name||'—'}</div>
       <div class="proj-card-client">👤 ${p.client||'—'}${p.phone?' · '+p.phone:''}</div>
+      ${p.leadId ? `<div style="font-size:10px;color:var(--blue);margin-top:2px">🔗 Lead: ${leads.find(l=>l.id===p.leadId)?.name||p.leadId}</div>` : ''}
       <div class="proj-card-row">
         <span class="proj-card-status">${sl[p.status]||'🟡 กำลังดำเนินการ'}</span>
         ${p.deadline?'<span style="font-size:11px;color:var(--gray-400)">📅 '+p.deadline+'</span>':''}

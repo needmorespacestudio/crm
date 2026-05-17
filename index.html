@@ -263,6 +263,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
 .admin-tbl tr:last-child td{border-bottom:none}
 .admin-tbl tr:hover td{background:var(--gray-50)}
 .role-pill{font-size:10px;font-weight:700;padding:2px 8px;border-radius:8px;font-family:'DM Mono',monospace;display:inline-block}
+.rp-owner{background:#ede9fe;color:#5b21b6;font-weight:700}
 .rp-admin{background:#fde8e8;color:var(--red)}
 .rp-sales{background:var(--gold-light);color:var(--gold)}
 .rp-designer{background:var(--blue-light);color:var(--blue)}
@@ -593,6 +594,50 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
 .ev-modal-ov.show{display:flex}
 .ev-modal{background:var(--white);border-radius:var(--r-lg);padding:24px;width:100%;max-width:440px;box-shadow:var(--shadow-lg)}
 
+/* ── DESIGNER/CONTRACTOR LANDING ── */
+.clanding-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 80px);padding:24px}
+.clanding-greet{font-size:22px;font-weight:300;color:var(--gray-800);margin-bottom:6px;text-align:center}
+.clanding-sub{font-size:13px;color:var(--gray-400);margin-bottom:40px;text-align:center}
+.clanding-cards{display:grid;grid-template-columns:1fr 1fr;gap:20px;width:100%;max-width:560px}
+.clanding-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r-lg);padding:32px 24px;text-align:center;cursor:pointer;transition:all .18s;box-shadow:var(--shadow-sm)}
+.clanding-card:hover{border-color:var(--gold);box-shadow:0 4px 20px rgba(196,154,60,.18);transform:translateY(-2px)}
+.clanding-card-icon{font-size:40px;margin-bottom:14px}
+.clanding-card-title{font-size:16px;font-weight:600;color:var(--gray-800);margin-bottom:6px}
+.clanding-card-desc{font-size:12px;color:var(--gray-400);line-height:1.5}
+@media(max-width:480px){.clanding-cards{grid-template-columns:1fr}}
+
+/* ── ACCOUNTING DOCS PAGE ── */
+.acc-wrap{padding:20px;max-width:900px;margin:0 auto}
+.acc-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+.acc-month-grid{display:flex;flex-direction:column;gap:12px}
+.acc-month-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow-sm)}
+.acc-month-hdr{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;user-select:none;transition:background .13s}
+.acc-month-hdr:hover{background:var(--gray-50)}
+.acc-month-icon{font-size:20px}.acc-month-label{font-size:14px;font-weight:600;color:var(--gray-800);flex:1}
+.acc-month-meta{font-size:11px;color:var(--gray-400);text-align:right}
+.acc-status{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;flex-shrink:0}
+.acc-status-draft{background:var(--gray-100);color:var(--gray-500)}
+.acc-status-sent{background:var(--blue-light);color:var(--blue)}
+.acc-status-confirmed{background:var(--green-light);color:var(--green)}
+.acc-month-body{border-top:1px solid var(--border);padding:16px}
+.acc-item-row{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--r-sm);border:1px solid var(--border);margin-bottom:6px;background:var(--gray-50)}
+.acc-item-type{font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;flex-shrink:0}
+.acc-type-revenue{background:var(--green-light);color:var(--green)}
+.acc-type-expense{background:var(--red-light,#fdf2f1);color:var(--red)}
+.acc-type-invoice{background:var(--blue-light);color:var(--blue)}
+.acc-type-receipt{background:var(--gold-light);color:var(--gold)}
+.acc-type-other{background:var(--gray-100);color:var(--gray-500)}
+.acc-item-desc{flex:1;font-size:13px;color:var(--gray-700)}
+.acc-item-ref{font-size:11px;color:var(--gray-400);font-family:monospace;flex-shrink:0}
+.acc-item-amt{font-size:13px;font-weight:600;font-family:monospace;color:var(--gray-800);min-width:90px;text-align:right;flex-shrink:0}
+.acc-item-del{color:var(--gray-300);cursor:pointer;font-size:14px;flex-shrink:0;padding:2px 4px;background:none;border:none;line-height:1}
+.acc-item-del:hover{color:var(--red)}
+.acc-add-form{background:var(--gray-50);border:1px dashed var(--border-md);border-radius:var(--r);padding:12px;margin-top:10px}
+.acc-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.acc-sum-card{background:var(--gray-50);border:1px solid var(--border);border-radius:var(--r-sm);padding:10px 12px;text-align:center}
+.acc-sum-lbl{font-size:10px;color:var(--gray-400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.acc-sum-val{font-size:16px;font-weight:600}
+
 @media(max-width:768px){
   .stats{grid-template-columns:repeat(3,1fr)}
   .panel{width:100vw}
@@ -602,10 +647,35 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
   .home-grid{grid-template-columns:1fr 1fr}
   .home-cols{grid-template-columns:1fr}
   .menu-grid{grid-template-columns:1fr}
+  .imper-bar{flex-direction:column;gap:6px;text-align:center}
 }
+
+/* ── IMPERSONATE BAR ── */
+.imper-bar{display:none;position:fixed;top:0;left:0;right:0;z-index:9999;background:linear-gradient(135deg,#c05c1a,#c0392b);color:#fff;padding:10px 20px;align-items:center;gap:12px;box-shadow:0 2px 12px rgba(0,0,0,.25);font-size:13px}
+.imper-bar.show{display:flex}
+.imper-bar-icon{font-size:20px;flex-shrink:0}
+.imper-bar-text{flex:1}.imper-bar-name{font-weight:700;font-size:14px}
+.imper-bar-role{opacity:.85;font-size:12px;margin-top:1px}
+.imper-bar-proj{opacity:.7;font-size:11px;margin-top:2px}
+.imper-back{background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:6px;padding:7px 16px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;transition:background .15s}
+.imper-back:hover{background:rgba(255,255,255,.35)}
+.imper-spacer{height:56px;display:none}
+.imper-spacer.show{display:block}
 </style>
 </head>
 <body>
+
+<!-- ═══ IMPERSONATE BAR ═══ -->
+<div class="imper-bar" id="imperBar">
+  <div class="imper-bar-icon">👁</div>
+  <div class="imper-bar-text">
+    <div class="imper-bar-name" id="imperName">—</div>
+    <div class="imper-bar-role" id="imperRole">—</div>
+    <div class="imper-bar-proj" id="imperProj"></div>
+  </div>
+  <button class="imper-back" onclick="stopImpersonating()">← กลับไป Admin</button>
+</div>
+<div class="imper-spacer" id="imperSpacer"></div>
 
 <!-- ═══ LOGIN ═══ -->
 <div id="loginScreen" class="active">
@@ -642,6 +712,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
       <button class="ntab" id="tabAnalytics" onclick="showPage('analytics',this)">📊 Analytics</button>
       <button class="ntab" id="tabFin" onclick="showPage('finance',this)">💰 การเงิน</button>
       <button class="ntab" id="tabAdmin" onclick="showPage('admin',this)" style="display:none">⚙️ Admin</button>
+      <button class="ntab" id="tabAccDocs" onclick="showPage('accdocs',this)" style="display:none">📂 เอกสารบัญชี</button>
     </div>
     <div class="nav-right">
       <div class="nav-user" id="navUser"></div>
@@ -782,8 +853,9 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
       </div>
       <!-- FILES TAB -->
       <div class="ptab-content" id="ptab-files">
-        <div style="display:flex;justify-content:flex-end;margin-bottom:14px">
-          <button class="btn btn-ghost btn-sm" onclick="addFileLink()">+ เพิ่มลิงก์ไฟล์</button>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+          <div style="font-size:11px;color:var(--gray-400)">📎 ไฟล์ทั้งหมดในโปรเจกต์ — ดูได้อย่างเดียว ไม่สามารถลบได้</div>
+          <button class="btn btn-ghost btn-sm" id="btnAddFileLink" onclick="addFileLink()" style="display:none">+ เพิ่มลิงก์ไฟล์</button>
         </div>
         <div class="file-list" id="projFiles"></div>
       </div>
@@ -1056,6 +1128,31 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
       <div style="margin-top:24px">
         <div style="font-size:12px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;font-family:monospace">ประวัติการอัปโหลดล่าสุด</div>
         <div id="upHistory"><div style="color:var(--gray-400);font-size:13px">กำลังโหลด...</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LANDING (all roles except accounting) -->
+  <div class="page" id="page-clanding">
+    <div class="clanding-wrap">
+      <div class="clanding-greet" id="clandingGreet">สวัสดี</div>
+      <div class="clanding-sub">คุณต้องการทำอะไรวันนี้?</div>
+      <div class="clanding-cards" id="clandingCards"></div>
+    </div>
+  </div>
+
+  <!-- ACCOUNTING DOCS -->
+  <div class="page" id="page-accdocs">
+    <div class="acc-wrap">
+      <div class="acc-hdr">
+        <div>
+          <div class="a-title">📂 เอกสารบัญชีรายเดือน</div>
+          <div class="a-sub">แอดมินรวบรวมเอกสาร → ส่งให้ทีมบัญชีทุกเดือน</div>
+        </div>
+        <button class="btn btn-gold btn-sm" onclick="openAccNewMonth()" id="btnAccNewMonth" style="display:none">+ เพิ่มเดือน</button>
+      </div>
+      <div id="accMonthGrid" class="acc-month-grid">
+        <div style="text-align:center;padding:60px;color:var(--gray-400)">โหลดข้อมูล...</div>
       </div>
     </div>
   </div>
@@ -1393,8 +1490,9 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
       <div class="field"><label>ชื่อแสดง *</label><input id="m-name" placeholder="เช่น คุณแพร"></div>
       <div class="field"><label>Role *</label>
         <select id="m-role">
-          <option value="admin">Admin — สิทธิ์สูงสุด</option>
-          <option value="sales">Sales — CRM & Lead</option>
+          <option value="owner" class="opt-owner-only" style="display:none">👑 Owner — เจ้าของระบบ</option>
+          <option value="admin" class="opt-owner-only" style="display:none">Admin — จัดการระบบ</option>
+          <option value="sales">Sales — CRM &amp; Lead</option>
           <option value="designer">Designer — ออกแบบ</option>
           <option value="drafter">Drafter — เขียนแบบ</option>
           <option value="accounting">Accounting — การเงิน</option>
@@ -1479,14 +1577,14 @@ const db = getFirestore(app);
 
 // ── Default Users (fallback ถ้า Firestore ยังไม่มีข้อมูล) ──
 const DEFAULT_USERS = {
-  'panupongtr': { pass:'Pong4911*', role:'admin', name:'ภาณุ', display:'ภาณุ (Admin)', email:'' },
+  'panupongtr': { pass:'Pong4911*', role:'owner', name:'ภาณุ', display:'ภาณุ (เจ้าของ)', email:'' },
   'admin':      { pass:'needmorespace', role:'admin', name:'Admin', display:'Admin', email:'' },
   'nms':        { pass:'nms2024', role:'admin', name:'NMS', display:'NMS Admin', email:'' },
 };
 
-const ROLE_COLOR = { admin:'#c0392b', sales:'#c49a3c', designer:'#2563a8', drafter:'#2563a8', accounting:'#2d7a5a', contractor:'#c05c1a', outsource:'#7a7268' };
-const ROLE_LABEL = { admin:'ADMIN', sales:'SALES', designer:'DESIGNER', drafter:'DRAFTER', accounting:'ACCOUNTING', contractor:'CONTRACTOR', outsource:'OUTSOURCE' };
-const ROLE_CLASS = { admin:'rp-admin', sales:'rp-sales', designer:'rp-designer', drafter:'rp-designer', accounting:'rp-accounting', contractor:'rp-outsource', outsource:'rp-outsource' };
+const ROLE_COLOR = { owner:'#5b21b6', admin:'#c0392b', sales:'#c49a3c', designer:'#2563a8', drafter:'#2563a8', accounting:'#2d7a5a', contractor:'#c05c1a', outsource:'#7a7268' };
+const ROLE_LABEL = { owner:'OWNER', admin:'ADMIN', sales:'SALES', designer:'DESIGNER', drafter:'DRAFTER', accounting:'ACCOUNTING', contractor:'CONTRACTOR', outsource:'OUTSOURCE' };
+const ROLE_CLASS = { owner:'rp-owner', admin:'rp-admin', sales:'rp-sales', designer:'rp-designer', drafter:'rp-designer', accounting:'rp-accounting', contractor:'rp-outsource', outsource:'rp-outsource' };
 
 const STEPS = [
   {id:'waiting_contact',label:'รอติดต่อ',long:'รอติดต่อไป'},
@@ -1526,14 +1624,16 @@ const fmtN=n=>(!n||n===0)?'0':parseInt(String(n).replace(/[,฿]/g,'')).toLocale
 const today=()=>new Date().toISOString().split('T')[0];
 const nowTH=()=>new Date().toLocaleString('th-TH',{dateStyle:'short',timeStyle:'short'});
 const isOverdue=l=>{if(!l.nextdate||l.step==='delivered')return false;return new Date(l.nextdate)<new Date(today());};
-const canDelete=()=>currentUser?.role==='admin';
-const canSeeFin=()=>['admin','accounting'].includes(currentUser?.role);
-const canEditFin=()=>['admin','accounting'].includes(currentUser?.role);
-const canSeeAll=()=>['admin','accounting'].includes(currentUser?.role);
-const canEdit=()=>['admin','sales'].includes(currentUser?.role);
-const canAdd=()=>['admin','sales'].includes(currentUser?.role);
-const isCL=()=>['admin','designer','drafter','outsource','contractor'].includes(currentUser?.role);
-const isAdmin=()=>currentUser?.role==='admin';
+const isOwner=()=>currentUser?.role==='owner';
+const isAdmin=()=>['owner','admin'].includes(currentUser?.role);
+const isStrictAdmin=()=>currentUser?.role==='admin';
+const canDelete=()=>isAdmin();
+const canSeeFin=()=>['owner','admin','accounting'].includes(currentUser?.role);
+const canEditFin=()=>['owner','admin','accounting'].includes(currentUser?.role);
+const canSeeAll=()=>['owner','admin','accounting'].includes(currentUser?.role);
+const canEdit=()=>['owner','admin','sales'].includes(currentUser?.role);
+const canAdd=()=>['owner','admin','sales'].includes(currentUser?.role);
+const isCL=()=>['owner','admin','designer','drafter','outsource','contractor'].includes(currentUser?.role);
 
 // ── Toast ──
 let tTimer;
@@ -1607,8 +1707,16 @@ async function startApp(){
   startSync();
   setTimeout(()=>{if(document.getElementById('page-cal')?.classList.contains('on'))calStartSync();},1000);
   checkLocalMigration();
-  renderHome();
-  setInterval(renderHome,60000);
+  const role=currentUser?.role;
+  if(role==='accounting'){
+    showPage('accdocs',document.getElementById('tabAccDocs'));
+    startAccSync();
+  } else if(['owner','admin','sales','designer','drafter','contractor','outsource'].includes(role)){
+    showClanding();
+  } else {
+    renderHome();
+    setInterval(renderHome,60000);
+  }
 }
 
 function setupNavUI(){
@@ -1621,6 +1729,7 @@ function setupNavUI(){
   if(!canSeeFin()&&!isAdmin())document.getElementById('tabDocs').style.display='none';
   if(!isAdmin())document.getElementById('tabAdmin').style.display='none';
   if(!canAdd())document.getElementById('btnNew').style.display='none';
+  if(canSeeFin())document.getElementById('tabAccDocs').style.display='';
   // Greeting
   const now=new Date();
   const hr=now.getHours();
@@ -1639,7 +1748,34 @@ window.showPage=function(id,el){
   else if(id==='finance')renderFinance();
   else if(id==='admin')renderAdmin();
   else if(id==='home')renderHome();
+  else if(id==='accdocs'){startAccSync();}
 };
+
+function showClanding(){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.getElementById('page-clanding').classList.add('on');
+  document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('on'));
+  const now=new Date();
+  const hr=now.getHours();
+  const greet=hr<12?'สวัสดีตอนเช้า':hr<17?'สวัสดีตอนบ่าย':'สวัสดีตอนเย็น';
+  document.getElementById('clandingGreet').textContent=`${greet}, ${currentUser.name} 👋`;
+  const role=currentUser?.role;
+  const allCards=[
+    {icon:'☁️',title:'อัพโหลดไฟล์',desc:'Smart Upload — ตั้งชื่อไฟล์อัตโนมัติ<br>& บันทึก log ลง Firebase',page:'upload',tab:'tabUpload'},
+    {icon:'🗂️',title:'เลือกโปรเจค',desc:'ดูข้อมูล Checklist ไฟล์งาน<br>& อัปเดตสถานะโปรเจค',page:'projects',tab:'tabProjects'},
+    {icon:'📋',title:'Lead CRM',desc:'Pipeline & ติดตามลูกค้า<br>เพิ่ม Lead & ติดตาม',page:'pipeline',tab:'tabPipeline'},
+  ];
+  const showLead=['owner','admin','sales'].includes(role);
+  const cards=showLead?allCards:allCards.slice(0,2);
+  const cols=cards.length===3?'grid-template-columns:1fr 1fr 1fr;max-width:780px':'grid-template-columns:1fr 1fr;max-width:560px';
+  document.getElementById('clandingCards').style.cssText=cols;
+  document.getElementById('clandingCards').innerHTML=cards.map(c=>`
+    <div class="clanding-card" onclick="showPage('${c.page}',document.getElementById('${c.tab}'))">
+      <div class="clanding-card-icon">${c.icon}</div>
+      <div class="clanding-card-title">${c.title}</div>
+      <div class="clanding-card-desc">${c.desc}</div>
+    </div>`).join('');
+}
 
 // ── Firebase Sync ──
 function startSync(){
@@ -1649,17 +1785,21 @@ function startSync(){
     snap=>{
       const allLeads=snap.docs.map(d=>({id:d.id,...d.data()}));
       allLeads.sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
-      // Filter by project access if not admin
-      if(canSeeAll()||!currentUser?.projectAccess?.length){
+      // Filter by project access
+      if(canSeeAll()){
         leads=allLeads;
+      } else if(currentUser?.projectAccess?.length){
+        leads=allLeads.filter(l=>currentUser.projectAccess.includes(l.id));
       } else {
-        leads=allLeads.filter(l=>!l.id||currentUser.projectAccess.includes(l.id)||!currentUser.projectAccess.length);
+        leads=allLeads; // ถ้ายังไม่กำหนดโปรเจค = เห็นทั้งหมด (สำหรับ sales ที่ยังไม่ assign)
       }
       lastSync=new Date().toISOString();
       setSyncUI(true);
       render();
       renderHome();
-      calRender(); // sync ปฏิทินทุกครั้งที่ leads อัปเดต
+      calRender();
+      if(document.getElementById('page-finance')?.classList.contains('on'))renderFinance();
+      if(document.getElementById('page-admin')?.classList.contains('on'))renderAdmin();
       try{localStorage.setItem('nms_leads_cache',JSON.stringify(allLeads));}catch(e){}
     },
     err=>{
@@ -2102,9 +2242,11 @@ function upTodayStr(){
 
 function upPopulateProjects(){
   const sel=document.getElementById('up-proj');if(!sel)return;
+  const accP=canSeeAll()?projects:projects.filter(p=>!currentUser.projectAccess?.length||currentUser.projectAccess.includes(p.id));
+  const accL=canSeeAll()?leads.filter(l=>l.clientId):leads.filter(l=>l.clientId&&(!currentUser.projectAccess?.length||currentUser.projectAccess.includes(l.id)));
   const allP=[
-    ...projects.map(p=>({id:p.id,label:(p.projId||p.id)+' · '+( p.name||p.client||'—'),projId:p.projId||p.id})),
-    ...leads.filter(l=>l.clientId).map(l=>({id:l.id,label:(l.projId||l.clientId)+' · '+(l.name||'—'),projId:l.projId||l.clientId}))
+    ...accP.map(p=>({id:p.id,label:(p.projId||p.id)+' · '+(p.name||p.client||'—'),projId:p.projId||p.id})),
+    ...accL.map(l=>({id:l.id,label:(l.projId||l.clientId)+' · '+(l.name||'—'),projId:l.projId||l.clientId}))
   ];
   sel.innerHTML='<option value="">— เลือกโปรเจกต์ —</option>'+allP.map(p=>`<option value="${p.id}" data-projid="${p.projId}">${p.label}</option>`).join('');
 }
@@ -2737,6 +2879,8 @@ function startProjSync() {
       projects.sort((a,b) => new Date(b._ts||0) - new Date(a._ts||0));
       renderProjGrid();
       calRender();
+      if(document.getElementById('page-finance')?.classList.contains('on'))renderFinance();
+      if(document.getElementById('page-admin')?.classList.contains('on'))renderAdmin();
     },
     () => { renderProjGrid(); }
   );
@@ -2798,12 +2942,15 @@ window.createProject = async function() {
 
 function renderProjGrid() {
   const grid = document.getElementById('projGrid'); if(!grid) return;
-  if(!projects.length){
-    grid.innerHTML='<div style="padding:40px;text-align:center;color:var(--gray-400)">ยังไม่มีโปรเจกต์ — กด "+ สร้างโปรเจกต์" ด้านบน</div>';
+  const visibleProj = canSeeAll()
+    ? projects
+    : projects.filter(p => !currentUser.projectAccess?.length || currentUser.projectAccess.includes(p.id));
+  if(!visibleProj.length){
+    grid.innerHTML='<div style="padding:40px;text-align:center;color:var(--gray-400)">ยังไม่มีโปรเจกต์ที่เข้าถึงได้</div>';
     return;
   }
   const sl={active:'🟡 กำลังดำเนินการ',completed:'✅ เสร็จสิ้น',paused:'⏸️ หยุดชั่วคราว',cancelled:'❌ ยกเลิก'};
-  grid.innerHTML = projects.map(p=>`
+  grid.innerHTML = visibleProj.map(p=>`
     <div class="proj-card" onclick="openProjDetail('${p.id}')">
       <div class="proj-card-id">${p.projId||p.id}</div>
       <div class="proj-card-name">${p.name||'—'}</div>
@@ -2838,6 +2985,8 @@ window.openProjDetail = function(pid) {
   const dra=document.getElementById('pd-drafter'); if(dra){dra.innerHTML=uOpts;dra.value=p.drafter||'';}
   renderTimeline(p); renderProjChecklist(p); renderProjFiles(p);
   renderContractorUpdates(p); renderProjFinCalc(p);
+  const btnFL=document.getElementById('btnAddFileLink');
+  if(btnFL) btnFL.style.display=isAdmin()?'':'none';
   const firstTab=document.querySelector('.ptab'); if(firstTab) showPTab('info',firstTab);
 };
 
@@ -2972,29 +3121,25 @@ function renderProjFiles(p){
   const el=document.getElementById('projFiles'); if(!el)return;
   const files=p.files||[];
   if(!files.length){el.innerHTML='<div style="color:var(--gray-400);font-size:13px;padding:20px 0">ยังไม่มีไฟล์</div>';return;}
-  el.innerHTML=files.map((f,i)=>`
+  el.innerHTML=files.map(f=>`
     <div class="file-item">
-      <span>📄 ${f.name||f.url||'ไฟล์'}</span>
-      <div style="display:flex;gap:6px">
-        ${f.url?'<a href="'+f.url+'" target="_blank" class="btn btn-ghost btn-sm">🔗 เปิด</a>':''}
-        <button class="btn btn-ghost btn-sm" onclick="delFileLink(${i})">🗑️</button>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:500;color:var(--gray-800);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">📄 ${f.name||f.url||'ไฟล์'}</div>
+        ${f.by?`<div style="font-size:10px;color:var(--gray-400);margin-top:2px">อัปโหลดโดย ${f.by}${f.date?' · '+f.date:''}</div>`:''}
+      </div>
+      <div style="display:flex;gap:6px;flex-shrink:0">
+        ${f.url?`<a href="${f.url}" target="_blank" class="btn btn-ghost btn-sm">🔗 เปิด</a>`:''}
       </div>
     </div>`).join('');
 }
 
 window.addFileLink=async function(){
+  if(!isAdmin()){toast('เฉพาะ Admin เท่านั้นที่เพิ่มลิงก์ไฟล์ได้','err');return;}
   const name=prompt('ชื่อไฟล์/เอกสาร:'); if(!name)return;
   const url=prompt('ลิงก์ (Google Drive หรืออื่นๆ):')||'';
   const p=projects.find(x=>x.id===currentProjId); if(!p)return;
   const files=[...(p.files||[]),{name,url,by:currentUser.name,date:today()}];
   await saveProjToCloud({...p,files}); renderProjFiles({...p,files}); toast('เพิ่มไฟล์ ✓','ok');
-};
-
-window.delFileLink=async function(idx){
-  if(!confirm('ลบไฟล์นี้?'))return;
-  const p=projects.find(x=>x.id===currentProjId); if(!p)return;
-  const files=(p.files||[]).filter((_,i)=>i!==idx);
-  await saveProjToCloud({...p,files}); renderProjFiles({...p,files});
 };
 
 function renderContractorUpdates(p){
@@ -3216,6 +3361,476 @@ window.saveDoc=async function(){
 window.printDoc=function(){window.print();};
 
 
+
+// ══════════════════════════════════════════
+// ACCOUNTING DOCS MODULE
+// ══════════════════════════════════════════
+let accBundles=[], accUnsubscribe=null;
+
+function startAccSync(){
+  if(accUnsubscribe)return;
+  accUnsubscribe=onSnapshot(collection(db,'acc_bundles'),snap=>{
+    accBundles=snap.docs.map(d=>({id:d.id,...d.data()}));
+    accBundles.sort((a,b)=>b.month?.localeCompare(a.month));
+    renderAccDocs();
+  });
+}
+
+function accTypeLabel(t){return{revenue:'รายรับ',expense:'รายจ่าย',invoice:'ใบแจ้งหนี้',receipt:'ใบเสร็จ',other:'อื่นๆ'}[t]||t;}
+
+function fmtAccAmt(n){if(!n&&n!==0)return'—';const v=parseFloat(n);if(isNaN(v))return'—';return v.toLocaleString('th-TH',{minimumFractionDigits:0,maximumFractionDigits:2})+'฿';}
+
+function renderAccDocs(){
+  const grid=document.getElementById('accMonthGrid');
+  if(!grid)return;
+  const btnNew=document.getElementById('btnAccNewMonth');
+  if(btnNew)btnNew.style.display=isAdmin()?'':'none';
+  if(!accBundles.length){
+    grid.innerHTML='<div style="text-align:center;padding:60px;color:var(--gray-400);font-size:13px">📂 ยังไม่มีเดือนที่บันทึก<br><span style="font-size:11px;margin-top:4px;display:block">แอดมินกด "+ เพิ่มเดือน" เพื่อเริ่ม</span></div>';
+    return;
+  }
+  grid.innerHTML=accBundles.map(b=>renderAccMonthCard(b)).join('');
+}
+
+function renderAccMonthCard(b){
+  const items=b.items||[];
+  const revenue=items.filter(i=>i.type==='revenue'||i.type==='receipt').reduce((s,i)=>s+(parseFloat(i.amount)||0),0);
+  const expense=items.filter(i=>i.type==='expense').reduce((s,i)=>s+(parseFloat(i.amount)||0),0);
+  const net=revenue-expense;
+  const statusMap={draft:{cls:'acc-status-draft',label:'📝 กำลังร่าง'},sent:{cls:'acc-status-sent',label:'📤 ส่งแล้ว'},confirmed:{cls:'acc-status-confirmed',label:'✅ รับทราบแล้ว'}};
+  const st=statusMap[b.status]||statusMap.draft;
+  const canManage=isAdmin();
+  const canConfirm=currentUser?.role==='accounting'&&b.status==='sent';
+  const canSend=isAdmin()&&b.status==='draft'&&items.length>0;
+
+  const itemRows=items.map((it,idx)=>`
+    <div class="acc-item-row">
+      <span class="acc-item-type acc-type-${it.type}">${accTypeLabel(it.type)}</span>
+      <span class="acc-item-desc">${it.desc||'—'}</span>
+      ${it.ref?`<span class="acc-item-ref">${it.ref}</span>`:''}
+      <span class="acc-item-amt">${fmtAccAmt(it.amount)}</span>
+      ${canManage&&b.status==='draft'?`<button class="acc-item-del" onclick="delAccItem('${b.id}',${idx})" title="ลบ">✕</button>`:''}
+    </div>`).join('');
+
+  const addForm=canManage&&b.status==='draft'?`
+    <div class="acc-add-form">
+      <div style="font-size:11px;font-weight:600;color:var(--gray-500);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em">เพิ่มรายการ</div>
+      <div class="prow2" style="margin-bottom:8px">
+        <div class="field"><label>ประเภท</label>
+          <select id="accType-${b.id}">
+            <option value="revenue">รายรับ</option>
+            <option value="expense">รายจ่าย</option>
+            <option value="invoice">ใบแจ้งหนี้</option>
+            <option value="receipt">ใบเสร็จ</option>
+            <option value="other">อื่นๆ</option>
+          </select>
+        </div>
+        <div class="field"><label>จำนวนเงิน (฿)</label>
+          <input id="accAmt-${b.id}" type="number" placeholder="0" min="0">
+        </div>
+      </div>
+      <div class="prow2" style="margin-bottom:10px">
+        <div class="field"><label>รายละเอียด *</label>
+          <input id="accDesc-${b.id}" placeholder="ระบุรายการ...">
+        </div>
+        <div class="field"><label>เลขอ้างอิง / เลขที่เอกสาร</label>
+          <input id="accRef-${b.id}" placeholder="INV-2026-001">
+        </div>
+      </div>
+      <button class="btn btn-green btn-sm" onclick="addAccItem('${b.id}')">+ เพิ่มรายการ</button>
+    </div>`:''
+
+  const footer=`
+    <div style="display:flex;gap:8px;margin-top:12px;justify-content:flex-end;flex-wrap:wrap">
+      ${canSend?`<button class="btn btn-gold btn-sm" onclick="sendAccBundle('${b.id}')">📤 ส่งให้บัญชี</button>`:''}
+      ${canConfirm?`<button class="btn btn-green btn-sm" onclick="confirmAccBundle('${b.id}')">✅ รับทราบแล้ว</button>`:''}
+      ${isAdmin()&&b.status==='sent'?`<button class="btn btn-ghost btn-sm" onclick="recallAccBundle('${b.id}')">↩ ดึงกลับแก้ไข</button>`:''}
+      ${isAdmin()?`<button class="btn btn-ghost btn-sm" onclick="openAccNote('${b.id}')">📝 หมายเหตุ</button>`:''}
+      ${isAdmin()?`<button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="deleteAccBundle('${b.id}')">🗑</button>`:''}
+    </div>
+    <div style="font-size:11px;color:var(--gray-400);margin-top:6px;text-align:right">
+      ${b.sentAt?`ส่ง: ${b.sentAt} โดย ${b.sentBy}<br>`:''}
+      ${b.confirmedAt?`<span style="color:var(--green)">รับทราบ: ${b.confirmedAt} โดย ${b.confirmedBy}</span>`:''}
+    </div>`;
+
+  return`
+    <div class="acc-month-card">
+      <div class="acc-month-hdr" onclick="toggleAccMonth('${b.id}')">
+        <span class="acc-month-icon">📁</span>
+        <span class="acc-month-label">${b.monthLabel||b.month}</span>
+        <span class="acc-month-meta">${items.length} รายการ</span>
+        <span class="acc-status ${st.cls}">${st.label}</span>
+      </div>
+      <div class="acc-month-body" id="accBody-${b.id}" style="display:none">
+        <div class="acc-summary">
+          <div class="acc-sum-card"><div class="acc-sum-lbl">รายรับ</div><div class="acc-sum-val" style="color:var(--green)">${fmtAccAmt(revenue)}</div></div>
+          <div class="acc-sum-card"><div class="acc-sum-lbl">รายจ่าย</div><div class="acc-sum-val" style="color:var(--red)">${fmtAccAmt(expense)}</div></div>
+          <div class="acc-sum-card"><div class="acc-sum-lbl">สุทธิ</div><div class="acc-sum-val" style="color:${net>=0?'var(--green)':'var(--red)'}">${fmtAccAmt(net)}</div></div>
+        </div>
+        ${itemRows||'<div style="font-size:12px;color:var(--gray-400);padding:8px 0;text-align:center">ยังไม่มีรายการ</div>'}
+        ${b.note?`<div style="font-size:12px;color:var(--gray-600);margin-top:10px;padding:8px 12px;background:var(--gold-light);border-radius:var(--r-sm);border-left:3px solid var(--gold)">📝 ${b.note}</div>`:''}
+        ${addForm}
+        ${footer}
+      </div>
+    </div>`;
+}
+
+window.toggleAccMonth=function(id){
+  const body=document.getElementById('accBody-'+id);
+  if(body)body.style.display=body.style.display==='none'?'block':'none';
+};
+
+window.openAccNewMonth=function(){
+  const now=new Date();
+  const def=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  const val=prompt('ระบุเดือน (รูปแบบ YYYY-MM เช่น 2026-05):',def);
+  if(!val||!/^\d{4}-\d{2}$/.test(val.trim())){if(val!==null)toast('รูปแบบไม่ถูกต้อง (ต้องเป็น YYYY-MM)','err');return;}
+  const m=val.trim();
+  if(accBundles.find(b=>b.id===m)){toast('มีเดือนนี้แล้ว','err');return;}
+  const [yr,mo]=m.split('-');
+  const label=new Date(parseInt(yr),parseInt(mo)-1,1).toLocaleDateString('th-TH',{month:'long',year:'numeric'});
+  const bundle={id:m,month:m,monthLabel:label,status:'draft',items:[],note:'',createdAt:nowTH(),createdBy:currentUser.name};
+  setDoc(doc(db,'acc_bundles',m),bundle).then(()=>toast('สร้างโฟลเดอร์ '+label+' ✓','ok'));
+};
+
+window.addAccItem=async function(bundleId){
+  const b=accBundles.find(x=>x.id===bundleId);
+  if(!b)return;
+  const type=document.getElementById('accType-'+bundleId)?.value;
+  const desc=document.getElementById('accDesc-'+bundleId)?.value.trim();
+  const amt=document.getElementById('accAmt-'+bundleId)?.value;
+  const ref=document.getElementById('accRef-'+bundleId)?.value.trim();
+  if(!desc){toast('กรุณาระบุรายละเอียด','err');return;}
+  const item={id:Date.now().toString(),type,desc,amount:parseFloat(amt)||0,ref:ref||'',by:currentUser.name,at:nowTH()};
+  await setDoc(doc(db,'acc_bundles',bundleId),{...b,items:[...(b.items||[]),item],updatedAt:nowTH()});
+  toast('เพิ่มรายการ ✓','ok');
+  ['accDesc','accAmt','accRef'].forEach(id=>{const el=document.getElementById(id+'-'+bundleId);if(el)el.value='';});
+};
+
+window.delAccItem=async function(bundleId,idx){
+  const b=accBundles.find(x=>x.id===bundleId);
+  if(!b||!isAdmin())return;
+  if(!confirm('ลบรายการนี้?'))return;
+  await setDoc(doc(db,'acc_bundles',bundleId),{...b,items:(b.items||[]).filter((_,i)=>i!==idx),updatedAt:nowTH()});
+  toast('ลบแล้ว','ok');
+};
+
+window.sendAccBundle=async function(bundleId){
+  const b=accBundles.find(x=>x.id===bundleId);
+  if(!b||!isAdmin())return;
+  if(!confirm(`ส่งรายการ "${b.monthLabel||b.month}" ให้ทีมบัญชีเลย?`))return;
+  await setDoc(doc(db,'acc_bundles',bundleId),{...b,status:'sent',sentAt:nowTH(),sentBy:currentUser.name});
+  toast('ส่งให้บัญชีแล้ว ✓','ok');
+};
+
+window.confirmAccBundle=async function(bundleId){
+  const b=accBundles.find(x=>x.id===bundleId);
+  if(!b)return;
+  if(!confirm(`ยืนยันรับทราบเอกสาร "${b.monthLabel||b.month}"?`))return;
+  await setDoc(doc(db,'acc_bundles',bundleId),{...b,status:'confirmed',confirmedAt:nowTH(),confirmedBy:currentUser.name});
+  toast('รับทราบแล้ว ✓','ok');
+};
+
+window.recallAccBundle=async function(bundleId){
+  const b=accBundles.find(x=>x.id===bundleId);
+  if(!b||!isAdmin())return;
+  await setDoc(doc(db,'acc_bundles',bundleId),{...b,status:'draft',sentAt:'',sentBy:''});
+  toast('ดึงกลับเพื่อแก้ไขแล้ว','ok');
+};
+
+window.openAccNote=async function(bundleId){
+  const b=accBundles.find(x=>x.id===bundleId);
+  if(!b||!isAdmin())return;
+  const note=prompt('หมายเหตุสำหรับทีมบัญชี:',b.note||'');
+  if(note===null)return;
+  await setDoc(doc(db,'acc_bundles',bundleId),{...b,note});
+  toast('บันทึกหมายเหตุ ✓','ok');
+};
+
+window.deleteAccBundle=async function(bundleId){
+  const b=accBundles.find(x=>x.id===bundleId);
+  if(!b||!isAdmin())return;
+  if(!confirm(`ลบโฟลเดอร์ "${b.monthLabel||b.month}" ทั้งหมด? ไม่สามารถกู้คืนได้`))return;
+  await deleteDoc(doc(db,'acc_bundles',bundleId));
+  toast('ลบโฟลเดอร์แล้ว','ok');
+};
+
+// ══════════════════════════════════════════
+// FINANCE DASHBOARD MODULE
+// ══════════════════════════════════════════
+function renderFinance(){
+  if(!canSeeFin())return;
+  const allP=[...projects,...leads.filter(l=>l.revenue||l.expense)];
+  const totalRev=allP.reduce((s,p)=>s+pn(p.revenue),0);
+  const totalExp=allP.reduce((s,p)=>s+pn(p.expense),0);
+  const profit=totalRev-totalExp;
+  const margin=totalRev>0?Math.round(profit/totalRev*100):0;
+  const outstanding=allP.filter(p=>pn(p.budget)>0&&pn(p.revenue)<pn(p.budget)&&p.status!=='cancelled');
+
+  // KPI
+  const kpi=document.getElementById('finKpiGrid');
+  if(kpi) kpi.innerHTML=`
+    <div class="kpi-card kpi-rev"><div class="kpi-lbl">รายรับจริง</div><div class="kpi-val" style="color:var(--green)">${totalRev>=1e6?(totalRev/1e6).toFixed(1)+'M':fmtN(totalRev)}฿</div><div class="kpi-sub">จาก ${allP.filter(p=>p.revenue).length} โปรเจกต์</div></div>
+    <div class="kpi-card kpi-exp"><div class="kpi-lbl">รายจ่ายจริง</div><div class="kpi-val" style="color:var(--red)">${totalExp>=1e6?(totalExp/1e6).toFixed(1)+'M':fmtN(totalExp)}฿</div><div class="kpi-sub">ต้นทุนรวม</div></div>
+    <div class="kpi-card kpi-profit"><div class="kpi-lbl">กำไรสุทธิ</div><div class="kpi-val" style="color:${profit>=0?'var(--gold)':'var(--red)'}">${profit>=0?'+':''}${profit>=1e6?(profit/1e6).toFixed(1)+'M':fmtN(profit)}฿</div><div class="kpi-sub">Margin ${margin}%</div></div>
+    <div class="kpi-card"><div class="kpi-lbl">รอรับเงิน</div><div class="kpi-val" style="color:var(--blue)">${outstanding.length}</div><div class="kpi-sub">โปรเจกต์ยังไม่ครบ</div></div>
+    <div class="kpi-card"><div class="kpi-lbl">Pipeline</div><div class="kpi-val" style="color:var(--gray-700)">${leads.filter(l=>ACTIVE_STEPS.includes(l.step)).reduce((s,l)=>s+pn(l.budget),0)>=1e6?(leads.filter(l=>ACTIVE_STEPS.includes(l.step)).reduce((s,l)=>s+pn(l.budget),0)/1e6).toFixed(1)+'M':fmtN(leads.filter(l=>ACTIVE_STEPS.includes(l.step)).reduce((s,l)=>s+pn(l.budget),0))}฿</div><div class="kpi-sub">Lead กำลังติดตาม</div></div>`;
+
+  // Monthly Chart (12 months)
+  const now=new Date();
+  const months=[];
+  for(let i=11;i>=0;i--){const d=new Date(now.getFullYear(),now.getMonth()-i,1);months.push({y:d.getFullYear(),m:d.getMonth(),label:['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'][d.getMonth()]});}
+  const mData=months.map(({y,m,label})=>{
+    const items=allP.filter(p=>{const d=new Date(p._ts||p.updatedAt||p.createdAt||0);return d.getFullYear()===y&&d.getMonth()===m;});
+    return{label,rev:items.reduce((s,p)=>s+pn(p.revenue),0),exp:items.reduce((s,p)=>s+pn(p.expense),0)};
+  });
+  const maxVal=Math.max(...mData.map(d=>Math.max(d.rev,d.exp)),1);
+  const chart=document.getElementById('finMonthChart');
+  if(chart) chart.innerHTML=`<div style="display:flex;align-items:flex-end;gap:6px;height:120px;padding:0 4px">${mData.map(d=>`
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px">
+      <div style="width:100%;display:flex;gap:2px;align-items:flex-end;height:100px">
+        <div style="flex:1;background:var(--green);opacity:.8;border-radius:2px 2px 0 0;height:${Math.round(d.rev/maxVal*100)}%;min-height:${d.rev?2:0}px" title="รายรับ ${fmtN(d.rev)}฿"></div>
+        <div style="flex:1;background:var(--red);opacity:.6;border-radius:2px 2px 0 0;height:${Math.round(d.exp/maxVal*100)}%;min-height:${d.exp?2:0}px" title="รายจ่าย ${fmtN(d.exp)}฿"></div>
+      </div>
+      <div style="font-size:9px;color:var(--gray-400);white-space:nowrap">${d.label}</div>
+    </div>`).join('')}</div>`;
+
+  // Outstanding
+  const outEl=document.getElementById('finOutstanding');
+  if(outEl) outEl.innerHTML=outstanding.length?outstanding.slice(0,8).map(p=>{
+    const paid=pn(p.revenue);const total=pn(p.budget);const remain=total-paid;
+    return`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border-lt)">
+      <div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;color:var(--gray-800);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.name||p.client||'—'}</div><div style="font-size:10px;color:var(--gray-400)">${p.projId||p.id}</div></div>
+      <div style="text-align:right;flex-shrink:0"><div style="font-size:12px;font-weight:600;color:var(--blue)">${fmtN(remain)}฿</div><div style="font-size:10px;color:var(--gray-400)">คงเหลือ</div></div>
+    </div>`}).join('')+'<div style="font-size:11px;color:var(--gray-400);padding:8px 0">รวม '+outstanding.length+' รายการ</div>'
+    :'<div style="font-size:12px;color:var(--gray-400);padding:20px 0;text-align:center">ไม่มีรายการค้างชำระ ✓</div>';
+
+  // Project finance profit list
+  const projList=document.getElementById('finProjList');
+  const sortedP=[...allP].filter(p=>p.revenue||p.expense).sort((a,b)=>pn(b.revenue)-pn(a.revenue)).slice(0,10);
+  if(projList) projList.innerHTML=sortedP.length?`<div style="display:flex;flex-direction:column;gap:4px">${sortedP.map(p=>{
+    const rev=pn(p.revenue),exp=pn(p.expense),net=rev-exp;
+    const bar=rev>0?Math.round(net/rev*100):0;
+    return`<div class="proj-fin-row">
+      <div class="proj-fin-name">${p.name||p.client||p.projId||'—'}</div>
+      <div class="proj-fin-bar-wrap"><div class="proj-fin-bar" style="width:${Math.max(0,bar)}%"></div></div>
+      <div class="proj-fin-val" style="color:${net>=0?'var(--green)':'var(--red)'}">${net>=0?'+':''}${fmtN(net)}฿</div>
+    </div>`;}).join('')}</div>`:'<div style="font-size:12px;color:var(--gray-400);padding:12px 0;text-align:center">ยังไม่มีข้อมูลรายรับ</div>';
+
+  // Full table
+  const tbody=document.getElementById('finBody');
+  if(tbody) tbody.innerHTML=[...projects,...leads.filter(l=>l.budget||l.revenue)].map(p=>{
+    const rev=pn(p.revenue),exp=pn(p.expense),bud=pn(p.budget),net=rev-exp,mg=rev>0?Math.round(net/rev*100):0;
+    const stMap={active:'🟡',completed:'✅',paused:'⏸️',cancelled:'❌',delivering:'📦',designing:'✏️',constructing:'🏗️'};
+    return`<tr>
+      <td>${p.projId||p.id||'—'}<br><span style="font-size:10px;color:var(--gray-400)">${p.name||p.client||''}</span></td>
+      <td style="text-align:right;font-family:monospace">${bud?fmtN(bud)+'฿':'—'}</td>
+      <td style="text-align:right;font-family:monospace;color:var(--green)">${rev?fmtN(rev)+'฿':'—'}</td>
+      <td style="text-align:right;font-family:monospace;color:var(--red)">${exp?fmtN(exp)+'฿':'—'}</td>
+      <td style="text-align:right;font-family:monospace;font-weight:600;color:${net>=0?'var(--green)':'var(--red)'}">${rev||exp?(net>=0?'+':'')+fmtN(net)+'฿':'—'}</td>
+      <td style="text-align:right">${rev>0?mg+'%':'—'}</td>
+      <td>${stMap[p.status||p.step]||'—'} ${(p.status||p.step)||'—'}</td>
+    </tr>`;}).join('') || '<tr><td colspan="7" style="text-align:center;color:var(--gray-400);padding:20px">ยังไม่มีข้อมูล</td></tr>';
+}
+
+// ══════════════════════════════════════════
+// ADMIN PANEL MODULE
+// ══════════════════════════════════════════
+function renderAdmin(){
+  if(!isAdmin())return;
+  const wrap=document.getElementById('adminContent'); if(!wrap) return;
+  const userList=Object.entries(users).sort((a,b)=>{
+    const order={owner:0,admin:1,sales:2,accounting:3,designer:4,drafter:5,contractor:6,outsource:7};
+    return (order[a[1].role]??9)-(order[b[1].role]??9)||a[0].localeCompare(b[0]);
+  });
+  const roleCounts={};userList.forEach(([,u])=>{roleCounts[u.role]=(roleCounts[u.role]||0)+1;});
+  const rcBadge=(role,count)=>{const c=ROLE_COLOR[role]||'#999';return`<span style="background:${c}20;color:${c};padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600">${ROLE_LABEL[role]||role.toUpperCase()} ${count}</span>`;};
+  wrap.innerHTML=`
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px">
+      ${Object.entries(roleCounts).map(([r,n])=>rcBadge(r,n)).join('')}
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div style="font-size:13px;font-weight:600;color:var(--gray-700)">ผู้ใช้งานทั้งหมด (${userList.length} คน)</div>
+      <button class="btn btn-gold btn-sm" onclick="openUserModal()">+ เพิ่มผู้ใช้</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      ${userList.map(([uid,u])=>{
+        const rc=ROLE_COLOR[u.role]||'#999';
+        const isMe=uid===currentUser.user;
+        const isUOwner=u.role==='owner';
+        const isUAdmin=u.role==='admin';
+        const iAmOwner=isOwner();
+        const projNames=(u.projectAccess||[]).map(pid=>{const p=projects.find(x=>x.id===pid);return p?p.projId||p.name:pid;}).filter(Boolean);
+        // admin พนักงานแตะ owner/admin อื่นไม่ได้
+        const canEdit_=isMe||iAmOwner||(isStrictAdmin()&&!isUOwner&&!isUAdmin);
+        const canDelete_=!isMe&&(iAmOwner||(isStrictAdmin()&&!isUOwner&&!isUAdmin));
+        const canImper_=!isMe&&!isUOwner;
+        const ownerBorder=isUOwner?'border-color:#c4b5fd;':'';
+        return`<div style="background:var(--white);border:1px solid var(--border);${ownerBorder}border-radius:var(--r);padding:12px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+          <div style="width:36px;height:36px;border-radius:50%;background:${rc}20;color:${rc};display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0">${(u.name||uid)[0].toUpperCase()}</div>
+          <div style="flex:1;min-width:160px">
+            <div style="font-size:14px;font-weight:600;color:var(--gray-800)">${u.name||uid}${isMe?' <span style="font-size:11px;font-weight:400;color:var(--gray-400)">(คุณ)</span>':''} <span style="font-size:11px;font-weight:400;color:var(--gray-400)">(${uid})</span></div>
+            <div style="display:flex;align-items:center;gap:8px;margin-top:3px;flex-wrap:wrap">
+              <span style="background:${rc}20;color:${rc};padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600">${ROLE_LABEL[u.role]||u.role}</span>
+              ${isUOwner?'<span style="font-size:10px;color:#5b21b6;font-weight:600">👑 เจ้าของระบบ</span>':''}
+              ${u.email?`<span style="font-size:11px;color:var(--gray-400)">${u.email}</span>`:''}
+            </div>
+            ${projNames.length?`<div style="font-size:10px;color:var(--gray-400);margin-top:4px">📂 ${projNames.join(', ')}</div>`:'<div style="font-size:10px;color:var(--gray-400);margin-top:4px">📂 เข้าถึงได้ทั้งหมด</div>'}
+          </div>
+          <div style="display:flex;gap:6px;flex-shrink:0;align-items:center">
+            ${canImper_?`<button class="btn btn-gold btn-sm" onclick="impersonateUser('${uid}')" title="ดูระบบในมุมมองของ ${u.name||uid}">👁 ดูในฐานะ</button>`:''}
+            ${canEdit_?`<button class="btn btn-ghost btn-sm" onclick="editUser('${uid}')">✏️ แก้ไข</button>`:''}
+            ${canDelete_?`<button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="deleteUser('${uid}')">🗑</button>`:''}
+            ${!canEdit_&&!canDelete_&&!canImper_&&!isMe?`<span style="font-size:11px;color:var(--gray-400)">🔒 protected</span>`:''}
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`;
+}
+
+window.openUserModal=function(uid){
+  const targetUser=uid?users[uid]:null;
+  // admin พนักงานแก้ไข owner/admin อื่นไม่ได้
+  if(uid&&isStrictAdmin()&&(targetUser?.role==='owner'||targetUser?.role==='admin')){
+    toast('Admin ไม่สามารถแก้ไข Owner หรือ Admin คนอื่นได้','err'); return;
+  }
+  editingUserId=uid||null;
+  document.getElementById('modalTitle').textContent=uid?`แก้ไข — ${targetUser?.name||uid}`:'เพิ่มผู้ใช้ใหม่';
+  document.getElementById('modalSub').textContent=uid?`แก้ไขข้อมูลของ ${uid}`:'กรอกข้อมูลผู้ใช้งานระบบ';
+  const u=targetUser;
+  document.getElementById('m-user').value=uid||'';
+  document.getElementById('m-user').disabled=!!uid;
+  document.getElementById('m-pass').value=u?.pass||'';
+  document.getElementById('m-name').value=u?.name||'';
+  document.getElementById('m-email').value=u?.email||'';
+  // show/hide owner-only role options
+  document.querySelectorAll('#m-role .opt-owner-only').forEach(el=>el.style.display=isOwner()?'':'none');
+  document.getElementById('m-role').value=u?.role||'designer';
+  // Project assignment grid
+  const grid=document.getElementById('projAssignGrid');
+  const selected=u?.projectAccess||[];
+  grid.innerHTML=projects.length?projects.map(p=>`
+    <label style="display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:var(--r-sm);cursor:pointer;font-size:12px;border:1px solid var(--border);background:var(--gray-50)">
+      <input type="checkbox" value="${p.id}" ${selected.includes(p.id)?'checked':''} style="accent-color:var(--gold)">
+      <span style="font-family:monospace;font-size:11px;color:var(--blue)">${p.projId||p.id}</span>
+      <span style="flex:1">${p.name||p.client||'—'}</span>
+    </label>`).join(''):'<div style="font-size:12px;color:var(--gray-400);padding:8px 0">ยังไม่มีโปรเจกต์</div>';
+  document.getElementById('userModal').classList.add('show');
+};
+
+window.editUser=function(uid){ openUserModal(uid); };
+
+window.closeUserModal=function(){
+  document.getElementById('userModal').classList.remove('show');
+  editingUserId=null;
+};
+
+window.saveUser=async function(){
+  const uid=(document.getElementById('m-user').value||'').trim().toLowerCase();
+  const pass=document.getElementById('m-pass').value.trim();
+  const name=document.getElementById('m-name').value.trim();
+  const role=document.getElementById('m-role').value;
+  const email=document.getElementById('m-email').value.trim();
+  if(!uid){toast('กรุณาใส่ Username','err');return;}
+  if(!pass){toast('กรุณาใส่ Password','err');return;}
+  if(!name){toast('กรุณาใส่ชื่อแสดง','err');return;}
+  if(!editingUserId&&users[uid]){toast('Username นี้มีอยู่แล้ว','err');return;}
+  if(isStrictAdmin()&&(role==='owner'||role==='admin')){toast('Admin ไม่สามารถตั้ง Role เป็น Owner หรือ Admin ได้','err');return;}
+  const projAccess=[...document.getElementById('projAssignGrid').querySelectorAll('input[type=checkbox]:checked')].map(cb=>cb.value);
+  const existing=users[uid]||{};
+  users[uid]={...existing,pass,name,display:name,role,email,projectAccess:projAccess};
+  try{
+    await saveUsersToCloud();
+    toast((editingUserId?'แก้ไข':'เพิ่ม')+`ผู้ใช้ "${name}" ✓`,'ok');
+    closeUserModal();
+    renderAdmin();
+  }catch(e){toast('บันทึกไม่สำเร็จ: '+e.message,'err');}
+};
+
+window.deleteUser=async function(uid){
+  if(uid===currentUser.user){toast('ไม่สามารถลบตัวเองได้','err');return;}
+  const u=users[uid];
+  if(u?.role==='owner'){toast('ไม่สามารถลบบัญชี Owner ได้','err');return;}
+  if(isStrictAdmin()&&u?.role==='admin'){toast('Admin ไม่สามารถลบ Admin คนอื่นได้','err');return;}
+  if(!confirm(`ลบผู้ใช้ "${u?.name||uid}" ออกจากระบบ?`))return;
+  delete users[uid];
+  try{
+    await saveUsersToCloud();
+    toast(`ลบผู้ใช้ "${u?.name||uid}" แล้ว`,'ok');
+    renderAdmin();
+  }catch(e){toast('ลบไม่สำเร็จ: '+e.message,'err');}
+};
+
+// ══════════════════════════════════════════
+// IMPERSONATE MODULE
+// ══════════════════════════════════════════
+function _resetListeners(){
+  if(unsubscribe){unsubscribe();unsubscribe=null;}
+  if(projUnsubscribe){projUnsubscribe();projUnsubscribe=null;}
+  if(accUnsubscribe){accUnsubscribe();accUnsubscribe=null;}
+  if(docUnsubscribe){docUnsubscribe();docUnsubscribe=null;}
+  if(calEvUnsubscribe){calEvUnsubscribe();calEvUnsubscribe=null;}
+  leads=[]; projects=[]; accBundles=[];
+}
+const IMPER_KEY = 'nms_imper_backup';
+
+window.impersonateUser = function(uid){
+  const targetUser = users[uid];
+  if(!targetUser){ toast('ไม่พบ user นี้','err'); return; }
+  if(!isAdmin()){ toast('เฉพาะ Admin/Owner เท่านั้น','err'); return; }
+  if(targetUser.role==='owner'){ toast('ไม่สามารถ Impersonate บัญชี Owner ได้','err'); return; }
+
+  // backup admin session
+  sessionStorage.setItem(IMPER_KEY, JSON.stringify(currentUser));
+
+  // switch to target user (ไม่ save session ลง localStorage เพื่อป้องกัน refresh แล้วค้างเป็น user อื่น)
+  const projAccess = targetUser.projectAccess || [];
+  currentUser = { user: uid, ...targetUser, projectAccess: projAccess };
+
+  // update impersonate bar
+  const projNames = projAccess.map(pid => {
+    const p = projects.find(x => x.id === pid);
+    return p ? (p.projId || p.name) : pid;
+  }).filter(Boolean);
+
+  document.getElementById('imperName').textContent = `กำลังดูในฐานะ: ${targetUser.name||uid}`;
+  document.getElementById('imperRole').textContent = `Role: ${ROLE_LABEL[targetUser.role]||targetUser.role}`;
+  document.getElementById('imperProj').textContent = projNames.length
+    ? `โปรเจกต์: ${projNames.join(', ')}`
+    : 'โปรเจกต์: เข้าถึงได้ทั้งหมด';
+  document.getElementById('imperBar').classList.add('show');
+  document.getElementById('imperSpacer').classList.add('show');
+
+  // restart UI as target user
+  _resetListeners();
+  setupNavUI();
+  startSync();
+  const role = currentUser.role;
+  if(role === 'accounting'){
+    showPage('accdocs', document.getElementById('tabAccDocs'));
+    startAccSync();
+  } else {
+    showClanding();
+  }
+  toast(`👁 ดูระบบในฐานะ ${targetUser.name||uid} (${ROLE_LABEL[targetUser.role]||targetUser.role})`,'ok');
+};
+
+window.stopImpersonating = function(){
+  const backup = sessionStorage.getItem(IMPER_KEY);
+  if(!backup){ toast('ไม่พบข้อมูล admin backup','err'); return; }
+  sessionStorage.removeItem(IMPER_KEY);
+
+  currentUser = JSON.parse(backup);
+
+  document.getElementById('imperBar').classList.remove('show');
+  document.getElementById('imperSpacer').classList.remove('show');
+
+  _resetListeners();
+  setupNavUI();
+  startSync();
+  showPage('admin', document.getElementById('tabAdmin'));
+  toast('กลับมาเป็น Admin แล้ว ✓','ok');
+};
 
 // ── Init ──
 document.getElementById('loginSync').textContent='✅ Firebase พร้อมใช้งาน';

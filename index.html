@@ -593,6 +593,18 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
 .ev-modal-ov.show{display:flex}
 .ev-modal{background:var(--white);border-radius:var(--r-lg);padding:24px;width:100%;max-width:440px;box-shadow:var(--shadow-lg)}
 
+/* ── DESIGNER/CONTRACTOR LANDING ── */
+.clanding-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 80px);padding:24px}
+.clanding-greet{font-size:22px;font-weight:300;color:var(--gray-800);margin-bottom:6px;text-align:center}
+.clanding-sub{font-size:13px;color:var(--gray-400);margin-bottom:40px;text-align:center}
+.clanding-cards{display:grid;grid-template-columns:1fr 1fr;gap:20px;width:100%;max-width:560px}
+.clanding-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r-lg);padding:32px 24px;text-align:center;cursor:pointer;transition:all .18s;box-shadow:var(--shadow-sm)}
+.clanding-card:hover{border-color:var(--gold);box-shadow:0 4px 20px rgba(196,154,60,.18);transform:translateY(-2px)}
+.clanding-card-icon{font-size:40px;margin-bottom:14px}
+.clanding-card-title{font-size:16px;font-weight:600;color:var(--gray-800);margin-bottom:6px}
+.clanding-card-desc{font-size:12px;color:var(--gray-400);line-height:1.5}
+@media(max-width:480px){.clanding-cards{grid-template-columns:1fr}}
+
 @media(max-width:768px){
   .stats{grid-template-columns:repeat(3,1fr)}
   .panel{width:100vw}
@@ -1056,6 +1068,26 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
       <div style="margin-top:24px">
         <div style="font-size:12px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;font-family:monospace">ประวัติการอัปโหลดล่าสุด</div>
         <div id="upHistory"><div style="color:var(--gray-400);font-size:13px">กำลังโหลด...</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DESIGNER/CONTRACTOR LANDING -->
+  <div class="page" id="page-clanding">
+    <div class="clanding-wrap">
+      <div class="clanding-greet" id="clandingGreet">สวัสดี</div>
+      <div class="clanding-sub">คุณต้องการทำอะไรวันนี้?</div>
+      <div class="clanding-cards">
+        <div class="clanding-card" onclick="showPage('upload',document.getElementById('tabUpload'))">
+          <div class="clanding-card-icon">☁️</div>
+          <div class="clanding-card-title">อัพโหลดไฟล์</div>
+          <div class="clanding-card-desc">Smart Upload — ตั้งชื่อไฟล์อัตโนมัติ<br>& บันทึก log ลง Firebase</div>
+        </div>
+        <div class="clanding-card" onclick="showPage('projects',document.getElementById('tabProjects'))">
+          <div class="clanding-card-icon">🗂️</div>
+          <div class="clanding-card-title">เลือกโปรเจค</div>
+          <div class="clanding-card-desc">ดูข้อมูล Checklist ไฟล์งาน<br>& อัปเดตสถานะโปรเจค</div>
+        </div>
       </div>
     </div>
   </div>
@@ -1607,8 +1639,13 @@ async function startApp(){
   startSync();
   setTimeout(()=>{if(document.getElementById('page-cal')?.classList.contains('on'))calStartSync();},1000);
   checkLocalMigration();
-  renderHome();
-  setInterval(renderHome,60000);
+  const clRoles=['designer','drafter','contractor','outsource'];
+  if(clRoles.includes(currentUser?.role)){
+    showClanding();
+  } else {
+    renderHome();
+    setInterval(renderHome,60000);
+  }
 }
 
 function setupNavUI(){
@@ -1640,6 +1677,16 @@ window.showPage=function(id,el){
   else if(id==='admin')renderAdmin();
   else if(id==='home')renderHome();
 };
+
+function showClanding(){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.getElementById('page-clanding').classList.add('on');
+  document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('on'));
+  const now=new Date();
+  const hr=now.getHours();
+  const greet=hr<12?'สวัสดีตอนเช้า':hr<17?'สวัสดีตอนบ่าย':'สวัสดีตอนเย็น';
+  document.getElementById('clandingGreet').textContent=`${greet}, ${currentUser.name} 👋`;
+}
 
 // ── Firebase Sync ──
 function startSync(){

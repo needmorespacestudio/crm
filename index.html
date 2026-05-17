@@ -641,65 +641,170 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
 .acc-sum-lbl{font-size:10px;color:var(--gray-400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
 .acc-sum-val{font-size:16px;font-weight:600}
 
-/* ── TABLET (iPad ≤ 1024px) ── */
+/* ════════════════════════════════════════
+   RESPONSIVE
+════════════════════════════════════════ */
+
+/* ── TABLET (iPad 768–1024px) ── */
 @media(max-width:1024px){
   .analytics-v2,.fin-dash,.proj-list-wrap,.proj-detail,.doc-wrap,.admin-wrap,.cal-page,.acc-wrap,.home-wrap{padding:16px}
   .a2-grid{grid-template-columns:1fr 1fr}
   .fin-kpi-grid{grid-template-columns:repeat(3,1fr)}
-  .kpi-cards-row{grid-template-columns:repeat(3,1fr)}
+  .proj-grid{grid-template-columns:1fr 1fr}
+  .home-grid{grid-template-columns:repeat(3,1fr)}
+  .fin-dash-grid{grid-template-columns:1fr}
 }
+
 /* ── MOBILE (≤ 768px) ── */
 @media(max-width:768px){
-  .stats{grid-template-columns:repeat(2,1fr)}
-  .panel{width:100vw}
-  .a-grid{grid-template-columns:1fr}
-  .fin-summary-cards{grid-template-columns:1fr 1fr}
+  /* ─ Sync bar ─ */
+  .sync-bar{padding:3px 14px;font-size:10px}
+
+  /* ─ Top nav: brand + user only ─ */
+  .nav{padding:0 14px;height:52px;gap:10px}
   .nav-tabs{display:none}
-  .home-grid{grid-template-columns:1fr 1fr}
-  .home-cols{grid-template-columns:1fr}
-  .menu-grid{grid-template-columns:1fr 1fr}
-  .imper-bar{flex-direction:column;gap:6px;text-align:center}
-  /* Project detail */
-  .proj-tabs{overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .nav-actions{display:none}
+
+  /* ─ Touch targets ─ */
+  .btn{min-height:42px}
+  .btn-sm{min-height:38px;padding:7px 13px;font-size:13px}
+  .ftag{padding:8px 16px;font-size:13px;min-height:38px}
+
+  /* ─ Panel full screen ─ */
+  .panel{width:100vw;top:0}
+  .panel-hd{padding:14px 16px 12px}
+  .panel-body{padding:16px}
+  .panel-foot{padding:12px 16px;gap:10px}
+  .panel-foot .btn{flex:1;justify-content:center}
+
+  /* ─ Pipeline board ─ */
+  .stats{grid-template-columns:repeat(2,1fr);padding:12px 14px 0}
+  .fbar{padding:10px 14px 0;gap:8px}
+  .board-wrap{padding:10px 14px 28px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .col{width:200px}
+
+  /* ─ Project list ─ */
+  .proj-grid{grid-template-columns:1fr}
+  .proj-list-wrap{padding:14px}
+
+  /* ─ Project detail header: sticky, horizontal ─ */
+  .proj-detail{padding:0;max-width:100%}
+  .proj-detail-hd{
+    position:sticky;top:0;z-index:10;
+    background:var(--white);
+    border-bottom:1px solid var(--border);
+    padding:10px 14px;
+    gap:10px;
+    flex-direction:row;
+    align-items:center;
+    margin-bottom:0;
+    box-shadow:var(--shadow-sm);
+  }
+  .proj-detail-hd > div:first-child{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0}
+  .proj-detail-hd > div:first-child > .btn{order:-1;align-self:flex-start;margin-bottom:4px}
+  .proj-detail-title{font-size:17px;line-height:1.2}
+  .proj-detail-sub{font-size:11px}
+  .proj-detail-hd > div:last-child{display:flex;flex-direction:column;gap:6px;flex-shrink:0}
+  .proj-detail-hd > div:last-child .btn{min-width:72px;justify-content:center}
+  /* ─ Project tabs ─ */
+  .proj-tabs{overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:0 14px;margin-bottom:0;border-bottom:1px solid var(--border)}
   .proj-tabs::-webkit-scrollbar{display:none}
-  .info-grid{grid-template-columns:1fr!important}
+  .ptab{padding:10px 14px;font-size:12px}
+  .ptab-content.on{padding:14px}
+
+  /* ─ Info / form grids ─ */
+  .info-grid{grid-template-columns:1fr!important;gap:12px}
   .prow2{grid-template-columns:1fr!important}
-  /* Analytics */
-  .a2-grid{grid-template-columns:1fr!important}
-  .analytics-kpi-row{grid-template-columns:1fr 1fr!important}
-  .funnel-v2-lbl{width:70px!important;font-size:11px!important}
-  /* Finance */
-  .fin-kpi-grid{grid-template-columns:1fr 1fr!important}
-  .fin-dash{padding:12px}
-  /* Modals */
-  .modal-ov{align-items:flex-end!important}
-  .modal{border-radius:16px 16px 0 0!important;max-width:100%!important;width:100%!important;max-height:92vh!important;margin:0!important}
-  /* Nav right buttons — hide non-essential */
-  .nav-right .btn-ghost:not(#btnLogout){font-size:0}
-  /* Toast bottom */
-  .toast{bottom:80px!important;right:12px!important;left:12px!important;max-width:unset!important}
-  /* proj grid */
-  .proj-grid{grid-template-columns:1fr!important}
-  /* Fin table scroll */
-  #finTableWrap{overflow-x:auto}
-  .fin-table{min-width:600px}
-  /* Calendar */
-  .cal-grid{font-size:11px}
-  /* Home stats */
+  .info-card{padding:14px}
+
+  /* ─ Analytics ─ */
+  .analytics-v2{padding:14px}
+  .a2-grid{grid-template-columns:1fr!important;gap:12px}
+  #analyticsKpiRow{grid-template-columns:1fr 1fr!important;gap:10px}
+  .funnel-v2-lbl{width:68px!important;font-size:11px!important}
+  .funnel-v2-pct{min-width:90px!important;font-size:10px!important}
+  .a-grid{grid-template-columns:1fr}
+
+  /* ─ Finance ─ */
+  .fin-dash{padding:14px}
+  .fin-kpi-grid{grid-template-columns:1fr 1fr!important;gap:10px}
+  .fin-dash-grid{grid-template-columns:1fr!important}
+  .fin-summary-cards{grid-template-columns:1fr 1fr}
+  #finTableWrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .fin-table{min-width:580px}
+
+  /* ─ Home ─ */
+  .home-wrap{padding:14px}
   .home-grid{grid-template-columns:1fr 1fr}
-  /* Boards horizontal scroll */
-  .board-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
-  /* KPI cards */
-  #analyticsKpiRow{grid-template-columns:1fr 1fr!important}
+  .home-cols{grid-template-columns:1fr;gap:12px}
+  .menu-grid{grid-template-columns:1fr 1fr;gap:8px}
+  .menu-card{padding:12px}
+  .hstat{padding:14px}
+
+  /* ─ Docs ─ */
+  .doc-wrap{padding:14px}
+  .doc-toolbar{flex-direction:column;align-items:flex-start;gap:10px}
+  .doc-filter-tabs{overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:2px}
+  .doc-filter-tabs::-webkit-scrollbar{display:none}
+
+  /* ─ Calendar ─ */
+  .cal-page{padding:14px}
+  .cal-grid{font-size:11px}
+
+  /* ─ Admin ─ */
+  .admin-wrap{padding:14px}
+
+  /* ─ Modals → bottom sheet ─ */
+  .modal-ov{align-items:flex-end}
+  .modal{
+    border-radius:20px 20px 0 0 !important;
+    max-width:100% !important;
+    width:100% !important;
+    max-height:88vh !important;
+    margin:0 !important;
+    padding:0 20px 24px !important;
+  }
+  .modal::before{
+    content:'';display:block;width:36px;height:4px;
+    background:var(--gray-200);border-radius:2px;
+    margin:12px auto 18px;
+  }
+  .modal-title{margin-top:0}
+
+  /* ─ Impersonate bar ─ */
+  .imper-bar{flex-direction:column;gap:6px;text-align:center;padding:8px 14px}
+
+  /* ─ Toast: above bottom nav ─ */
+  .toast{bottom:88px !important;right:12px;left:12px;max-width:unset;text-align:center}
+
+  /* ─ Progress bar in panel ─ */
+  .prog-bar{padding-bottom:6px}
+  .prog-step{min-width:32px}
+  .prog-circle{width:22px;height:22px;font-size:9px}
+  .prog-lbl{font-size:7.5px}
+
+  /* ─ Bottom padding for bottom nav ─ */
+  .page,.home-wrap,.proj-list-wrap,.proj-detail,.analytics-v2,.fin-dash,.doc-wrap,.admin-wrap,.cal-page,.acc-wrap{padding-bottom:80px !important}
 }
+
 /* ── SMALL MOBILE (≤ 480px) ── */
 @media(max-width:480px){
   .clanding-cards{grid-template-columns:1fr}
-  .home-grid{grid-template-columns:1fr}
-  #analyticsKpiRow{grid-template-columns:1fr!important}
+  .home-grid{grid-template-columns:1fr 1fr}
   .stats{grid-template-columns:1fr 1fr}
-  .nav-right{gap:4px}
-  .btn-sm{padding:5px 8px;font-size:11px}
+  #analyticsKpiRow{grid-template-columns:1fr 1fr!important}
+  .hstat-val{font-size:24px}
+  .btn-sm{font-size:12px}
+}
+
+/* ── PANEL BACK/CLOSE BUTTON ── */
+.panel-back-btn{display:none}
+.panel-close-btn{display:inline-flex}
+@media(max-width:768px){
+  .panel-back-btn{display:inline-flex}
+  .panel-close-btn{display:none}
+  .panel-hd{align-items:center}
+  .panel-hd > div:first-child{flex:1}
 }
 
 /* ── IMPERSONATE BAR ── */
@@ -715,13 +820,73 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
 .imper-spacer.show{display:block}
 
 /* ── BOTTOM NAV (mobile only) ── */
-.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:100;background:var(--white);border-top:1px solid var(--border);padding:6px 0 env(safe-area-inset-bottom,6px);justify-content:space-around;align-items:center;box-shadow:0 -2px 12px rgba(0,0,0,.08)}
-.bnav-btn{display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 8px;border:none;background:none;color:var(--gray-400);cursor:pointer;font-size:9px;font-weight:500;transition:color .15s;min-width:44px;font-family:inherit}
+.bottom-nav{
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;z-index:100;
+  background:var(--white);
+  border-top:1px solid var(--border);
+  padding:6px 8px max(env(safe-area-inset-bottom,0px),8px);
+  align-items:stretch;
+  box-shadow:0 -4px 24px rgba(26,23,20,.07);
+}
+.bnav-btn{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;padding:4px 2px;border:none;background:none;
+  color:var(--gray-400);cursor:pointer;
+  font-size:10px;font-weight:500;
+  transition:color .18s,transform .15s;
+  flex:1;font-family:inherit;border-radius:var(--r-sm);
+  min-height:48px;line-height:1;
+}
+.bnav-btn .bnav-icon{font-size:23px;line-height:1;margin-bottom:1px;display:block}
 .bnav-btn.on{color:var(--gold)}
-.bnav-btn .bnav-icon{font-size:20px;line-height:1}
+.bnav-btn.on .bnav-icon{transform:scale(1.12)}
+.bnav-fab{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:2px;padding:2px;border:none;background:none;
+  color:var(--gray-800);cursor:pointer;font-size:10px;font-weight:600;
+  transition:all .15s;flex:1;font-family:inherit;
+  min-height:48px;line-height:1;
+}
+.bnav-fab .bnav-fab-circle{
+  width:44px;height:44px;border-radius:50%;
+  background:var(--gray-800);color:var(--white);
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;line-height:1;
+  box-shadow:0 3px 12px rgba(26,23,20,.22);
+  transition:transform .15s,background .15s;
+}
+.bnav-fab:active .bnav-fab-circle{transform:scale(.93);background:var(--gray-700)}
 @media(max-width:768px){
   .bottom-nav{display:flex}
-  .page,.analytics-v2,.fin-dash,.proj-list-wrap,.proj-detail,.doc-wrap,.admin-wrap,.cal-page,.acc-wrap,.home-wrap{padding-bottom:80px!important}
+}
+
+/* ── MOBILE MORE MENU ── */
+.more-menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px}
+.more-menu-item{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:6px;padding:14px 10px;
+  background:var(--gray-50);border:1px solid var(--border);
+  border-radius:var(--r);cursor:pointer;font-family:inherit;
+  font-size:13px;font-weight:500;color:var(--gray-700);
+  transition:all .15s;text-align:center;min-height:72px;
+}
+.more-menu-item:active{background:var(--gray-100);transform:scale(.97)}
+.more-menu-item-icon{font-size:22px}
+/* FAB new lead button in pipeline page */
+.fab-new-lead{
+  display:none;
+  position:fixed;bottom:80px;right:18px;z-index:90;
+  width:52px;height:52px;border-radius:50%;
+  background:var(--gray-800);color:var(--white);
+  border:none;font-size:26px;cursor:pointer;
+  box-shadow:0 4px 16px rgba(26,23,20,.22);
+  align-items:center;justify-content:center;
+  transition:transform .15s;
+}
+.fab-new-lead:active{transform:scale(.92)}
+@media(max-width:768px){
+  .fab-new-lead{display:flex}
 }
 </style>
 </head>
@@ -778,45 +943,60 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
     </div>
     <div class="nav-right">
       <div class="nav-user" id="navUser"></div>
-      <button class="btn btn-ghost btn-sm" onclick="exportCSV()">⬇️ CSV</button>
-      <button class="btn btn-gold btn-sm" onclick="importJSON()">📂 Import</button>
-      <button class="btn btn-ghost btn-sm" onclick="manualSync()">🔄 Sync</button>
-      <button class="btn btn-dark btn-sm" onclick="newLead()" id="btnNew">+ Lead</button>
-      <button class="btn btn-ghost btn-sm" onclick="doLogout()">ออก</button>
+      <div class="nav-actions">
+        <button class="btn btn-ghost btn-sm" onclick="exportCSV()">⬇️ CSV</button>
+        <button class="btn btn-gold btn-sm" onclick="importJSON()">📂 Import</button>
+        <button class="btn btn-ghost btn-sm" onclick="manualSync()">🔄 Sync</button>
+        <button class="btn btn-dark btn-sm" onclick="newLead()" id="btnNew">+ Lead</button>
+        <button class="btn btn-ghost btn-sm" onclick="doLogout()">ออก</button>
+      </div>
     </div>
   </nav>
 
 <!-- BOTTOM NAV (mobile) -->
 <div class="bottom-nav" id="bottomNav">
   <button class="bnav-btn on" id="bnavHome" onclick="showPage('home',document.getElementById('tabHome'));updateBNav('home')">
-    <span class="bnav-icon">🏠</span>Home
+    <span class="bnav-icon">🏠</span>หน้าแรก
   </button>
   <button class="bnav-btn" id="bnavPipeline" onclick="showPage('pipeline',document.getElementById('tabPipeline'));updateBNav('pipeline')">
-    <span class="bnav-icon">📋</span>Lead
+    <span class="bnav-icon">📋</span>Lead CRM
+  </button>
+  <button class="bnav-fab" onclick="newLead()" title="Lead ใหม่">
+    <div class="bnav-fab-circle">+</div>
   </button>
   <button class="bnav-btn" id="bnavProjects" onclick="showPage('projects',document.getElementById('tabProjects'));updateBNav('projects')">
     <span class="bnav-icon">🗂️</span>โปรเจกต์
   </button>
-  <button class="bnav-btn" id="bnavAnalytics" onclick="showPage('analytics',document.getElementById('tabAnalytics'));updateBNav('analytics')">
-    <span class="bnav-icon">📊</span>Analytics
-  </button>
   <button class="bnav-btn" id="bnavMore" onclick="toggleMobileMenu()">
-    <span class="bnav-icon">☰</span>เพิ่มเติม
+    <span class="bnav-icon">☰</span>เมนู
   </button>
 </div>
+
 <!-- MOBILE MORE MENU -->
 <div class="modal-ov" id="mobileMoreModal" onclick="if(event.target===this)closeMobileMenu()">
-  <div class="modal" style="padding:20px">
-    <div style="font-size:14px;font-weight:600;color:var(--gray-700);margin-bottom:14px">เมนูเพิ่มเติม</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <button class="btn btn-ghost" onclick="showPage('finance',document.getElementById('tabFin'));closeMobileMenu();updateBNav('finance')" id="bnavFinBtn" style="display:none">💰 การเงิน</button>
-      <button class="btn btn-ghost" onclick="showPage('docs',document.getElementById('tabDocs'));closeMobileMenu();updateBNav('docs')">📄 เอกสาร</button>
-      <button class="btn btn-ghost" onclick="showPage('cal',document.getElementById('tabCal'));closeMobileMenu();updateBNav('cal')">📅 ปฏิทิน</button>
-      <button class="btn btn-ghost" onclick="showPage('upload',document.getElementById('tabUpload'));closeMobileMenu();updateBNav('upload')">☁️ อัปโหลด</button>
-      <button class="btn btn-ghost" onclick="showPage('admin',document.getElementById('tabAdmin'));closeMobileMenu();updateBNav('admin')" id="bnavAdminBtn" style="display:none">⚙️ Admin</button>
-      <button class="btn btn-ghost" onclick="newLead();closeMobileMenu()">+ Lead ใหม่</button>
-      <button class="btn btn-ghost" onclick="doLogout()">🚪 ออกจากระบบ</button>
+  <div class="modal">
+    <div style="font-size:16px;font-weight:700;color:var(--gray-800);margin-bottom:16px">เมนูทั้งหมด</div>
+    <div class="more-menu-grid">
+      <button class="more-menu-item" onclick="showPage('analytics',document.getElementById('tabAnalytics'));closeMobileMenu();updateBNav('analytics')">
+        <span class="more-menu-item-icon">📊</span>Analytics
+      </button>
+      <button class="more-menu-item" onclick="showPage('finance',document.getElementById('tabFin'));closeMobileMenu();updateBNav('finance')" id="bnavFinBtn" style="display:none">
+        <span class="more-menu-item-icon">💰</span>การเงิน
+      </button>
+      <button class="more-menu-item" onclick="showPage('docs',document.getElementById('tabDocs'));closeMobileMenu();updateBNav('docs')">
+        <span class="more-menu-item-icon">📄</span>เอกสาร
+      </button>
+      <button class="more-menu-item" onclick="showPage('cal',document.getElementById('tabCal'));closeMobileMenu();updateBNav('cal')">
+        <span class="more-menu-item-icon">📅</span>ปฏิทิน
+      </button>
+      <button class="more-menu-item" onclick="showPage('upload',document.getElementById('tabUpload'));closeMobileMenu();updateBNav('upload')">
+        <span class="more-menu-item-icon">☁️</span>อัปโหลด
+      </button>
+      <button class="more-menu-item" onclick="showPage('admin',document.getElementById('tabAdmin'));closeMobileMenu();updateBNav('admin')" id="bnavAdminBtn" style="display:none">
+        <span class="more-menu-item-icon">⚙️</span>Admin
+      </button>
     </div>
+    <button class="btn btn-ghost" style="width:100%;margin-top:12px;justify-content:center" onclick="doLogout()">🚪 ออกจากระบบ</button>
   </div>
 </div>
 
@@ -1482,8 +1662,12 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
 <div class="panel-ov" id="panelOv" onclick="if(event.target===this)closePanel()"></div>
 <div class="panel" id="panel">
   <div class="panel-hd">
-    <div><div class="panel-title" id="panelTitle">Lead ใหม่</div><div class="panel-sub" id="panelSub"></div></div>
-    <button class="btn btn-ghost btn-sm" onclick="closePanel()">✕</button>
+    <div>
+      <button class="btn btn-ghost btn-sm panel-back-btn" onclick="closePanel()" style="margin-bottom:8px">← กลับ</button>
+      <div class="panel-title" id="panelTitle">Lead ใหม่</div>
+      <div class="panel-sub" id="panelSub"></div>
+    </div>
+    <button class="btn btn-ghost btn-sm panel-close-btn" onclick="closePanel()" style="font-size:18px;padding:6px 10px">✕</button>
   </div>
   <div class="panel-body">
     <div id="panelIdBanner"></div>
@@ -1862,6 +2046,8 @@ window.showPage=function(id,el){
   else if(id==='admin')renderAdmin();
   else if(id==='home')renderHome();
   else if(id==='accdocs'){startAccSync();}
+  // sync bottom nav
+  if(window.updateBNav) updateBNav(id);
 };
 
 function showClanding(){
@@ -3954,7 +4140,7 @@ window.stopImpersonating = function(){
 // ── Mobile Nav Functions ──
 window.updateBNav = function(page) {
   document.querySelectorAll('.bnav-btn').forEach(b=>b.classList.remove('on'));
-  const map = {home:'bnavHome',pipeline:'bnavPipeline',projects:'bnavProjects',analytics:'bnavAnalytics'};
+  const map = {home:'bnavHome',pipeline:'bnavPipeline',projects:'bnavProjects'};
   const btn = map[page] ? document.getElementById(map[page]) : document.getElementById('bnavMore');
   if(btn) btn.classList.add('on');
 };

@@ -366,6 +366,33 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
 .toast{position:fixed;bottom:24px;right:24px;background:var(--gray-800);color:var(--white);padding:10px 18px;border-radius:var(--r);font-size:13px;z-index:999;opacity:0;transform:translateY(6px);transition:all .2s;pointer-events:none;max-width:320px;box-shadow:var(--shadow-lg)}
 .toast.show{opacity:1;transform:translateY(0)}.toast.ok{background:var(--green)}.toast.err{background:var(--red)}
 
+/* ── ID SYSTEM + SMART UPLOAD ── */
+.id-badge{display:inline-flex;align-items:center;gap:4px;font-family:var(--font-mono,monospace);font-size:12px;font-weight:600;padding:3px 10px;border-radius:6px;letter-spacing:.02em}
+.id-client{background:var(--blue-light);color:var(--blue)}
+.id-proj{background:var(--gold-light);color:var(--gold)}
+.id-doc{background:var(--green-light);color:var(--green)}
+.id-staff{background:var(--purple-light,#f5f0ff);color:var(--purple,#7c3aed)}
+.upload-panel{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;margin-bottom:16px}
+.upload-panel-title{font-size:13px;font-weight:600;color:var(--gray-800);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.type-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;margin-bottom:12px}
+.type-chip{padding:5px 14px;border-radius:20px;font-size:12px;border:1px solid var(--border-md);background:var(--white);color:var(--gray-500);cursor:pointer;transition:all .13s;font-family:inherit;font-weight:500}
+.type-chip:hover{border-color:var(--gray-300);color:var(--gray-700)}
+.type-chip.tc-on{background:var(--gold-light);border-color:var(--gold-mid);color:var(--gold)}
+.type-chip.tc-blue{background:var(--blue-light);border-color:rgba(37,99,168,.3);color:var(--blue)}
+.type-chip.tc-green{background:var(--green-light);border-color:rgba(45,122,90,.3);color:var(--green)}
+.type-chip.tc-red{background:var(--red-light);border-color:rgba(192,57,43,.25);color:var(--red)}
+.fname-preview{background:var(--gray-50);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;margin-top:8px}
+.fname-preview .fname{font-family:monospace;font-size:13px;font-weight:600;word-break:break-all;color:var(--gray-800)}
+.fname-part-proj{display:inline-block;background:var(--blue-light);color:var(--blue);padding:1px 5px;border-radius:3px;margin:1px}
+.fname-part-type{display:inline-block;background:var(--gold-light);color:var(--gold);padding:1px 5px;border-radius:3px;margin:1px}
+.fname-part-sub{display:inline-block;background:var(--green-light);color:var(--green);padding:1px 5px;border-radius:3px;margin:1px}
+.fname-part-ver{display:inline-block;background:var(--gray-100);color:var(--gray-600);padding:1px 5px;border-radius:3px;margin:1px;border:0.5px solid var(--border-md)}
+.fname-part-date{display:inline-block;background:var(--gray-100);color:var(--gray-600);padding:1px 5px;border-radius:3px;margin:1px;border:0.5px solid var(--border-md)}
+.upload-dropzone{border:1.5px dashed var(--border-md);border-radius:var(--r);padding:20px;text-align:center;cursor:pointer;transition:all .15s;margin-top:8px}
+.upload-dropzone:hover,.upload-dropzone.dz-over{border-color:var(--gold);background:var(--gold-light)}
+.ufile-row{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--border);border-radius:var(--r-sm);margin-top:6px;background:var(--white)}
+.ufile-old{font-size:12px;color:var(--gray-400);flex:1;text-decoration:line-through;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ufile-new{font-size:12px;font-family:monospace;font-weight:600;color:var(--green);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 /* ── ANALYTICS v2 ── */
 .analytics-v2{padding:20px;max-width:1100px;margin:0 auto}
 .kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:20px}
@@ -544,6 +571,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
       <button class="ntab on" id="tabHome" onclick="showPage('home',this)">🏠 Home</button>
       <button class="ntab" id="tabProjects" onclick="showPage('projects',this)">🗂️ โปรเจกต์</button>
       <button class="ntab" id="tabDocs" onclick="showPage('docs',this)">📄 เอกสาร</button>
+      <button class="ntab" id="tabUpload" onclick="showPage('upload',this)">☁️ อัปโหลด</button>
       <button class="ntab" id="tabPipeline" onclick="showPage('pipeline',this)">📋 Lead CRM</button>
       <button class="ntab" id="tabAnalytics" onclick="showPage('analytics',this)">📊 Analytics</button>
       <button class="ntab" id="tabFin" onclick="showPage('finance',this)">💰 การเงิน</button>
@@ -881,6 +909,91 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
     </div>
   </div>
 
+  <!-- SMART UPLOAD -->
+  <div class="page" id="page-upload">
+    <div style="padding:20px;max-width:900px;margin:0 auto">
+      <div class="a-title">Smart File Upload</div>
+      <div class="a-sub">เลือกข้อมูล → ระบบตั้งชื่อไฟล์อัตโนมัติ → บันทึก log ลง Firebase</div>
+
+      <div class="upload-panel">
+        <div class="upload-panel-title">📁 ข้อมูลไฟล์</div>
+
+        <div class="prow2">
+          <div class="field"><label>โปรเจกต์ *</label>
+            <select id="up-proj" onchange="upGen()">
+              <option value="">— เลือกโปรเจกต์ —</option>
+            </select>
+          </div>
+          <div class="field"><label>Project ID</label>
+            <div class="id-badge id-proj" id="up-projid" style="margin-top:6px;min-height:34px;border-radius:var(--r-sm)">— เลือกโปรเจกต์ก่อน —</div>
+          </div>
+        </div>
+
+        <div class="field" style="margin-bottom:12px"><label>ประเภทไฟล์ / โฟลเดอร์ปลายทาง</label>
+          <div class="type-chips" id="upTypeChips">
+            <button class="type-chip tc-on" data-val="Design" data-sub='["Concept","FloorPlan","Elevation","3D","Presentation","Final"]' data-folder="02-แบบดีไซน์" onclick="upPickType(this)">แบบดีไซน์</button>
+            <button class="type-chip" data-val="ShopDwg" data-sub='["FloorPlan","Ceiling","Section","Joinery","MEP","Furniture"]' data-folder="03-ShopDrawing" onclick="upPickType(this)">Shop Drawing</button>
+            <button class="type-chip" data-val="Photo" data-sub='["Before","After","Progress","Defect","QC"]' data-folder="04-รูปหน้างาน" onclick="upPickType(this)">รูปหน้างาน</button>
+            <button class="type-chip" data-val="Doc" data-sub='["QT","CD","CC","IV","RC","BQ","PR","DL"]' data-folder="05-เอกสาร" onclick="upPickType(this)">เอกสาร</button>
+            <button class="type-chip" data-val="Ref" data-sub='["Inspo","Material","Spec","ClientInfo"]' data-folder="06-Reference" onclick="upPickType(this)">Reference</button>
+          </div>
+        </div>
+
+        <div class="field" style="margin-bottom:12px"><label>หมวดย่อย</label>
+          <div class="type-chips" id="upSubChips"></div>
+        </div>
+
+        <div class="prow2">
+          <div class="field"><label>เวอร์ชัน / รอบแก้ไข</label>
+            <div class="type-chips" id="upVerChips">
+              <button class="type-chip tc-blue" data-val="v1" onclick="upPickVer(this)">v1 — ร่างแรก</button>
+              <button class="type-chip" data-val="v2" onclick="upPickVer(this)">v2</button>
+              <button class="type-chip" data-val="v3" onclick="upPickVer(this)">v3</button>
+              <button class="type-chip tc-green" data-val="FINAL" onclick="upPickVer(this)">FINAL</button>
+              <button class="type-chip tc-green" data-val="APPROVED" onclick="upPickVer(this)">APPROVED</button>
+            </div>
+          </div>
+          <div class="field"><label>วันที่เอกสาร</label>
+            <input type="date" id="up-date" onchange="upGen()" style="width:180px">
+          </div>
+        </div>
+
+        <div class="field" style="margin-bottom:0">
+          <label>ชื่อไฟล์ที่จะได้ (preview)</label>
+          <div class="fname-preview">
+            <div class="fname" id="upPreviewName">—</div>
+            <div style="font-size:11px;color:var(--gray-400);margin-top:6px">
+              📁 บันทึกใน: <span id="upPreviewFolder" style="font-family:monospace;font-weight:600">02-แบบดีไซน์</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="upload-panel">
+        <div class="upload-panel-title">📎 เลือกไฟล์</div>
+        <div class="upload-dropzone" id="upDropZone"
+          ondragover="upDO(event)" ondragleave="upDL(event)" ondrop="upDP(event)"
+          onclick="document.getElementById('upFileInput').click()">
+          <div style="font-size:28px;margin-bottom:8px;color:var(--gray-300)">☁️</div>
+          <div style="font-size:13px;color:var(--gray-500)">ลากไฟล์มาวางที่นี่ หรือกดเพื่อเลือก</div>
+          <div style="font-size:11px;color:var(--gray-400);margin-top:4px">รองรับ PDF, DWG, PNG, JPG, XLSX ทุกขนาด</div>
+          <input type="file" id="upFileInput" multiple style="display:none" onchange="upHandleFiles(this.files)">
+        </div>
+        <div id="upFileList" style="margin-top:8px"></div>
+      </div>
+
+      <div style="display:flex;gap:10px;justify-content:flex-end">
+        <button class="btn btn-ghost" onclick="upClearAll()">🗑️ ล้างทั้งหมด</button>
+        <button class="btn btn-green" id="upSubmitBtn" onclick="upSubmit()" disabled>☁️ บันทึก Log & อัปโหลด</button>
+      </div>
+
+      <div style="margin-top:24px">
+        <div style="font-size:12px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;font-family:monospace">ประวัติการอัปโหลดล่าสุด</div>
+        <div id="upHistory"><div style="color:var(--gray-400);font-size:13px">กำลังโหลด...</div></div>
+      </div>
+    </div>
+  </div>
+
   <!-- ANALYTICS v2 -->
   <div class="page" id="page-analytics">
     <div class="analytics-v2">
@@ -1006,6 +1119,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
     <button class="btn btn-ghost btn-sm" onclick="closePanel()">✕</button>
   </div>
   <div class="panel-body">
+    <div id="panelIdBanner"></div>
     <div class="psec"><div class="psec-title">ขั้นตอนปัจจุบัน</div><div class="prog-bar" id="progBar"></div></div>
     <div class="move-strip" id="moveStrip" style="display:none">
       <label>ย้ายไป:</label>
@@ -1412,7 +1526,7 @@ function renderHome(){
 
   // Menu by role
   const menus={
-    admin:[{icon:'📋',title:'Lead CRM',desc:'Pipeline & ติดตามลูกค้า',page:'pipeline'},{icon:'🗂️',title:'โปรเจกต์',desc:'จัดการทุกโปรเจกต์',page:'projects'},{icon:'📄',title:'เอกสาร',desc:'ใบเสนอราคา · ใบแจ้งหนี้',page:'docs'},{icon:'💰',title:'การเงิน',desc:'รายรับ-รายจ่าย-กำไร',page:'finance'},{icon:'⚙️',title:'Admin Panel',desc:'จัดการผู้ใช้ & สิทธิ์',page:'admin'}],
+    admin:[{icon:'📋',title:'Lead CRM',desc:'Pipeline & ติดตามลูกค้า',page:'pipeline'},{icon:'🗂️',title:'โปรเจกต์',desc:'จัดการทุกโปรเจกต์',page:'projects'},{icon:'📄',title:'เอกสาร',desc:'ใบเสนอราคา · ใบแจ้งหนี้',page:'docs'},{icon:'☁️',title:'Smart Upload',desc:'อัปโหลดไฟล์ + ตั้งชื่ออัตโนมัติ',page:'upload'},{icon:'💰',title:'การเงิน',desc:'รายรับ-รายจ่าย-กำไร',page:'finance'},{icon:'⚙️',title:'Admin Panel',desc:'จัดการผู้ใช้ & สิทธิ์',page:'admin'}],
     sales:[{icon:'📋',title:'Lead CRM',desc:'Pipeline & ติดตามลูกค้า',page:'pipeline'},{icon:'📊',title:'Analytics',desc:'ภาพรวม Lead',page:'analytics'}],
     designer:[{icon:'📋',title:'โปรเจกต์ของฉัน',desc:'Checklist & ไฟล์งาน',page:'pipeline'},{icon:'📊',title:'ภาพรวม',desc:'สถานะงาน',page:'analytics'}],
     drafter:[{icon:'📋',title:'งานของฉัน',desc:'Checklist & อัปโหลดแบบ',page:'pipeline'},{icon:'📊',title:'ภาพรวม',desc:'สถานะงาน',page:'analytics'}],
@@ -1422,7 +1536,7 @@ function renderHome(){
   };
   const m=menus[currentUser.role]||menus.outsource;
   document.getElementById('homeMenu').innerHTML=m.map(x=>{
-    const tabMap={'home':'tabHome','projects':'tabProjects','pipeline':'tabPipeline','analytics':'tabAnalytics','finance':'tabFin','docs':'tabDocs','admin':'tabAdmin'};
+    const tabMap={'home':'tabHome','projects':'tabProjects','pipeline':'tabPipeline','analytics':'tabAnalytics','finance':'tabFin','docs':'tabDocs','upload':'tabUpload','admin':'tabAdmin'};
     return `<div class="menu-card" onclick="showPage('${x.page}',document.getElementById('${tabMap[x.page]||'tabHome'}'))">
       <div class="menu-card-icon">${x.icon}</div>
       <div class="menu-card-title">${x.title}</div>
@@ -1596,6 +1710,9 @@ window.openPanel=function(id){
   const l=id?leads.find(x=>x.id===id):null;
   document.getElementById('panelTitle').textContent=l?l.name||'แก้ไข Lead':'Lead ใหม่';
   document.getElementById('panelSub').textContent=l?(l.proj||l.src||''):'กรอกข้อมูลลูกค้าและโปรเจกต์';
+  // Show IDs if exist
+  const idBannerEl=document.getElementById('panelIdBanner');
+  if(idBannerEl) idBannerEl.innerHTML=l?renderLeadIds(l):'';
   document.getElementById('panelDel').style.display=l&&canDelete()?'flex':'none';
   document.getElementById('calStrip').style.display=l?'flex':'none';
   document.getElementById('moveStrip').style.display=(l&&canEdit())?'flex':'none';
@@ -1699,8 +1816,11 @@ function getForm(){
 window.saveLead=async function(){
   const form=getForm();if(!form.name){toast('ใส่ชื่อลูกค้าด้วย','err');return;}
   const isNew=!eid,id=eid||Date.now().toString();
-  const existing=leads.find(l=>l.id===id);
-  const nl={id,...form,checklist:existing?.checklist||DEFAULT_CHECKLIST.map(c=>({...c})),activities:existing?.activities||[],createdBy:existing?.createdBy||currentUser.name};
+  let existing=leads.find(l=>l.id===id);
+  let formWithIds = form;
+  if(isNew){ try{ formWithIds = await assignLeadIds(form); }catch(e){ console.log('ID gen err:',e); } }
+  else { formWithIds = {...form, clientId:existing?.clientId||form.clientId, projId:existing?.projId||form.projId}; }
+  const nl={id,...formWithIds,checklist:existing?.checklist||DEFAULT_CHECKLIST.map(c=>({...c})),activities:existing?.activities||[],createdBy:existing?.createdBy||currentUser.name};
   if(isNew){nl.activities=[{text:`เพิ่ม Lead ใหม่ — ที่มา: ${form.src||'ไม่ระบุ'}`,date:nowTH(),type:'note',user:currentUser.name}];}
   else if(existing?.step!==curStep){const from=STEPS.find(s=>s.id===existing.step)?.long||existing.step;const to=STEPS.find(s=>s.id===curStep)?.long||curStep;nl.activities=[...(existing?.activities||[]),{text:`เลื่อน: ${from} → ${to}`,date:nowTH(),type:'step',user:currentUser.name}];}
   else{nl.activities=[...(existing?.activities||[]),{text:'แก้ไขข้อมูล',date:nowTH(),type:'note',user:currentUser.name}];}
@@ -1726,6 +1846,213 @@ window.delLead=async function(){
 };
 
 // ── Analytics ──
+// ══════════════════════════════════════════
+// ID SYSTEM — Phase 6
+// ══════════════════════════════════════════
+
+// ── ID Generation ──────────────────────────
+const ID_YEAR = () => new Date().getFullYear().toString().slice(-2);
+
+async function getNextSeq(type){
+  // ดึง counter จาก Firestore
+  try{
+    const ref = doc(db,'counters',type+'_'+ID_YEAR());
+    const snap = await getDoc(ref);
+    const next = (snap.exists()?snap.data().seq||0:0)+1;
+    await setDoc(ref,{seq:next,year:ID_YEAR(),updatedAt:new Date().toISOString()});
+    return String(next).padStart(3,'0');
+  }catch(e){
+    // fallback: นับจาก local data
+    const yr = ID_YEAR();
+    if(type==='client') return String((leads.filter(l=>l.clientId?.includes('-'+yr+'-')).length||0)+1).padStart(3,'0');
+    if(type==='project') return String((projects.filter(p=>p.projId?.includes('-'+yr+'-')).length||0)+1).padStart(3,'0');
+    return String(Math.floor(Math.random()*900)+100);
+  }
+}
+
+async function genClientId(){ return 'NMS-C-'+ID_YEAR()+'-'+await getNextSeq('client'); }
+async function genProjectId(seq,type){ return 'NMS-P-'+ID_YEAR()+'-'+seq+'-'+(type||'D'); }
+async function genDocId(docType){
+  const prefixes={quotation:'QT',invoice:'IV',contract_design:'CD',contract_construction:'CC',payment_request:'PR',receipt:'RC',delivery:'DL',boq:'BQ',material_request:'MR'};
+  const prefix=prefixes[docType]||'DOC';
+  return 'NMS-'+prefix+'-'+ID_YEAR()+'-'+await getNextSeq(prefix.toLowerCase());
+}
+function genStaffId(role){
+  const prefixes={admin:'S',sales:'S',designer:'DS',drafter:'DR',accounting:'S',contractor:'CT',outsource:'EX'};
+  const p=prefixes[role]||'S';
+  const existing=Object.values(users).filter(u=>{const pr2=prefixes[u.role]||'S';return pr2===p;});
+  return 'NMS-'+p+'-'+String(existing.length+1).padStart(3,'0');
+}
+
+// ── Auto-assign IDs when saving new Lead ──
+async function assignLeadIds(leadData){
+  if(leadData.clientId) return leadData; // already has ID
+  const cid = await genClientId();
+  const seq = cid.split('-').pop();
+  const projType = leadData.step==='constructing'?'C':leadData.step==='designing'?'D':'DC';
+  const pid = await genProjectId(seq, 'D'); // default D, upgrades to DC later
+  return {...leadData, clientId:cid, projId:pid, idAssignedAt:new Date().toISOString()};
+}
+
+// Show IDs in Lead card panel
+function renderLeadIds(l){
+  if(!l.clientId&&!l.projId) return '';
+  return `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;padding:10px 12px;background:var(--gray-50);border:1px solid var(--border);border-radius:var(--r)">
+    ${l.clientId?`<span class="id-badge id-client">👤 ${l.clientId}</span>`:''}
+    ${l.projId?`<span class="id-badge id-proj">📁 ${l.projId}</span>`:''}
+    ${l.docRef?`<span class="id-badge id-doc">📄 ${l.docRef}</span>`:''}
+  </div>`;
+}
+
+// ── SMART UPLOAD MODULE ──────────────────────
+let upFiles=[], upType='Design', upSub='Concept', upVer='v1', upFolder='02-แบบดีไซน์';
+
+const UP_SUB_LABELS = {
+  Design:{Concept:'Concept/Mood',FloorPlan:'แปลนพื้น',Elevation:'รูปด้าน','3D':'3D Perspective',Presentation:'Presentation',Final:'Final Approved'},
+  ShopDwg:{FloorPlan:'แปลนพื้น(Shop)',Ceiling:'แปลนฝ้า&แสง',Section:'รูปตัด',Joinery:'Joinery Detail',MEP:'ระบบ MEP',Furniture:'เฟอร์นิเจอร์'},
+  Photo:{Before:'Before',After:'After',Progress:'Progress',Defect:'Defect/ปัญหา',QC:'QC ตรวจงาน'},
+  Doc:{QT:'ใบเสนอราคา',CD:'สัญญาออกแบบ',CC:'สัญญาก่อสร้าง',IV:'ใบแจ้งหนี้',RC:'ใบรับเงิน',BQ:'BOQ',PR:'ใบเบิกเงิน',DL:'ใบส่งงาน'},
+  Ref:{Inspo:'Inspiration',Material:'Material Sample',Spec:'Spec Sheet',ClientInfo:'ข้อมูลนิติบุคคล'},
+};
+
+function upTodayStr(){
+  const d=new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+
+function upPopulateProjects(){
+  const sel=document.getElementById('up-proj');if(!sel)return;
+  const allP=[
+    ...projects.map(p=>({id:p.id,label:(p.projId||p.id)+' · '+( p.name||p.client||'—'),projId:p.projId||p.id})),
+    ...leads.filter(l=>l.clientId).map(l=>({id:l.id,label:(l.projId||l.clientId)+' · '+(l.name||'—'),projId:l.projId||l.clientId}))
+  ];
+  sel.innerHTML='<option value="">— เลือกโปรเจกต์ —</option>'+allP.map(p=>`<option value="${p.id}" data-projid="${p.projId}">${p.label}</option>`).join('');
+}
+
+window.upPickType=function(el){
+  document.querySelectorAll('#upTypeChips .type-chip').forEach(c=>c.className='type-chip');
+  el.classList.add('tc-on');
+  upType=el.dataset.val; upFolder=el.dataset.folder;
+  const subs=JSON.parse(el.dataset.sub||'[]');
+  upSub=subs[0]||'';
+  document.getElementById('upSubChips').innerHTML=subs.map((s,i)=>`
+    <button class="type-chip ${i===0?'tc-blue':''}" data-val="${s}" onclick="upPickSub(this)">${UP_SUB_LABELS[upType]?.[s]||s}</button>`).join('');
+  upGen();
+};
+
+window.upPickSub=function(el){
+  document.querySelectorAll('#upSubChips .type-chip').forEach(c=>c.className='type-chip');
+  el.classList.add('tc-blue'); upSub=el.dataset.val; upGen();
+};
+
+window.upPickVer=function(el){
+  document.querySelectorAll('#upVerChips .type-chip').forEach(c=>c.className='type-chip');
+  el.classList.add('tc-blue'); upVer=el.dataset.val; upGen();
+};
+
+window.upGen=function(){
+  const sel=document.getElementById('up-proj');
+  const opt=sel?.options[sel.selectedIndex];
+  const pid=opt?.dataset?.projid||'NMS-P-XX-XXX';
+  document.getElementById('up-projid').textContent=pid;
+  const date=document.getElementById('up-date')?.value||upTodayStr();
+  const base=pid+'_'+upType+'_'+upSub+'_'+upVer+'_'+date;
+  document.getElementById('upPreviewName').innerHTML=
+    '<span class="fname-part-proj">'+pid+'</span>_<span class="fname-part-type">'+upType+'</span>_<span class="fname-part-sub">'+upSub+'</span>_<span class="fname-part-ver">'+upVer+'</span>_<span class="fname-part-date">'+date+'</span><span style="color:var(--gray-400)">.ext</span>';
+  document.getElementById('upPreviewFolder').textContent=upFolder;
+  upRenderFileList(pid,date);
+};
+
+function upGetExt(f){return f.name.includes('.')?'.'+f.name.split('.').pop():'';}
+
+function upRenderFileList(pid,date){
+  if(!upFiles.length){document.getElementById('upFileList').innerHTML='';return;}
+  document.getElementById('upFileList').innerHTML=upFiles.map((f,i)=>{
+    const ext=upGetExt(f);
+    const suffix=upFiles.length>1?'_'+String(i+1).padStart(2,'0'):'';
+    const newName=pid+'_'+upType+'_'+upSub+'_'+upVer+'_'+date+suffix+ext;
+    return`<div class="ufile-row">
+      <span style="font-size:18px">${ext==='.pdf'?'📄':ext==='.dwg'?'📐':ext==='.png'||ext==='.jpg'||ext==='.jpeg'?'🖼️':'📎'}</span>
+      <span class="ufile-old">${f.name}</span>
+      <span style="color:var(--gray-300)">→</span>
+      <span class="ufile-new">${newName}</span>
+    </div>`;
+  }).join('');
+  document.getElementById('upSubmitBtn').disabled=false;
+}
+
+window.upDO=function(e){e.preventDefault();document.getElementById('upDropZone').classList.add('dz-over');};
+window.upDL=function(e){document.getElementById('upDropZone').classList.remove('dz-over');};
+window.upDP=function(e){e.preventDefault();upDL(e);upHandleFiles(e.dataTransfer.files);};
+window.upHandleFiles=function(flist){upFiles=[...upFiles,...Array.from(flist)];upGen();};
+window.upClearAll=function(){upFiles=[];document.getElementById('upFileInput').value='';document.getElementById('upFileList').innerHTML='';document.getElementById('upSubmitBtn').disabled=true;};
+
+window.upSubmit=async function(){
+  if(!upFiles.length){toast('เลือกไฟล์ก่อน','err');return;}
+  const sel=document.getElementById('up-proj');
+  if(!sel?.value){toast('เลือกโปรเจกต์ก่อน','err');return;}
+  const opt=sel.options[sel.selectedIndex];
+  const pid=opt?.dataset?.projid||sel.value;
+  const date=document.getElementById('up-date')?.value||upTodayStr();
+  const btn=document.getElementById('upSubmitBtn');
+  btn.textContent='⏳ บันทึก...';btn.disabled=true;
+
+  const logId='upload_'+Date.now().toString();
+  const fileNames=upFiles.map((f,i)=>{
+    const ext=upGetExt(f);
+    const suffix=upFiles.length>1?'_'+String(i+1).padStart(2,'0'):'';
+    return pid+'_'+upType+'_'+upSub+'_'+upVer+'_'+date+suffix+ext;
+  });
+
+  const logData={
+    id:logId, projId:pid, type:upType, sub:upSub, ver:upVer,
+    folder:upFolder, fileNames, fileCount:upFiles.length,
+    uploadedBy:currentUser.name, uploadedAt:new Date().toISOString(),
+    date, status:'logged'
+  };
+
+  try{
+    await setDoc(doc(db,'file_uploads',logId),logData);
+    // Update project file list
+    const proj=projects.find(p=>p.id===sel.value)||leads.find(l=>l.id===sel.value);
+    if(proj){
+      const files=[...(proj.files||[]),...fileNames.map((n,i)=>({name:n,folder:upFolder,by:currentUser.name,date,size:upFiles[i]?.size||0}))];
+      if(projects.find(p=>p.id===sel.value)) await saveProjToCloud({...proj,files});
+    }
+    toast('บันทึก log สำเร็จ ✓ — '+fileNames.length+' ไฟล์','ok');
+    upClearAll();
+    upLoadHistory();
+  }catch(e){toast('บันทึกไม่สำเร็จ: '+e.message,'err');}
+  finally{btn.textContent='☁️ บันทึก Log & อัปโหลด';btn.disabled=false;}
+};
+
+async function upLoadHistory(){
+  const hEl=document.getElementById('upHistory');if(!hEl)return;
+  try{
+    const snap=await getDocs(collection(db,'file_uploads'));
+    const logs=snap.docs.map(d=>d.data()).sort((a,b)=>b.uploadedAt.localeCompare(a.uploadedAt)).slice(0,10);
+    if(!logs.length){hEl.innerHTML='<div style="color:var(--gray-400);font-size:13px">ยังไม่มีประวัติ</div>';return;}
+    hEl.innerHTML=logs.map(l=>`
+      <div style="display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)">
+        <div style="width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:5px"></div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:600;color:var(--gray-800)">${l.projId} — ${l.type}/${l.sub}</div>
+          <div style="font-size:11px;color:var(--gray-500);margin-top:2px">${l.fileCount} ไฟล์ · 📁 ${l.folder} · โดย ${l.uploadedBy}</div>
+          ${l.fileNames?.slice(0,2).map(n=>`<div style="font-size:11px;font-family:monospace;color:var(--gray-600);margin-top:2px">→ ${n}</div>`).join('')||''}
+          ${(l.fileNames?.length||0)>2?`<div style="font-size:11px;color:var(--gray-400)">+${l.fileNames.length-2} ไฟล์เพิ่มเติม</div>`:''}
+        </div>
+        <div style="font-size:10px;color:var(--gray-400);font-family:monospace;white-space:nowrap">${new Date(l.uploadedAt).toLocaleString('th-TH',{dateStyle:'short',timeStyle:'short'})}</div>
+      </div>`).join('');
+  }catch(e){hEl.innerHTML='<div style="color:var(--gray-400);font-size:13px">ไม่สามารถโหลดประวัติได้</div>';}
+}
+
+// Init sub-chips for default type
+function upInitSubChips(){
+  const defaultSubs=['Concept','FloorPlan','Elevation','3D','Presentation','Final'];
+  document.getElementById('upSubChips').innerHTML=defaultSubs.map((s,i)=>`
+    <button class="type-chip ${i===0?'tc-blue':''}" data-val="${s}" onclick="upPickSub(this)">${UP_SUB_LABELS.Design?.[s]||s}</button>`).join('');
+}
+
 // ══════════════════════════════════════════
 // ANALYTICS v2 — Phase 5
 // ══════════════════════════════════════════
@@ -1958,6 +2285,8 @@ window.showPage=function(id,el){
   if(id==='projects'){if(!projUnsubscribe)startProjSync();renderProjGrid();}
   else if(id==='docs'){if(!docUnsubscribe)startDocSync();renderDocGrid();}
   else if(id==='finance'){renderFinance();}
+  else if(id==='upload'){upPopulateProjects();upInitSubChips();upGen();upLoadHistory();
+    const dt=document.getElementById('up-date');if(dt&&!dt.value)dt.value=today();}
 };
 
 // ── Init ──

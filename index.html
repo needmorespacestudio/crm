@@ -159,9 +159,9 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
 .migrate-banner.hidden{display:none}
 
 /* ── PANEL ── */
-.panel-ov{display:none;position:fixed;inset:0;background:rgba(26,23,20,.35);z-index:50;backdrop-filter:blur(1px)}
+.panel-ov{display:none;position:fixed;inset:0;background:rgba(26,23,20,.35);z-index:102;backdrop-filter:blur(1px)}
 .panel-ov.show{display:block}
-.panel{position:fixed;right:0;top:0;bottom:0;width:580px;max-width:100vw;background:var(--white);box-shadow:var(--shadow-lg);z-index:51;overflow-y:auto;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .25s cubic-bezier(.4,0,.2,1)}
+.panel{position:fixed;right:0;top:0;bottom:0;width:580px;max-width:100vw;background:var(--white);box-shadow:var(--shadow-lg);z-index:103;overflow-y:auto;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .25s cubic-bezier(.4,0,.2,1)}
 .panel.open{transform:translateX(0)}
 .panel-hd{padding:18px 20px 14px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;position:sticky;top:0;background:var(--white);z-index:2}
 .panel-title{font-family:'Instrument Serif',serif;font-size:20px;color:var(--gray-800);line-height:1.2}
@@ -275,9 +275,9 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
 .rp-contractor{background:var(--orange-light);color:var(--orange)}
 
 /* ── USER MODAL ── */
-.modal-ov{display:none;position:fixed;inset:0;background:rgba(26,23,20,.4);z-index:60;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
+.modal-ov{display:none;position:fixed;inset:0;background:rgba(26,23,20,.4);z-index:110;align-items:center;justify-content:center;backdrop-filter:blur(2px);overflow:hidden}
 .modal-ov.show{display:flex}
-.modal{background:var(--white);border-radius:var(--r-lg);padding:28px;width:100%;max-width:480px;box-shadow:var(--shadow-lg);max-height:90vh;overflow-y:auto}
+.modal{background:var(--white);border-radius:var(--r-lg);padding:28px;width:100%;max-width:480px;box-shadow:var(--shadow-lg);max-height:90vh;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
 .modal-title{font-family:'Instrument Serif',serif;font-size:20px;margin-bottom:4px}
 .modal-sub{font-size:12px;color:var(--gray-400);margin-bottom:20px}
 .modal-foot{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
@@ -593,9 +593,9 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
 .cal-legend{display:flex;gap:14px;padding:10px 20px;border-top:1px solid var(--border);flex-wrap:wrap}
 .cleg{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--gray-500)}
 .cleg-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
-.ev-modal-ov{display:none;position:fixed;inset:0;background:rgba(26,23,20,.35);z-index:60;align-items:center;justify-content:center;backdrop-filter:blur(1px)}
+.ev-modal-ov{display:none;position:fixed;inset:0;background:rgba(26,23,20,.35);z-index:110;align-items:center;justify-content:center;backdrop-filter:blur(1px);overflow:hidden}
 .ev-modal-ov.show{display:flex}
-.ev-modal{background:var(--white);border-radius:var(--r-lg);padding:24px;width:100%;max-width:440px;box-shadow:var(--shadow-lg)}
+.ev-modal{background:var(--white);border-radius:var(--r-lg);padding:24px;width:100%;max-width:440px;box-shadow:var(--shadow-lg);max-height:90vh;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
 
 /* ── DESIGNER/CONTRACTOR LANDING ── */
 .clanding-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 80px);padding:24px}
@@ -674,7 +674,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
   .panel{width:100vw;top:0}
   .panel-hd{padding:14px 16px 12px}
   .panel-body{padding:16px}
-  .panel-foot{padding:12px 16px;gap:10px}
+  .panel-foot{padding:12px 16px max(16px,env(safe-area-inset-bottom));gap:10px}
   .panel-foot .btn{flex:1;justify-content:center}
 
   /* ─ Pipeline board ─ */
@@ -755,19 +755,25 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
   .admin-wrap{padding:14px}
 
   /* ─ Modals → bottom sheet ─ */
-  .modal-ov{align-items:flex-end}
+  .modal-ov{align-items:flex-end;overflow:hidden}
   .modal{
     border-radius:20px 20px 0 0 !important;
     max-width:100% !important;
     width:100% !important;
     max-height:88vh !important;
     margin:0 !important;
-    padding:0 20px 24px !important;
+    padding:0 20px env(safe-area-inset-bottom,20px) !important;
+    padding-bottom:max(24px,env(safe-area-inset-bottom)) !important;
+    overflow-y:auto !important;
+    -webkit-overflow-scrolling:touch !important;
+    overscroll-behavior:contain !important;
+    touch-action:pan-y !important;
   }
   .modal::before{
     content:'';display:block;width:36px;height:4px;
     background:var(--gray-200);border-radius:2px;
     margin:12px auto 18px;
+    flex-shrink:0;
   }
   .modal-title{margin-top:0}
 
@@ -893,7 +899,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
 .print-installments{display:none}
 @media print{
   body{background:white;font-size:12pt}
-  .nav,.sync-bar,.bottom-nav,.imper-bar,.imper-spacer,
+  .nav,.sync-bar,.bottom-nav,.imper-bar,.imper-spacer,#backupBanner,
   .page:not(.on),#docListView,.doc-toolbar,
   button,select,input[type=checkbox],
   #docExtras .doc-section{display:none !important}
@@ -939,6 +945,14 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
 
 <!-- ═══ APP ═══ -->
 <div id="appScreen">
+  <!-- BACKUP REMINDER BANNER -->
+  <div id="backupBanner" style="display:none;background:#7c3aed;color:#fff;padding:8px 20px;font-size:12px;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+    <span>⚠️ <span id="backupBannerTxt">ยังไม่เคย Backup</span></span>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button onclick="showPage('admin',document.getElementById('tabAdmin'));checkBackupReminder()" style="background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:6px;padding:4px 12px;font-size:11px;cursor:pointer;font-family:inherit">ไป Admin → Backup</button>
+      <button onclick="document.getElementById('backupBanner').style.display='none'" style="background:none;color:rgba(255,255,255,.7);border:none;cursor:pointer;font-size:14px;padding:0 4px">✕</button>
+    </div>
+  </div>
   <div class="sync-bar">
     <div><span class="sdot sdot-off" id="sdot"></span><span id="smsg">กำลังเชื่อมต่อ...</span></div>
     <div id="stime" style="font-size:10px;opacity:.6"></div>
@@ -958,8 +972,9 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
       <button class="ntab" id="tabPipeline" onclick="showPage('pipeline',this)">📋 Lead CRM</button>
       <button class="ntab" id="tabAnalytics" onclick="showPage('analytics',this)">📊 Analytics</button>
       <button class="ntab" id="tabFin" onclick="showPage('finance',this)">💰 การเงิน</button>
-      <button class="ntab" id="tabAdmin" onclick="showPage('admin',this)" style="display:none">⚙️ Admin</button>
+      <button class="ntab" id="tabAdmin" onclick="showPage('admin',this)" style="display:none">⚙️ Admin<span id="backupBadge" style="display:none;background:#ef4444;color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:8px;margin-left:4px;vertical-align:middle">!</span></button>
       <button class="ntab" id="tabAccDocs" onclick="showPage('accdocs',this)" style="display:none">📂 เอกสารบัญชี</button>
+      <button class="ntab" id="tabClients" onclick="showPage('clients',this)" style="display:none">🪪 รหัสลูกค้า</button>
     </div>
     <div class="nav-right">
       <div class="nav-user" id="navUser"></div>
@@ -1003,8 +1018,14 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
       <button class="more-menu-item" onclick="showPage('finance',document.getElementById('tabFin'));closeMobileMenu();updateBNav('finance')" id="bnavFinBtn" style="display:none">
         <span class="more-menu-item-icon">💰</span>การเงิน
       </button>
-      <button class="more-menu-item" onclick="showPage('docs',document.getElementById('tabDocs'));closeMobileMenu();updateBNav('docs')">
+      <button class="more-menu-item" onclick="showPage('docs',document.getElementById('tabDocs'));closeMobileMenu();updateBNav('docs')" id="bnavDocsBtn" style="display:none">
         <span class="more-menu-item-icon">📄</span>เอกสาร
+      </button>
+      <button class="more-menu-item" onclick="showPage('accdocs',document.getElementById('tabAccDocs'));closeMobileMenu();updateBNav('accdocs')" id="bnavAccDocsBtn" style="display:none">
+        <span class="more-menu-item-icon">📂</span>เอกสารบัญชี
+      </button>
+      <button class="more-menu-item" onclick="showPage('clients',document.getElementById('tabClients'));closeMobileMenu();updateBNav('clients')" id="bnavClientsBtn" style="display:none">
+        <span class="more-menu-item-icon">🪪</span>รหัสลูกค้า
       </button>
       <button class="more-menu-item" onclick="showPage('cal',document.getElementById('tabCal'));closeMobileMenu();updateBNav('cal')">
         <span class="more-menu-item-icon">📅</span>ปฏิทิน
@@ -1108,6 +1129,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
         <button class="ptab" onclick="showPTab('files',this)">📁 ไฟล์แบบ</button>
         <button class="ptab" onclick="showPTab('contractor',this)">🏗️ ผู้รับเหมา</button>
         <button class="ptab" onclick="showPTab('finance',this)">💰 การเงิน</button>
+        <button class="ptab" id="ptabAccess" onclick="showPTab('access',this)" style="display:none">👥 สิทธิ์</button>
       </div>
       <!-- INFO TAB -->
       <div class="ptab-content on" id="ptab-info">
@@ -1183,6 +1205,15 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
             <div class="fin-summary" id="pdFinCalc"></div>
           </div>
         </div>
+      <!-- ACCESS TAB -->
+      <div class="ptab-content" id="ptab-access">
+        <div style="margin-bottom:14px">
+          <div style="font-size:13px;font-weight:600;color:var(--gray-800);margin-bottom:4px">👥 กำหนดสิทธิ์การเข้าถึงโปรเจกต์</div>
+          <div style="font-size:12px;color:var(--gray-400)">เลือกพนักงานที่มีสิทธิ์เข้าถึงโปรเจกต์นี้ · Owner และ Admin เห็นทุกโปรเจกต์อยู่แล้ว</div>
+        </div>
+        <div id="projAccessGrid" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px"></div>
+        <button class="btn btn-green" onclick="saveProjAccess()">💾 บันทึกสิทธิ์</button>
+      </div>
       </div>
     </div>
   </div>
@@ -1483,6 +1514,22 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
       <div id="accMonthGrid" class="acc-month-grid">
         <div style="text-align:center;padding:60px;color:var(--gray-400)">โหลดข้อมูล...</div>
       </div>
+    </div>
+  </div>
+
+  <!-- CLIENT CODES -->
+  <div class="page" id="page-clients">
+    <div class="acc-wrap">
+      <div class="acc-hdr">
+        <div>
+          <div class="a-title">🪪 รหัสลูกค้า</div>
+          <div class="a-sub">รหัสลูกค้าและรหัสโปรเจกต์ — ใช้อ้างอิงในเอกสารเท่านั้น</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input type="text" id="clientSearchInput" placeholder="🔍 ค้นหา ชื่อ / รหัส / เบอร์..." style="padding:6px 12px;border:1px solid var(--border);border-radius:var(--r);font-size:13px;width:220px;font-family:inherit" oninput="renderClientCodes()">
+        </div>
+      </div>
+      <div id="clientCodesTable"></div>
     </div>
   </div>
 
@@ -1821,8 +1868,10 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
       </div>
     </div>
     <div class="field" style="margin-bottom:12px"><label>อีเมล (ไม่บังคับ)</label><input id="m-email" placeholder="email@example.com" type="email"></div>
-    <div style="margin-bottom:4px;font-size:11px;color:var(--gray-500);font-weight:600;letter-spacing:0.03em">กำหนดโปรเจกต์ที่เข้าถึงได้ <span style="font-weight:400;color:var(--gray-400)">(ถ้าไม่เลือก = เห็นทั้งหมด)</span></div>
-    <div class="proj-assign-grid" id="projAssignGrid"></div>
+    <div style="margin-bottom:4px;font-size:11px;color:var(--gray-500);font-weight:600;letter-spacing:0.03em">โปรเจกต์ที่เข้าถึงได้</div>
+    <div id="projAssignGrid" style="font-size:12px;color:var(--gray-500);padding:8px 10px;background:var(--gray-50);border:1px solid var(--border);border-radius:var(--r-sm);line-height:1.7">
+      <span style="color:var(--gray-400)">ตั้งค่าสิทธิ์ได้ที่ โปรเจกต์ → tab 👥 สิทธิ์</span>
+    </div>
     <div class="modal-foot">
       <button class="btn btn-ghost" onclick="closeUserModal()">ยกเลิก</button>
       <button class="btn btn-green" onclick="saveUser()">💾 บันทึก</button>
@@ -2069,25 +2118,42 @@ function setupNavUI(){
     <div class="nav-avatar">${(currentUser.name||'?')[0]}</div>
     <span class="nav-uname">${currentUser.display||currentUser.name}</span>
     <span class="rbadge" style="background:${rc}20;color:${rc}">${ROLE_LABEL[currentUser.role]||currentUser.role.toUpperCase()}</span>`;
+  const role = currentUser?.role || '';
+  const canSeeDocs = ['owner','admin','sales'].includes(role);
+  const canSeeClients = ['owner','admin','sales'].includes(role);
   document.getElementById('tabFin').style.display=canSeeFin()?'':'none';
-  document.getElementById('tabDocs').style.display=(canSeeFin()||isAdmin())?'':'none';
+  document.getElementById('tabDocs').style.display=canSeeDocs?'':'none';
   document.getElementById('tabAdmin').style.display=isAdmin()?'':'none';
   document.getElementById('btnNew').style.display=canAdd()?'':'none';
   document.getElementById('tabAccDocs').style.display=canSeeFin()?'':'none';
+  document.getElementById('tabClients').style.display=canSeeClients?'':'none';
   const bnavFinBtn = document.getElementById('bnavFinBtn');
   if(bnavFinBtn) bnavFinBtn.style.display = canSeeFin()?'':'none';
   const bnavAdminBtn = document.getElementById('bnavAdminBtn');
   if(bnavAdminBtn) bnavAdminBtn.style.display = isAdmin()?'':'none';
+  const bnavDocsBtn = document.getElementById('bnavDocsBtn');
+  if(bnavDocsBtn) bnavDocsBtn.style.display = canSeeDocs?'':'none';
+  const bnavAccDocsBtn = document.getElementById('bnavAccDocsBtn');
+  if(bnavAccDocsBtn) bnavAccDocsBtn.style.display = canSeeFin()?'':'none';
+  const bnavClientsBtn = document.getElementById('bnavClientsBtn');
+  if(bnavClientsBtn) bnavClientsBtn.style.display = canSeeClients?'':'none';
   // Greeting
   const now=new Date();
   const hr=now.getHours();
   const greet=hr<12?'สวัสดีตอนเช้า':hr<17?'สวัสดีตอนบ่าย':'สวัสดีตอนเย็น';
   document.getElementById('greetingName').textContent=`${greet}, ${currentUser.name} 👋`;
   document.getElementById('greetingDate').textContent=now.toLocaleDateString('th-TH',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  // Show backup reminder for admin/owner only
+  if(isAdmin()) setTimeout(checkBackupReminder, 500);
 }
 
 // ── Page Nav ──
 window.showPage=function(id,el){
+  const role=currentUser?.role||'';
+  if(id==='docs'&&!['owner','admin','sales'].includes(role)){toast('ไม่มีสิทธิ์เข้าถึงหน้านี้','err');return;}
+  if(id==='clients'&&!['owner','admin','sales'].includes(role)){toast('ไม่มีสิทธิ์เข้าถึงหน้านี้','err');return;}
+  if(id==='accdocs'&&!canSeeFin()){toast('ไม่มีสิทธิ์เข้าถึงหน้านี้','err');return;}
+  if(id==='admin'&&!isAdmin()){toast('ไม่มีสิทธิ์เข้าถึงหน้านี้','err');return;}
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
   document.getElementById('page-'+id).classList.add('on');
   document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('on'));
@@ -2097,6 +2163,7 @@ window.showPage=function(id,el){
   else if(id==='admin')renderAdmin();
   else if(id==='home')renderHome();
   else if(id==='accdocs'){startAccSync();}
+  else if(id==='clients'){renderClientCodes();}
   // sync bottom nav
   if(window.updateBNav) updateBNav(id);
 };
@@ -3246,8 +3313,13 @@ window.createProject = async function() {
   let projId = '';
   try { const seq = await getNextSeq('project'); projId = 'NMS-P-'+ID_YEAR()+'-'+seq+'-D'; }
   catch(e) { projId = 'NMS-P-'+ID_YEAR()+'-'+Math.floor(Math.random()*900+100)+'-D'; }
+  let clientId = leadRef?.clientId || '';
+  if (!clientId) {
+    try { clientId = await genClientId(); }
+    catch(e) { clientId = 'NMS-C-'+ID_YEAR()+'-'+Math.floor(Math.random()*900+100); }
+  }
   const newProj = {
-    id:pid, projId, name, client:client||leadRef?.name||'',
+    id:pid, projId, clientId, name, client:client||leadRef?.name||'',
     phone:document.getElementById('np-phone').value.trim()||leadRef?.phone||'',
     size:document.getElementById('np-size').value.trim(),
     budget:document.getElementById('np-budget').value.trim(),
@@ -3265,7 +3337,7 @@ window.createProject = async function() {
     if (leadId) {
       const lRef = leads.find(x=>x.id===leadId);
       if (lRef) {
-        await saveToCloud({...lRef, linkedProjectId: pid, updatedBy: currentUser.name, updated: new Date().toISOString()});
+        await saveToCloud({...lRef, linkedProjectId: pid, clientId: clientId||lRef.clientId||'', updatedBy: currentUser.name, updated: new Date().toISOString()});
       }
     }
     document.getElementById('newProjModal').classList.remove('show');
@@ -3304,7 +3376,7 @@ window.openProjDetail = function(pid) {
   document.getElementById('projListWrap').style.display='none';
   document.getElementById('projDetail').style.display='block';
   document.getElementById('pdTitle').textContent=p.name||'—';
-  document.getElementById('pdSub').textContent=(p.projId||'')+(p.client?' · '+p.client:'');
+  document.getElementById('pdSub').textContent=(p.projId||'')+(p.clientId?' · '+p.clientId:'')+(p.client?' · '+p.client:'');
   const fields={
     'pd-client':p.client,'pd-phone':p.phone,'pd-line':p.line,'pd-email':p.email,
     'pd-pain':p.pain,'pd-name':p.name,'pd-size':p.size,'pd-loc':p.loc,
@@ -3340,6 +3412,9 @@ window.openProjDetail = function(pid) {
     const el=document.getElementById(id);
     if(el) el.readOnly = !canEditFin();
   });
+  // Access tab — owner only
+  const ptabAccess=document.getElementById('ptabAccess');
+  if(ptabAccess) ptabAccess.style.display=isOwner()?'':'none';
   const firstTab=document.querySelector('.ptab'); if(firstTab) showPTab('info',firstTab);
 };
 
@@ -3385,6 +3460,7 @@ window.showPTab=function(tab,el){
   document.querySelectorAll('.ptab-content').forEach(c=>c.classList.remove('on'));
   if(el)el.classList.add('on');
   const tc=document.getElementById('ptab-'+tab); if(tc)tc.classList.add('on');
+  if(tab==='access') renderProjAccess();
 };
 
 window.convertProjToLead=function(){
@@ -3517,6 +3593,77 @@ window.addContractorUpdate=async function(){
   await saveProjToCloud({...p,contractorUpdates:upds}); renderContractorUpdates({...p,contractorUpdates:upds}); toast('บันทึกอัปเดต ✓','ok');
 };
 
+function renderProjAccess(){
+  if(!isOwner()) return;
+  const grid=document.getElementById('projAccessGrid'); if(!grid) return;
+  const p=projects.find(x=>x.id===currentProjId); if(!p) return;
+
+  // Roles that always see all projects — exclude from checkboxes
+  const alwaysAll=['owner','admin'];
+  const staffUsers=Object.entries(users).filter(([,u])=>!alwaysAll.includes(u.role));
+
+  if(!staffUsers.length){
+    grid.innerHTML='<div style="font-size:12px;color:var(--gray-400);padding:12px 0">ยังไม่มีพนักงานในระบบ</div>';
+    return;
+  }
+
+  const ROLE_TH={sales:'Sales',designer:'Designer',drafter:'Drafter',accounting:'Accounting',contractor:'Contractor',outsource:'Outsource'};
+  grid.innerHTML=staffUsers.map(([uid,u])=>{
+    const hasAccess=(u.projectAccess||[]).includes(p.id)||(u.projectAccess||[]).length===0;
+    // Show checked if user has explicit access OR has no restrictions (empty array = sees all)
+    const checked=(u.projectAccess||[]).includes(p.id);
+    const noRestrict=!(u.projectAccess||[]).length;
+    const rc=ROLE_COLOR[u.role]||'#999';
+    return `
+    <label style="display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:var(--r-sm);border:1px solid var(--border);background:var(--white);cursor:pointer;transition:background .1s"
+           onmouseover="this.style.background='var(--gray-50)'" onmouseout="this.style.background='var(--white)'">
+      <input type="checkbox" data-uid="${uid}" value="${p.id}" ${checked?'checked':''} style="accent-color:var(--gold);width:16px;height:16px;flex-shrink:0">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:500;color:var(--gray-800)">${u.name||uid}</div>
+        <div style="font-size:11px;color:var(--gray-400)">${uid}</div>
+      </div>
+      <span style="background:${rc}20;color:${rc};padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;flex-shrink:0">${ROLE_TH[u.role]||u.role}</span>
+      ${noRestrict?'<span style="font-size:10px;color:var(--gray-300);flex-shrink:0">ไม่มีข้อจำกัด</span>':''}
+    </label>`;
+  }).join('');
+
+  // Info note for owner/admin
+  grid.innerHTML+=`
+    <div style="margin-top:8px;padding:8px 12px;background:var(--gray-50);border-radius:var(--r-sm);font-size:11px;color:var(--gray-400)">
+      👑 Owner และ Admin เห็นทุกโปรเจกต์อัตโนมัติ · พนักงานที่ไม่มีข้อจำกัด (ช่องว่าง) = เห็นทุกโปรเจกต์เช่นกัน
+    </div>`;
+}
+
+window.saveProjAccess = async function(){
+  if(!isOwner()){toast('เฉพาะ Owner เท่านั้น','err');return;}
+  const p=projects.find(x=>x.id===currentProjId); if(!p) return;
+  const grid=document.getElementById('projAccessGrid'); if(!grid) return;
+
+  const checkedUids=new Set([...grid.querySelectorAll('input[type=checkbox]:checked')].map(cb=>cb.dataset.uid));
+
+  let changed=false;
+  for(const [uid,u] of Object.entries(users)){
+    if(['owner','admin'].includes(u.role)) continue; // never touch owner/admin
+    const currentAccess=u.projectAccess||[];
+    const hadAccess=currentAccess.includes(p.id);
+    const shouldHave=checkedUids.has(uid);
+    if(hadAccess===shouldHave) continue;
+    if(shouldHave){
+      users[uid].projectAccess=[...currentAccess, p.id];
+    } else {
+      users[uid].projectAccess=currentAccess.filter(id=>id!==p.id);
+    }
+    changed=true;
+  }
+
+  if(!changed){toast('ไม่มีการเปลี่ยนแปลง','ok');return;}
+  try{
+    await saveUsersToCloud();
+    toast('บันทึกสิทธิ์โปรเจกต์ ✓','ok');
+    renderProjAccess(); // re-render to reflect saved state
+  }catch(e){toast('บันทึกไม่สำเร็จ: '+e.message,'err');}
+};
+
 function renderProjFinCalc(p){
   const el=document.getElementById('pdFinCalc'); if(!el)return;
   const rev=parseInt(String(p.revenue||'0').replace(/[,฿]/g,''))||0;
@@ -3545,15 +3692,15 @@ const DOC_STATUS_LABEL={draft:'📝 Draft',sent:'📤 ส่งแล้ว',app
 
 // Who can CREATE, EDIT, VIEW each document type
 const DOC_ACCESS = {
-  'quotation_design':  { create:['owner','admin','sales'],        edit:['owner','admin','sales'],        view:['owner','admin','sales','designer','accounting'] },
-  'quotation_construction': { create:['owner','admin','sales'],   edit:['owner','admin','sales'],        view:['owner','admin','sales','accounting','contractor'] },
-  'contract_design':   { create:['owner','admin'],                edit:['owner','admin'],                view:['owner','admin','sales','designer','accounting'] },
-  'contract_construction': { create:['owner','admin'],           edit:['owner','admin'],                view:['owner','admin','sales','accounting','contractor'] },
-  'invoice':           { create:['owner','admin','accounting'],   edit:['owner','admin','accounting'],   view:['owner','admin','accounting'] },
-  'payment_request':   { create:['owner','admin','accounting'],   edit:['owner','admin','accounting'],   view:['owner','admin','accounting'] },
-  'receipt':           { create:['owner','admin','accounting'],   edit:['owner','admin','accounting'],   view:['owner','admin','accounting'] },
-  'delivery':          { create:['owner','admin','sales','designer'], edit:['owner','admin','sales','designer'], view:['owner','admin','sales','designer','accounting'] },
-  'boq':               { create:['owner','admin','sales'],        edit:['owner','admin','sales','designer'], view:['owner','admin','sales','designer','accounting','contractor'] },
+  'quotation_design':       { create:['owner','admin','sales'], edit:['owner','admin','sales'], view:['owner','admin','sales'] },
+  'quotation_construction': { create:['owner','admin','sales'], edit:['owner','admin','sales'], view:['owner','admin','sales'] },
+  'contract_design':        { create:['owner','admin'],         edit:['owner','admin'],         view:['owner','admin','sales'] },
+  'contract_construction':  { create:['owner','admin'],         edit:['owner','admin'],         view:['owner','admin','sales'] },
+  'invoice':                { create:['owner','admin','sales'], edit:['owner','admin','sales'], view:['owner','admin','sales'] },
+  'payment_request':        { create:['owner','admin','sales'], edit:['owner','admin','sales'], view:['owner','admin','sales'] },
+  'receipt':                { create:['owner','admin','sales'], edit:['owner','admin','sales'], view:['owner','admin','sales'] },
+  'delivery':               { create:['owner','admin','sales'], edit:['owner','admin','sales'], view:['owner','admin','sales'] },
+  'boq':                    { create:['owner','admin','sales'], edit:['owner','admin','sales'], view:['owner','admin','sales'] },
 };
 
 function canAccessDoc(type, action) {
@@ -3656,8 +3803,10 @@ window.createDoc=async function(){
     }
   }
   const docId=Date.now().toString();
+  const projId=(clientObj?.projId)||'';
+  const clientId=(clientObj?.clientId)||'';
   const newDoc={
-    id:docId,docNum,type,projRef,date,due,status:'draft',
+    id:docId,docNum,type,projRef,projId,clientId,date,due,status:'draft',
     clientName,clientDetail,projName,
     clientAddress,clientTaxId,clientIsCompany:false,
     projLocation,projSize,
@@ -3712,6 +3861,7 @@ window.setDocFilter=function(f,el){
 
 window.openDocEditor=function(docId){
   const d=docs.find(x=>x.id===docId); if(!d)return;
+  if(!canAccessDoc(d.type,'view')){toast('ไม่มีสิทธิ์ดูเอกสารนี้','err');return;}
   currentDocId=docId;
   currentDocItems=(d.items||[]).map(i=>({...i}));
   currentInstallments=[];
@@ -3728,7 +3878,7 @@ window.openDocEditor=function(docId){
   document.getElementById('docClientName').textContent=d.clientName||'—';
   document.getElementById('docClientDetail').textContent=d.clientDetail||'—';
   document.getElementById('docProjName').textContent=d.projName||'—';
-  document.getElementById('docProjDetail').textContent=d.docNum||'—';
+  document.getElementById('docProjDetail').textContent=(d.projId||d.clientId||'—');
   document.getElementById('docStatusSel').value=d.status||'draft';
   document.getElementById('docNotes').value=d.notes||'';
   document.getElementById('docClientSignName').textContent=d.clientName||'—';
@@ -4018,6 +4168,89 @@ function accTypeLabel(t){return{revenue:'รายรับ',expense:'ราย�
 
 function fmtAccAmt(n){if(!n&&n!==0)return'—';const v=parseFloat(n);if(isNaN(v))return'—';return v.toLocaleString('th-TH',{minimumFractionDigits:0,maximumFractionDigits:2})+'฿';}
 
+function renderClientCodes(){
+  const el=document.getElementById('clientCodesTable');
+  if(!el)return;
+  const q=(document.getElementById('clientSearchInput')?.value||'').toLowerCase().trim();
+
+  const rows=[];
+  const seenClientIds=new Set();
+
+  projects.forEach(p=>{
+    if(!p.clientId)return;
+    const lead=p.leadId?leads.find(l=>l.id===p.leadId):null;
+    rows.push({
+      clientId:p.clientId,
+      projId:p.projId||'—',
+      name:p.name||p.client||'—',
+      client:p.client||lead?.name||'—',
+      phone:p.phone||lead?.phone||'—',
+      status:p.status||'active',
+      pid:p.id,
+    });
+    seenClientIds.add(p.clientId);
+  });
+
+  leads.forEach(l=>{
+    if(!l.clientId||seenClientIds.has(l.clientId))return;
+    rows.push({
+      clientId:l.clientId,
+      projId:l.projId||'—',
+      name:l.name||'—',
+      client:l.name||'—',
+      phone:l.phone||'—',
+      status:l.status||'new',
+      lid:l.id,
+    });
+  });
+
+  const filtered=q?rows.filter(r=>
+    (r.clientId||'').toLowerCase().includes(q)||
+    (r.projId||'').toLowerCase().includes(q)||
+    (r.name||'').toLowerCase().includes(q)||
+    (r.client||'').toLowerCase().includes(q)||
+    (r.phone||'').toLowerCase().includes(q)
+  ):rows;
+
+  if(!filtered.length){
+    el.innerHTML='<div style="text-align:center;padding:60px;color:var(--gray-400);font-size:13px">ไม่พบข้อมูล</div>';
+    return;
+  }
+
+  const statusLabel={active:'🟡 ดำเนินการ',completed:'✅ เสร็จสิ้น',paused:'⏸️ หยุด',cancelled:'❌ ยกเลิก',new:'🔵 ใหม่',contacted:'📞 ติดต่อแล้ว',quoted:'📋 เสนอราคา',won:'✅ ปิดได้',lost:'❌ ปิดไม่ได้'};
+
+  el.innerHTML=`
+  <div style="overflow-x:auto;margin-top:8px">
+  <table style="width:100%;border-collapse:collapse;font-size:13px">
+    <thead>
+      <tr style="background:var(--gray-50);border-bottom:2px solid var(--border)">
+        <th style="padding:10px 12px;text-align:left;font-weight:600;color:var(--gray-600);white-space:nowrap">รหัสลูกค้า</th>
+        <th style="padding:10px 12px;text-align:left;font-weight:600;color:var(--gray-600);white-space:nowrap">รหัสโปรเจกต์</th>
+        <th style="padding:10px 12px;text-align:left;font-weight:600;color:var(--gray-600)">ชื่อ / ลูกค้า</th>
+        <th style="padding:10px 12px;text-align:left;font-weight:600;color:var(--gray-600)">เบอร์</th>
+        <th style="padding:10px 12px;text-align:left;font-weight:600;color:var(--gray-600)">สถานะ</th>
+      </tr>
+    </thead>
+    <tbody>
+    ${filtered.map(r=>`
+      <tr style="border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s"
+          onmouseover="this.style.background='var(--gray-50)'" onmouseout="this.style.background=''"
+          onclick="${r.pid?`openProjDetail('${r.pid}')`:r.lid?`openPanel('${r.lid}')`:''}" >
+        <td style="padding:10px 12px;font-family:monospace;font-weight:600;color:var(--blue);white-space:nowrap">${r.clientId}</td>
+        <td style="padding:10px 12px;font-family:monospace;font-size:12px;color:var(--gray-600);white-space:nowrap">${r.projId}</td>
+        <td style="padding:10px 12px">
+          <div style="font-weight:500">${r.name}</div>
+          ${r.client&&r.client!==r.name?`<div style="font-size:11px;color:var(--gray-400)">${r.client}</div>`:''}
+        </td>
+        <td style="padding:10px 12px;color:var(--gray-600)">${r.phone}</td>
+        <td style="padding:10px 12px"><span style="font-size:12px">${statusLabel[r.status]||r.status}</span></td>
+      </tr>`).join('')}
+    </tbody>
+  </table>
+  </div>
+  <div style="font-size:11px;color:var(--gray-400);margin-top:10px;text-align:right">${filtered.length} รายการ · รหัสลูกค้าใช้อ้างอิงในเอกสารเท่านั้น ไม่ใส่ในชื่อไฟล์</div>`;
+}
+
 function renderAccDocs(){
   const grid=document.getElementById('accMonthGrid');
   if(!grid)return;
@@ -4283,7 +4516,34 @@ function renderAdmin(){
   });
   const roleCounts={};userList.forEach(([,u])=>{roleCounts[u.role]=(roleCounts[u.role]||0)+1;});
   const rcBadge=(role,count)=>{const c=ROLE_COLOR[role]||'#999';return`<span style="background:${c}20;color:${c};padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600">${ROLE_LABEL[role]||role.toUpperCase()} ${count}</span>`;};
+  const bkDays=getLastBackupDays();
+  const bkColor=bkDays===null||bkDays>=BACKUP_WARN_DAYS?'#ef4444':bkDays>=3?'#f59e0b':'#22c55e';
+  const bkLabel=bkDays===null?'ยังไม่เคย Backup':bkDays===0?'✅ Backup วันนี้แล้ว':`${bkDays} วันที่แล้ว`;
   wrap.innerHTML=`
+    <!-- BACKUP SECTION -->
+    <div class="admin-section" style="margin-bottom:20px;border-color:${bkDays===null||bkDays>=BACKUP_WARN_DAYS?'#c4b5fd':'var(--border)'}">
+      <div class="admin-section-hd" style="${bkDays===null||bkDays>=BACKUP_WARN_DAYS?'background:#f5f3ff':''}">
+        <div>
+          <div class="admin-section-title">💾 Backup & กู้คืนข้อมูล</div>
+          <div class="admin-section-sub">ดาวน์โหลด JSON ครบทุก collection เก็บไว้ใน Google Drive หรือคอมฯ</div>
+        </div>
+        <span style="font-size:12px;font-weight:600;color:${bkColor}" id="lastBackupInfo">${bkLabel}</span>
+      </div>
+      <div style="padding:16px 20px;display:flex;flex-wrap:wrap;gap:12px;align-items:center">
+        <button class="btn btn-gold" id="btnBackupAll" onclick="backupAll()" style="gap:8px">
+          💾 Backup ทั้งหมดทันที
+        </button>
+        <div style="flex:1;font-size:12px;color:var(--gray-500);line-height:1.6">
+          เก็บข้อมูล: leads · projects · documents · events · acc_bundles<br>
+          ไฟล์ชื่อ: <code style="background:var(--gray-100);padding:1px 5px;border-radius:3px">NMS-Backup-YYYY-MM-DD.json</code>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="importJSON()" style="white-space:nowrap">📂 กู้คืนจาก Backup</button>
+      </div>
+      ${bkDays===null||bkDays>=BACKUP_WARN_DAYS?`
+      <div style="background:#f5f3ff;border-top:1px solid #e9d5ff;padding:10px 20px;font-size:12px;color:#7c3aed;display:flex;align-items:center;gap:8px">
+        ⚠️ ${bkDays===null?'ยังไม่เคย Backup เลย — กรุณากด Backup เพื่อความปลอดภัยของข้อมูล':`ไม่ได้ Backup มา ${bkDays} วันแล้ว — แนะนำ Backup ทุก 7 วัน`}
+      </div>`:''}
+    </div>
     <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px">
       ${Object.entries(roleCounts).map(([r,n])=>rcBadge(r,n)).join('')}
     </div>
@@ -4313,7 +4573,7 @@ function renderAdmin(){
               ${isUOwner?'<span style="font-size:10px;color:#5b21b6;font-weight:600">👑 เจ้าของระบบ</span>':''}
               ${u.email?`<span style="font-size:11px;color:var(--gray-400)">${u.email}</span>`:''}
             </div>
-            ${projNames.length?`<div style="font-size:10px;color:var(--gray-400);margin-top:4px">📂 ${projNames.join(', ')}</div>`:'<div style="font-size:10px;color:var(--gray-400);margin-top:4px">📂 เข้าถึงได้ทั้งหมด</div>'}
+            ${['owner','admin'].includes(u.role)?'<div style="font-size:10px;color:var(--green);margin-top:4px">📂 เห็นทุกโปรเจกต์ (ตาม Role)</div>':projNames.length?`<div style="font-size:10px;color:var(--gray-400);margin-top:4px">📂 ${projNames.join(' · ')}</div>`:'<div style="font-size:10px;color:var(--gray-300);margin-top:4px">📂 ยังไม่ได้กำหนดโปรเจกต์ — ตั้งที่ โปรเจกต์ → 👥 สิทธิ์</div>'}
           </div>
           <div style="display:flex;gap:6px;flex-shrink:0;align-items:center">
             ${canImper_?`<button class="btn btn-gold btn-sm" onclick="impersonateUser('${uid}')" title="ดูระบบในมุมมองของ ${u.name||uid}">👁 ดูในฐานะ</button>`:''}
@@ -4344,15 +4604,18 @@ window.openUserModal=function(uid){
   // show/hide owner-only role options
   document.querySelectorAll('#m-role .opt-owner-only').forEach(el=>el.style.display=isOwner()?'':'none');
   document.getElementById('m-role').value=u?.role||'designer';
-  // Project assignment grid
+  // Show read-only project access info
   const grid=document.getElementById('projAssignGrid');
   const selected=u?.projectAccess||[];
-  grid.innerHTML=projects.length?projects.map(p=>`
-    <label style="display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:var(--r-sm);cursor:pointer;font-size:12px;border:1px solid var(--border);background:var(--gray-50)">
-      <input type="checkbox" value="${p.id}" ${selected.includes(p.id)?'checked':''} style="accent-color:var(--gold)">
-      <span style="font-family:monospace;font-size:11px;color:var(--blue)">${p.projId||p.id}</span>
-      <span style="flex:1">${p.name||p.client||'—'}</span>
-    </label>`).join(''):'<div style="font-size:12px;color:var(--gray-400);padding:8px 0">ยังไม่มีโปรเจกต์</div>';
+  const roleAlwaysSeeAll=['owner','admin'].includes(u?.role||'');
+  if(roleAlwaysSeeAll){
+    grid.innerHTML='<span style="color:var(--green);font-weight:500">✅ เห็นทุกโปรเจกต์ (ตาม Role)</span>';
+  } else if(!selected.length){
+    grid.innerHTML='<span style="color:var(--gray-400)">ยังไม่ได้กำหนด — ตั้งที่ โปรเจกต์ → tab 👥 สิทธิ์</span>';
+  } else {
+    const names=selected.map(pid=>{const p=projects.find(x=>x.id===pid);return p?(p.projId||p.name||pid):pid;});
+    grid.innerHTML=names.map(n=>`<span style="display:inline-block;background:var(--blue-light);color:var(--blue);padding:2px 8px;border-radius:10px;font-size:11px;margin:2px">${n}</span>`).join('');
+  }
   document.getElementById('userModal').classList.add('show');
 };
 
@@ -4374,9 +4637,8 @@ window.saveUser=async function(){
   if(!name){toast('กรุณาใส่ชื่อแสดง','err');return;}
   if(!editingUserId&&users[uid]){toast('Username นี้มีอยู่แล้ว','err');return;}
   if(isStrictAdmin()&&(role==='owner'||role==='admin')){toast('Admin ไม่สามารถตั้ง Role เป็น Owner หรือ Admin ได้','err');return;}
-  const projAccess=[...document.getElementById('projAssignGrid').querySelectorAll('input[type=checkbox]:checked')].map(cb=>cb.value);
   const existing=users[uid]||{};
-  users[uid]={...existing,pass,name,display:name,role,email,projectAccess:projAccess};
+  users[uid]={...existing,pass,name,display:name,role,email,projectAccess:existing.projectAccess||[]};
   try{
     await saveUsersToCloud();
     toast((editingUserId?'แก้ไข':'เพิ่ม')+`ผู้ใช้ "${name}" ✓`,'ok');
@@ -4490,6 +4752,145 @@ window.goToLinkedProject = function(pid) {
   showPage('projects', document.getElementById('tabProjects'));
   setTimeout(() => openProjDetail(pid), 300);
 };
+
+// ══════════════════════════════════════════
+// BACKUP SYSTEM
+// ══════════════════════════════════════════
+const BACKUP_KEY = 'nms_last_backup';
+const BACKUP_WARN_DAYS = 7;
+
+function getLastBackupDays(){
+  const ts = localStorage.getItem(BACKUP_KEY);
+  if(!ts) return null;
+  return Math.floor((Date.now()-parseInt(ts))/(1000*60*60*24));
+}
+
+function markBackupDone(){
+  localStorage.setItem(BACKUP_KEY, Date.now().toString());
+  checkBackupReminder();
+}
+
+function checkBackupReminder(){
+  const days = getLastBackupDays();
+  const badge = document.getElementById('backupBadge');
+  const banner = document.getElementById('backupBanner');
+  const bannerTxt = document.getElementById('backupBannerTxt');
+
+  if(days === null || days >= BACKUP_WARN_DAYS){
+    const msg = days===null ? 'ยังไม่เคย Backup — กรุณา Backup ข้อมูลเพื่อความปลอดภัย' : `ไม่ได้ Backup มา ${days} วันแล้ว — แนะนำให้ Backup ทุก 7 วัน`;
+    if(badge) badge.style.display='inline-block';
+    if(banner){ banner.style.display='flex'; if(bannerTxt) bannerTxt.textContent=msg; }
+  } else {
+    if(badge) badge.style.display='none';
+    if(banner) banner.style.display='none';
+  }
+  const lastEl = document.getElementById('lastBackupInfo');
+  if(lastEl){
+    if(days===null) lastEl.textContent='ยังไม่เคย Backup';
+    else if(days===0) lastEl.textContent='Backup ล่าสุด: วันนี้';
+    else lastEl.textContent=`Backup ล่าสุด: ${days} วันที่แล้ว`;
+  }
+}
+
+window.backupAll = async function(){
+  const btn = document.getElementById('btnBackupAll');
+  if(btn){ btn.disabled=true; btn.textContent='⏳ กำลัง Backup...'; }
+  try{
+    const [leadsSnap, projSnap, docsSnap, evSnap, accSnap] = await Promise.all([
+      getDocs(collection(db,'leads')),
+      getDocs(collection(db,'projects')),
+      getDocs(collection(db,'documents')),
+      getDocs(collection(db,'events')),
+      getDocs(collection(db,'acc_bundles')),
+    ]);
+    const backup={
+      _meta:{ version:'v12', exportedAt:new Date().toISOString(), exportedBy:currentUser.name, totalLeads:leadsSnap.size, totalProjects:projSnap.size, totalDocs:docsSnap.size },
+      leads: leadsSnap.docs.map(d=>({id:d.id,...d.data()})),
+      projects: projSnap.docs.map(d=>({id:d.id,...d.data()})),
+      documents: docsSnap.docs.map(d=>({id:d.id,...d.data()})),
+      events: evSnap.docs.map(d=>({id:d.id,...d.data()})),
+      acc_bundles: accSnap.docs.map(d=>({id:d.id,...d.data()})),
+    };
+    const blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    const dateStr=new Date().toISOString().slice(0,10);
+    a.href=url; a.download=`NMS-Backup-${dateStr}.json`; a.click();
+    URL.revokeObjectURL(url);
+    markBackupDone();
+    toast(`✅ Backup สำเร็จ! ${backup.leads.length} leads · ${backup.projects.length} projects · ${backup.documents.length} docs`,'ok');
+    if(isAdmin()) renderAdmin();
+  }catch(e){
+    toast('Backup ไม่สำเร็จ: '+e.message,'err');
+  }finally{
+    if(btn){ btn.disabled=false; btn.textContent='💾 Backup ทั้งหมดทันที'; }
+  }
+};
+
+window.exportCSV = function(){
+  if(!leads.length){ toast('ไม่มีข้อมูล Leads','err'); return; }
+  const headers=['วันที่','ชื่อ','เบอร์','Line','อีเมล','แหล่งที่มา','ขั้นตอน','งบประมาณ','พื้นที่','รหัสลูกค้า','รหัสโปรเจกต์'];
+  const rows=leads.map(l=>[l.date||'',l.name||'',l.phone||'',l.line||'',l.email||'',l.source||'',l.step||'',l.budget||'',l.size||'',l.clientId||'',l.projId||''].map(v=>`"${String(v).replace(/"/g,'""')}"`));
+  const csv='﻿'+[headers,...rows].map(r=>r.join(',')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download=`NMS-Leads-${new Date().toISOString().slice(0,10)}.csv`; a.click();
+  URL.revokeObjectURL(url);
+  toast('Export CSV สำเร็จ ✓','ok');
+};
+
+window.importJSON = function(){
+  const input=document.createElement('input');
+  input.type='file'; input.accept='.json';
+  input.onchange=async(e)=>{
+    const file=e.target.files[0]; if(!file) return;
+    try{
+      const text=await file.text();
+      const data=JSON.parse(text);
+      // Support both full backup format and leads-only format
+      const leadsArr=data.leads||data;
+      if(!Array.isArray(leadsArr)){toast('รูปแบบไฟล์ไม่ถูกต้อง','err');return;}
+      if(!confirm(`นำเข้า ${leadsArr.length} leads?\n(ข้อมูลที่มี ID ซ้ำจะถูก overwrite)`))return;
+      let ok=0,fail=0;
+      for(const l of leadsArr){
+        if(!l.id)continue;
+        try{ await setDoc(doc(db,'leads',l.id),sanitizeForFirestore(l)); ok++; }
+        catch(e){ fail++; }
+      }
+      toast(`นำเข้าสำเร็จ ${ok} รายการ${fail?' · ล้มเหลว '+fail:''}  ✓`,'ok');
+    }catch(e){ toast('อ่านไฟล์ไม่ได้: '+e.message,'err'); }
+  };
+  input.click();
+};
+
+// ── Body scroll lock when any modal-ov is open (iOS fix) ──
+(function(){
+  let scrollY=0;
+  function lockBody(){
+    scrollY=window.scrollY;
+    document.body.style.overflow='hidden';
+    document.body.style.position='fixed';
+    document.body.style.top=`-${scrollY}px`;
+    document.body.style.width='100%';
+  }
+  function unlockBody(){
+    document.body.style.overflow='';
+    document.body.style.position='';
+    document.body.style.top='';
+    document.body.style.width='';
+    window.scrollTo(0,scrollY);
+  }
+  const obs=new MutationObserver(()=>{
+    const anyOpen=document.querySelector('.modal-ov.show,.ev-modal-ov.show');
+    if(anyOpen) lockBody(); else unlockBody();
+  });
+  document.addEventListener('DOMContentLoaded',()=>{
+    document.querySelectorAll('.modal-ov,.ev-modal-ov').forEach(el=>{
+      obs.observe(el,{attributes:true,attributeFilter:['class']});
+    });
+  });
+})();
 
 // ── Init ──
 document.getElementById('loginSync').textContent='✅ Firebase พร้อมใช้งาน';

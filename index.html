@@ -1655,6 +1655,7 @@ function startSync(){
       setSyncUI(true);
       render();
       renderHome();
+      if(document.getElementById('page-cal')?.classList.contains('on')) calRender();
       try{localStorage.setItem('nms_leads_cache',JSON.stringify(allLeads));}catch(e){}
     },
     err=>{
@@ -2241,14 +2242,35 @@ function calGetAllEvents(){
   const evs=[];
   // From leads — nextdate
   leads.forEach(l=>{
-    if(!l.nextdate) return;
+    if(!l.nextdate||l.step==='delivered') return;
+    // normalize date format
+    let dateVal=l.nextdate;
+    if(typeof dateVal==='string'&&dateVal.length>=10){
+      dateVal=dateVal.slice(0,10); // ensure YYYY-MM-DD
+    }
+    if(!dateVal) return;
     evs.push({
-      id:'lead_'+l.id, date:l.nextdate, type:'lead',
-      title:(l.nextstep||'ติดตาม')+' — '+(l.name||'ลูกค้า'),
-      sub:l.proj||l.src||'—', time:l.nexttime||'',
+      id:'lead_'+l.id, date:dateVal, type:'lead',
+      title:(l.nextstep||'ติดตามลูกค้า')+' — '+(l.name||'ลูกค้า'),
+      sub:(l.proj||l.src||'—')+(l.budget?' · '+l.budget:''),
+      time:l.nexttime||'',
       sourceId:l.id, sourceType:'lead',
-      detail:{ลูกค้า:l.name||'—', เบอร์:l.phone||'—', โปรเจกต์:l.proj||'—', งบ:l.budget||'—', ที่ตั้ง:l.loc||'—', บันทึก:l.notes||'—'}
+      detail:{
+        ลูกค้า:l.name||'—',
+        เบอร์:l.phone||'—',
+        'Line':l.line||'—',
+        โปรเจกต์:l.proj||'—',
+        งบประมาณ:l.budget||'—',
+        ที่ตั้ง:l.loc||'—',
+        'Action':l.nextstep||'—',
+        บันทึก:l.notes||'—'
+      }
     });
+    // Also add date as past-due warning if overdue
+    const now=new Date().toISOString().slice(0,10);
+    if(dateVal<now){
+      evs.find(e=>e.id==='lead_'+l.id) && (evs[evs.length-1].overdue=true);
+    }
   });
   // From projects — deadline
   projects.forEach(p=>{
@@ -2674,7 +2696,13 @@ window.showPage=function(id,el){
   else if(id==='finance'){renderFinance();}
   else if(id==='upload'){upPopulateProjects();upInitSubChips();upGen();upLoadHistory();
     const dt=document.getElementById('up-date');if(dt&&!dt.value)dt.value=today();}
-  else if(id==='cal'){calGoToday();if(!calEvUnsubscribe)calStartSync();else calRender();}
+  else if(id==='cal'){
+    calGoToday();
+    if(!calEvUnsubscribe)calStartSync();else calRender();
+    // Re-render after leads sync completes
+    setTimeout(()=>calRender(), 800);
+    setTimeout(()=>calRender(), 2000);
+  }
 };
 
 // ── Init ──

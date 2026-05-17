@@ -827,8 +827,9 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
       </div>
       <!-- FILES TAB -->
       <div class="ptab-content" id="ptab-files">
-        <div style="display:flex;justify-content:flex-end;margin-bottom:14px">
-          <button class="btn btn-ghost btn-sm" onclick="addFileLink()">+ เพิ่มลิงก์ไฟล์</button>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+          <div style="font-size:11px;color:var(--gray-400)">📎 ไฟล์ทั้งหมดในโปรเจกต์ — ดูได้อย่างเดียว ไม่สามารถลบได้</div>
+          <button class="btn btn-ghost btn-sm" id="btnAddFileLink" onclick="addFileLink()" style="display:none">+ เพิ่มลิงก์ไฟล์</button>
         </div>
         <div class="file-list" id="projFiles"></div>
       </div>
@@ -1755,17 +1756,21 @@ function startSync(){
     snap=>{
       const allLeads=snap.docs.map(d=>({id:d.id,...d.data()}));
       allLeads.sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
-      // Filter by project access if not admin
-      if(canSeeAll()||!currentUser?.projectAccess?.length){
+      // Filter by project access
+      if(canSeeAll()){
         leads=allLeads;
+      } else if(currentUser?.projectAccess?.length){
+        leads=allLeads.filter(l=>currentUser.projectAccess.includes(l.id));
       } else {
-        leads=allLeads.filter(l=>!l.id||currentUser.projectAccess.includes(l.id)||!currentUser.projectAccess.length);
+        leads=allLeads; // ถ้ายังไม่กำหนดโปรเจค = เห็นทั้งหมด (สำหรับ sales ที่ยังไม่ assign)
       }
       lastSync=new Date().toISOString();
       setSyncUI(true);
       render();
       renderHome();
-      calRender(); // sync ปฏิทินทุกครั้งที่ leads อัปเดต
+      calRender();
+      if(document.getElementById('page-finance')?.classList.contains('on'))renderFinance();
+      if(document.getElementById('page-admin')?.classList.contains('on'))renderAdmin();
       try{localStorage.setItem('nms_leads_cache',JSON.stringify(allLeads));}catch(e){}
     },
     err=>{
@@ -2208,9 +2213,11 @@ function upTodayStr(){
 
 function upPopulateProjects(){
   const sel=document.getElementById('up-proj');if(!sel)return;
+  const accP=canSeeAll()?projects:projects.filter(p=>!currentUser.projectAccess?.length||currentUser.projectAccess.includes(p.id));
+  const accL=canSeeAll()?leads.filter(l=>l.clientId):leads.filter(l=>l.clientId&&(!currentUser.projectAccess?.length||currentUser.projectAccess.includes(l.id)));
   const allP=[
-    ...projects.map(p=>({id:p.id,label:(p.projId||p.id)+' · '+( p.name||p.client||'—'),projId:p.projId||p.id})),
-    ...leads.filter(l=>l.clientId).map(l=>({id:l.id,label:(l.projId||l.clientId)+' · '+(l.name||'—'),projId:l.projId||l.clientId}))
+    ...accP.map(p=>({id:p.id,label:(p.projId||p.id)+' · '+(p.name||p.client||'—'),projId:p.projId||p.id})),
+    ...accL.map(l=>({id:l.id,label:(l.projId||l.clientId)+' · '+(l.name||'—'),projId:l.projId||l.clientId}))
   ];
   sel.innerHTML='<option value="">— เลือกโปรเจกต์ —</option>'+allP.map(p=>`<option value="${p.id}" data-projid="${p.projId}">${p.label}</option>`).join('');
 }
@@ -2843,6 +2850,8 @@ function startProjSync() {
       projects.sort((a,b) => new Date(b._ts||0) - new Date(a._ts||0));
       renderProjGrid();
       calRender();
+      if(document.getElementById('page-finance')?.classList.contains('on'))renderFinance();
+      if(document.getElementById('page-admin')?.classList.contains('on'))renderAdmin();
     },
     () => { renderProjGrid(); }
   );
@@ -2904,12 +2913,15 @@ window.createProject = async function() {
 
 function renderProjGrid() {
   const grid = document.getElementById('projGrid'); if(!grid) return;
-  if(!projects.length){
-    grid.innerHTML='<div style="padding:40px;text-align:center;color:var(--gray-400)">ยังไม่มีโปรเจกต์ — กด "+ สร้างโปรเจกต์" ด้านบน</div>';
+  const visibleProj = canSeeAll()
+    ? projects
+    : projects.filter(p => !currentUser.projectAccess?.length || currentUser.projectAccess.includes(p.id));
+  if(!visibleProj.length){
+    grid.innerHTML='<div style="padding:40px;text-align:center;color:var(--gray-400)">ยังไม่มีโปรเจกต์ที่เข้าถึงได้</div>';
     return;
   }
   const sl={active:'🟡 กำลังดำเนินการ',completed:'✅ เสร็จสิ้น',paused:'⏸️ หยุดชั่วคราว',cancelled:'❌ ยกเลิก'};
-  grid.innerHTML = projects.map(p=>`
+  grid.innerHTML = visibleProj.map(p=>`
     <div class="proj-card" onclick="openProjDetail('${p.id}')">
       <div class="proj-card-id">${p.projId||p.id}</div>
       <div class="proj-card-name">${p.name||'—'}</div>
@@ -2944,6 +2956,8 @@ window.openProjDetail = function(pid) {
   const dra=document.getElementById('pd-drafter'); if(dra){dra.innerHTML=uOpts;dra.value=p.drafter||'';}
   renderTimeline(p); renderProjChecklist(p); renderProjFiles(p);
   renderContractorUpdates(p); renderProjFinCalc(p);
+  const btnFL=document.getElementById('btnAddFileLink');
+  if(btnFL) btnFL.style.display=isAdmin()?'':'none';
   const firstTab=document.querySelector('.ptab'); if(firstTab) showPTab('info',firstTab);
 };
 
@@ -3078,29 +3092,25 @@ function renderProjFiles(p){
   const el=document.getElementById('projFiles'); if(!el)return;
   const files=p.files||[];
   if(!files.length){el.innerHTML='<div style="color:var(--gray-400);font-size:13px;padding:20px 0">ยังไม่มีไฟล์</div>';return;}
-  el.innerHTML=files.map((f,i)=>`
+  el.innerHTML=files.map(f=>`
     <div class="file-item">
-      <span>📄 ${f.name||f.url||'ไฟล์'}</span>
-      <div style="display:flex;gap:6px">
-        ${f.url?'<a href="'+f.url+'" target="_blank" class="btn btn-ghost btn-sm">🔗 เปิด</a>':''}
-        <button class="btn btn-ghost btn-sm" onclick="delFileLink(${i})">🗑️</button>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:500;color:var(--gray-800);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">📄 ${f.name||f.url||'ไฟล์'}</div>
+        ${f.by?`<div style="font-size:10px;color:var(--gray-400);margin-top:2px">อัปโหลดโดย ${f.by}${f.date?' · '+f.date:''}</div>`:''}
+      </div>
+      <div style="display:flex;gap:6px;flex-shrink:0">
+        ${f.url?`<a href="${f.url}" target="_blank" class="btn btn-ghost btn-sm">🔗 เปิด</a>`:''}
       </div>
     </div>`).join('');
 }
 
 window.addFileLink=async function(){
+  if(!isAdmin()){toast('เฉพาะ Admin เท่านั้นที่เพิ่มลิงก์ไฟล์ได้','err');return;}
   const name=prompt('ชื่อไฟล์/เอกสาร:'); if(!name)return;
   const url=prompt('ลิงก์ (Google Drive หรืออื่นๆ):')||'';
   const p=projects.find(x=>x.id===currentProjId); if(!p)return;
   const files=[...(p.files||[]),{name,url,by:currentUser.name,date:today()}];
   await saveProjToCloud({...p,files}); renderProjFiles({...p,files}); toast('เพิ่มไฟล์ ✓','ok');
-};
-
-window.delFileLink=async function(idx){
-  if(!confirm('ลบไฟล์นี้?'))return;
-  const p=projects.find(x=>x.id===currentProjId); if(!p)return;
-  const files=(p.files||[]).filter((_,i)=>i!==idx);
-  await saveProjToCloud({...p,files}); renderProjFiles({...p,files});
 };
 
 function renderContractorUpdates(p){
@@ -3514,6 +3524,187 @@ window.deleteAccBundle=async function(bundleId){
   if(!confirm(`ลบโฟลเดอร์ "${b.monthLabel||b.month}" ทั้งหมด? ไม่สามารถกู้คืนได้`))return;
   await deleteDoc(doc(db,'acc_bundles',bundleId));
   toast('ลบโฟลเดอร์แล้ว','ok');
+};
+
+// ══════════════════════════════════════════
+// FINANCE DASHBOARD MODULE
+// ══════════════════════════════════════════
+function renderFinance(){
+  if(!canSeeFin())return;
+  const allP=[...projects,...leads.filter(l=>l.revenue||l.expense)];
+  const totalRev=allP.reduce((s,p)=>s+pn(p.revenue),0);
+  const totalExp=allP.reduce((s,p)=>s+pn(p.expense),0);
+  const profit=totalRev-totalExp;
+  const margin=totalRev>0?Math.round(profit/totalRev*100):0;
+  const outstanding=allP.filter(p=>pn(p.budget)>0&&pn(p.revenue)<pn(p.budget)&&p.status!=='cancelled');
+
+  // KPI
+  const kpi=document.getElementById('finKpiGrid');
+  if(kpi) kpi.innerHTML=`
+    <div class="kpi-card kpi-rev"><div class="kpi-lbl">รายรับจริง</div><div class="kpi-val" style="color:var(--green)">${totalRev>=1e6?(totalRev/1e6).toFixed(1)+'M':fmtN(totalRev)}฿</div><div class="kpi-sub">จาก ${allP.filter(p=>p.revenue).length} โปรเจกต์</div></div>
+    <div class="kpi-card kpi-exp"><div class="kpi-lbl">รายจ่ายจริง</div><div class="kpi-val" style="color:var(--red)">${totalExp>=1e6?(totalExp/1e6).toFixed(1)+'M':fmtN(totalExp)}฿</div><div class="kpi-sub">ต้นทุนรวม</div></div>
+    <div class="kpi-card kpi-profit"><div class="kpi-lbl">กำไรสุทธิ</div><div class="kpi-val" style="color:${profit>=0?'var(--gold)':'var(--red)'}">${profit>=0?'+':''}${profit>=1e6?(profit/1e6).toFixed(1)+'M':fmtN(profit)}฿</div><div class="kpi-sub">Margin ${margin}%</div></div>
+    <div class="kpi-card"><div class="kpi-lbl">รอรับเงิน</div><div class="kpi-val" style="color:var(--blue)">${outstanding.length}</div><div class="kpi-sub">โปรเจกต์ยังไม่ครบ</div></div>
+    <div class="kpi-card"><div class="kpi-lbl">Pipeline</div><div class="kpi-val" style="color:var(--gray-700)">${leads.filter(l=>ACTIVE_STEPS.includes(l.step)).reduce((s,l)=>s+pn(l.budget),0)>=1e6?(leads.filter(l=>ACTIVE_STEPS.includes(l.step)).reduce((s,l)=>s+pn(l.budget),0)/1e6).toFixed(1)+'M':fmtN(leads.filter(l=>ACTIVE_STEPS.includes(l.step)).reduce((s,l)=>s+pn(l.budget),0))}฿</div><div class="kpi-sub">Lead กำลังติดตาม</div></div>`;
+
+  // Monthly Chart (12 months)
+  const now=new Date();
+  const months=[];
+  for(let i=11;i>=0;i--){const d=new Date(now.getFullYear(),now.getMonth()-i,1);months.push({y:d.getFullYear(),m:d.getMonth(),label:['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'][d.getMonth()]});}
+  const mData=months.map(({y,m,label})=>{
+    const items=allP.filter(p=>{const d=new Date(p._ts||p.updatedAt||p.createdAt||0);return d.getFullYear()===y&&d.getMonth()===m;});
+    return{label,rev:items.reduce((s,p)=>s+pn(p.revenue),0),exp:items.reduce((s,p)=>s+pn(p.expense),0)};
+  });
+  const maxVal=Math.max(...mData.map(d=>Math.max(d.rev,d.exp)),1);
+  const chart=document.getElementById('finMonthChart');
+  if(chart) chart.innerHTML=`<div style="display:flex;align-items:flex-end;gap:6px;height:120px;padding:0 4px">${mData.map(d=>`
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px">
+      <div style="width:100%;display:flex;gap:2px;align-items:flex-end;height:100px">
+        <div style="flex:1;background:var(--green);opacity:.8;border-radius:2px 2px 0 0;height:${Math.round(d.rev/maxVal*100)}%;min-height:${d.rev?2:0}px" title="รายรับ ${fmtN(d.rev)}฿"></div>
+        <div style="flex:1;background:var(--red);opacity:.6;border-radius:2px 2px 0 0;height:${Math.round(d.exp/maxVal*100)}%;min-height:${d.exp?2:0}px" title="รายจ่าย ${fmtN(d.exp)}฿"></div>
+      </div>
+      <div style="font-size:9px;color:var(--gray-400);white-space:nowrap">${d.label}</div>
+    </div>`).join('')}</div>`;
+
+  // Outstanding
+  const outEl=document.getElementById('finOutstanding');
+  if(outEl) outEl.innerHTML=outstanding.length?outstanding.slice(0,8).map(p=>{
+    const paid=pn(p.revenue);const total=pn(p.budget);const remain=total-paid;
+    return`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border-lt)">
+      <div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;color:var(--gray-800);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.name||p.client||'—'}</div><div style="font-size:10px;color:var(--gray-400)">${p.projId||p.id}</div></div>
+      <div style="text-align:right;flex-shrink:0"><div style="font-size:12px;font-weight:600;color:var(--blue)">${fmtN(remain)}฿</div><div style="font-size:10px;color:var(--gray-400)">คงเหลือ</div></div>
+    </div>`}).join('')+'<div style="font-size:11px;color:var(--gray-400);padding:8px 0">รวม '+outstanding.length+' รายการ</div>'
+    :'<div style="font-size:12px;color:var(--gray-400);padding:20px 0;text-align:center">ไม่มีรายการค้างชำระ ✓</div>';
+
+  // Project finance profit list
+  const projList=document.getElementById('finProjList');
+  const sortedP=[...allP].filter(p=>p.revenue||p.expense).sort((a,b)=>pn(b.revenue)-pn(a.revenue)).slice(0,10);
+  if(projList) projList.innerHTML=sortedP.length?`<div style="display:flex;flex-direction:column;gap:4px">${sortedP.map(p=>{
+    const rev=pn(p.revenue),exp=pn(p.expense),net=rev-exp;
+    const bar=rev>0?Math.round(net/rev*100):0;
+    return`<div class="proj-fin-row">
+      <div class="proj-fin-name">${p.name||p.client||p.projId||'—'}</div>
+      <div class="proj-fin-bar-wrap"><div class="proj-fin-bar" style="width:${Math.max(0,bar)}%"></div></div>
+      <div class="proj-fin-val" style="color:${net>=0?'var(--green)':'var(--red)'}">${net>=0?'+':''}${fmtN(net)}฿</div>
+    </div>`;}).join('')}</div>`:'<div style="font-size:12px;color:var(--gray-400);padding:12px 0;text-align:center">ยังไม่มีข้อมูลรายรับ</div>';
+
+  // Full table
+  const tbody=document.getElementById('finBody');
+  if(tbody) tbody.innerHTML=[...projects,...leads.filter(l=>l.budget||l.revenue)].map(p=>{
+    const rev=pn(p.revenue),exp=pn(p.expense),bud=pn(p.budget),net=rev-exp,mg=rev>0?Math.round(net/rev*100):0;
+    const stMap={active:'🟡',completed:'✅',paused:'⏸️',cancelled:'❌',delivering:'📦',designing:'✏️',constructing:'🏗️'};
+    return`<tr>
+      <td>${p.projId||p.id||'—'}<br><span style="font-size:10px;color:var(--gray-400)">${p.name||p.client||''}</span></td>
+      <td style="text-align:right;font-family:monospace">${bud?fmtN(bud)+'฿':'—'}</td>
+      <td style="text-align:right;font-family:monospace;color:var(--green)">${rev?fmtN(rev)+'฿':'—'}</td>
+      <td style="text-align:right;font-family:monospace;color:var(--red)">${exp?fmtN(exp)+'฿':'—'}</td>
+      <td style="text-align:right;font-family:monospace;font-weight:600;color:${net>=0?'var(--green)':'var(--red)'}">${rev||exp?(net>=0?'+':'')+fmtN(net)+'฿':'—'}</td>
+      <td style="text-align:right">${rev>0?mg+'%':'—'}</td>
+      <td>${stMap[p.status||p.step]||'—'} ${(p.status||p.step)||'—'}</td>
+    </tr>`;}).join('') || '<tr><td colspan="7" style="text-align:center;color:var(--gray-400);padding:20px">ยังไม่มีข้อมูล</td></tr>';
+}
+
+// ══════════════════════════════════════════
+// ADMIN PANEL MODULE
+// ══════════════════════════════════════════
+function renderAdmin(){
+  if(!isAdmin())return;
+  const wrap=document.getElementById('adminContent'); if(!wrap) return;
+  const userList=Object.entries(users).sort((a,b)=>a[0].localeCompare(b[0]));
+  const roleCounts={};userList.forEach(([,u])=>{roleCounts[u.role]=(roleCounts[u.role]||0)+1;});
+  const rcBadge=(role,count)=>{const c=ROLE_COLOR[role]||'#999';return`<span style="background:${c}20;color:${c};padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600">${ROLE_LABEL[role]||role.toUpperCase()} ${count}</span>`;};
+  wrap.innerHTML=`
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px">
+      ${Object.entries(roleCounts).map(([r,n])=>rcBadge(r,n)).join('')}
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div style="font-size:13px;font-weight:600;color:var(--gray-700)">ผู้ใช้งานทั้งหมด (${userList.length} คน)</div>
+      <button class="btn btn-gold btn-sm" onclick="openUserModal()">+ เพิ่มผู้ใช้</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      ${userList.map(([uid,u])=>{
+        const rc=ROLE_COLOR[u.role]||'#999';
+        const projNames=(u.projectAccess||[]).map(pid=>{const p=projects.find(x=>x.id===pid);return p?p.projId||p.name:pid;}).filter(Boolean);
+        return`<div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:12px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+          <div style="width:36px;height:36px;border-radius:50%;background:${rc}20;color:${rc};display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0">${(u.name||uid)[0].toUpperCase()}</div>
+          <div style="flex:1;min-width:160px">
+            <div style="font-size:14px;font-weight:600;color:var(--gray-800)">${u.name||uid} <span style="font-size:11px;font-weight:400;color:var(--gray-400)">(${uid})</span></div>
+            <div style="display:flex;align-items:center;gap:8px;margin-top:3px;flex-wrap:wrap">
+              <span style="background:${rc}20;color:${rc};padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600">${ROLE_LABEL[u.role]||u.role}</span>
+              ${u.email?`<span style="font-size:11px;color:var(--gray-400)">${u.email}</span>`:''}
+            </div>
+            ${projNames.length?`<div style="font-size:10px;color:var(--gray-400);margin-top:4px">📂 ${projNames.join(', ')}</div>`:'<div style="font-size:10px;color:var(--gray-400);margin-top:4px">📂 เข้าถึงได้ทั้งหมด</div>'}
+          </div>
+          <div style="display:flex;gap:6px;flex-shrink:0">
+            <button class="btn btn-ghost btn-sm" onclick="editUser('${uid}')">✏️ แก้ไข</button>
+            ${uid!==currentUser.user?`<button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="deleteUser('${uid}')">🗑</button>`:''}
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`;
+}
+
+window.openUserModal=function(uid){
+  editingUserId=uid||null;
+  document.getElementById('modalTitle').textContent=uid?'แก้ไขผู้ใช้':'เพิ่มผู้ใช้ใหม่';
+  document.getElementById('modalSub').textContent=uid?`แก้ไขข้อมูลของ ${uid}`:'กรอกข้อมูลผู้ใช้งานระบบ';
+  const u=uid?users[uid]:null;
+  document.getElementById('m-user').value=uid||'';
+  document.getElementById('m-user').disabled=!!uid;
+  document.getElementById('m-pass').value=u?.pass||'';
+  document.getElementById('m-name').value=u?.name||'';
+  document.getElementById('m-email').value=u?.email||'';
+  document.getElementById('m-role').value=u?.role||'designer';
+  // Project assignment grid
+  const grid=document.getElementById('projAssignGrid');
+  const selected=u?.projectAccess||[];
+  grid.innerHTML=projects.length?projects.map(p=>`
+    <label style="display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:var(--r-sm);cursor:pointer;font-size:12px;border:1px solid var(--border);background:var(--gray-50)">
+      <input type="checkbox" value="${p.id}" ${selected.includes(p.id)?'checked':''} style="accent-color:var(--gold)">
+      <span style="font-family:monospace;font-size:11px;color:var(--blue)">${p.projId||p.id}</span>
+      <span style="flex:1">${p.name||p.client||'—'}</span>
+    </label>`).join(''):'<div style="font-size:12px;color:var(--gray-400);padding:8px 0">ยังไม่มีโปรเจกต์</div>';
+  document.getElementById('userModal').classList.add('show');
+};
+
+window.editUser=function(uid){ openUserModal(uid); };
+
+window.closeUserModal=function(){
+  document.getElementById('userModal').classList.remove('show');
+  editingUserId=null;
+};
+
+window.saveUser=async function(){
+  const uid=(document.getElementById('m-user').value||'').trim().toLowerCase();
+  const pass=document.getElementById('m-pass').value.trim();
+  const name=document.getElementById('m-name').value.trim();
+  const role=document.getElementById('m-role').value;
+  const email=document.getElementById('m-email').value.trim();
+  if(!uid){toast('กรุณาใส่ Username','err');return;}
+  if(!pass){toast('กรุณาใส่ Password','err');return;}
+  if(!name){toast('กรุณาใส่ชื่อแสดง','err');return;}
+  if(!editingUserId&&users[uid]){toast('Username นี้มีอยู่แล้ว','err');return;}
+  const projAccess=[...document.getElementById('projAssignGrid').querySelectorAll('input[type=checkbox]:checked')].map(cb=>cb.value);
+  const existing=users[uid]||{};
+  users[uid]={...existing,pass,name,display:name,role,email,projectAccess:projAccess};
+  try{
+    await saveUsersToCloud();
+    toast((editingUserId?'แก้ไข':'เพิ่ม')+`ผู้ใช้ "${name}" ✓`,'ok');
+    closeUserModal();
+    renderAdmin();
+  }catch(e){toast('บันทึกไม่สำเร็จ: '+e.message,'err');}
+};
+
+window.deleteUser=async function(uid){
+  if(uid===currentUser.user){toast('ไม่สามารถลบตัวเองได้','err');return;}
+  const u=users[uid];
+  if(!confirm(`ลบผู้ใช้ "${u?.name||uid}" ออกจากระบบ?`))return;
+  delete users[uid];
+  try{
+    await saveUsersToCloud();
+    toast(`ลบผู้ใช้ "${u?.name||uid}" แล้ว`,'ok');
+    renderAdmin();
+  }catch(e){toast('ลบไม่สำเร็จ: '+e.message,'err');}
 };
 
 // ── Init ──

@@ -1290,7 +1290,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
           <div class="funnel-v2" id="analyticsFunnel"></div>
         </div>
         <div class="a2-card">
-          <div class="a2-title">เป้าหมายปี 2568</div>
+          <div class="a2-title">เป้าหมายปี 2569</div>
           <div id="analyticsGoals"></div>
         </div>
       </div>
@@ -2592,11 +2592,8 @@ window.saveEvent=async function(){
 // ANALYTICS v2 — Phase 5
 // ══════════════════════════════════════════
 let analyticsPeriod = 'year';
-const GOALS_2568 = {
-  deals: { label:'ปิดงานได้', target:10, unit:'โปรเจกต์', color:'var(--green)' },
-  revenue: { label:'รายรับรวม', target:4000000, unit:'฿', color:'var(--gold)' },
-  profit: { label:'กำไรสุทธิ', target:2000000, unit:'฿', color:'var(--purple)' },
-  leads: { label:'Lead ทั้งหมด', target:60, unit:'ราย', color:'var(--blue)' },
+const GOALS_2569 = {
+  profit: { label:'กำไรสุทธิ', target:1500000, unit:'฿', color:'var(--purple)' },
 };
 const SRC_COLORS = ['#c49a3c','#2563a8','#2d7a5a','#c05c1a','#7c3aed','#c0392b','#a89f93','#185FA5'];
 
@@ -2622,7 +2619,7 @@ function getFilteredByPeriod(arr){
 }
 
 function renderAnalytics(){
-  const periodLabels={month:'เดือนนี้',quarter:'ไตรมาสนี้',year:'ปี 2568',all:'ทั้งหมด'};
+  const periodLabels={month:'เดือนนี้',quarter:'ไตรมาสนี้',year:'ปี 2569',all:'ทั้งหมด'};
   const el=document.getElementById('analyticsPeriodLabel');
   if(el) el.textContent='ภาพรวมธุรกิจ — '+periodLabels[analyticsPeriod];
 
@@ -2654,35 +2651,28 @@ function renderAnalytics(){
   const maxCount=Math.max(...Object.values(stepCounts),1);
   const funColors=['#2563a8','#2563a8','#7c3aed','#7c3aed','#c49a3c','#c49a3c','#c05c1a','#c05c1a','#2d7a5a','#2d7a5a','#2d7a5a','#185FA5'];
   const funnelEl=document.getElementById('analyticsFunnel');
+  const totalLeads=filtLeads.length||1;
   if(funnelEl) funnelEl.innerHTML=STEPS.map((s,i)=>{
     const cnt=stepCounts[s.id]||0;
-    // หาขั้นตอนก่อนหน้าที่มี lead อยู่จริง (ข้ามขั้นที่ว่าง)
-    let refCount=null, refLabel='';
-    for(let j=i-1;j>=0;j--){
-      if(stepCounts[STEPS[j].id]>0){refCount=stepCounts[STEPS[j].id];refLabel=STEPS[j].label;break;}
-    }
-    const pct=(refCount!==null&&refCount>0)?Math.round(cnt/refCount*100):null;
-    // สีตาม conversion rate
-    const pctColor=pct===null?'var(--gray-400)':pct>=80?'var(--green)':pct>=50?'var(--gold)':'var(--red)';
+    // % คำนวณจาก Lead ทั้งหมด (100% = total leads)
+    const pct=Math.round(cnt/totalLeads*100);
+    const pctColor=pct>=80?'var(--green)':pct>=50?'var(--gold)':'var(--red)';
     // แถบกว้างตามสัดส่วน — ไม่มี minimum สำหรับขั้นที่ว่าง
     const w=cnt>0?Math.max(cnt/maxCount*100,6):0;
-    const pctTxt=pct!==null?`<span style="color:${pctColor};font-weight:600">${pct}%</span><span style="font-size:10px;color:var(--gray-300);margin-left:2px">vs ${refLabel}</span>`:'—';
+    const pctTxt=`<span style="color:${pctColor};font-weight:600">${pct}%</span><span style="font-size:10px;color:var(--gray-300);margin-left:2px">จาก Lead ทั้งหมด</span>`;
     return`<div class="funnel-v2-row">
       <div class="funnel-v2-lbl">${s.label}</div>
       <div class="funnel-v2-bar-wrap"><div class="funnel-v2-bar" style="width:${w}%;background:${funColors[i]}">${cnt>0?cnt:''}</div></div>
-      <div class="funnel-v2-pct" style="min-width:120px;text-align:right">${i===0?`<span style="color:var(--gray-400)">เริ่มต้น</span>`:pctTxt}</div>
+      <div class="funnel-v2-pct" style="min-width:140px;text-align:right">${pctTxt}</div>
     </div>`;
   }).join('');
 
-  // Goals 2568
+  // Goals 2569
   const goalData={
-    deals:{actual:done},
-    revenue:{actual:totalRev},
     profit:{actual:Math.max(profit,0)},
-    leads:{actual:filtLeads.length},
   };
   const goalsEl=document.getElementById('analyticsGoals');
-  if(goalsEl) goalsEl.innerHTML=Object.entries(GOALS_2568).map(([k,g])=>{
+  if(goalsEl) goalsEl.innerHTML=Object.entries(GOALS_2569).map(([k,g])=>{
     const actual=goalData[k]?.actual||0;
     const pct=Math.min(Math.round(actual/g.target*100),100);
     const valStr=g.unit==='฿'?(actual>=1e6?(actual/1e6).toFixed(1)+'M฿':fmtN(actual)+'฿'):actual+' '+g.unit;
@@ -2734,9 +2724,9 @@ function renderAnalytics(){
   if(topSrc) insights.push({icon:'📊',text:`Lead ส่วนใหญ่มาจาก "${topSrc[0]}" (${topSrc[1]} ราย / ${Math.round(topSrc[1]/total*100)}%)`,color:'var(--blue)'});
   if(convRate>0) insights.push({icon:'✅',text:`Conversion rate ${convRate}% — ปิดได้ ${done} จาก ${filtLeads.length} Lead`,color:'var(--green)'});
   if(pipeline>0) insights.push({icon:'💰',text:`Pipeline มูลค่า ${(pipeline/1e6).toFixed(1)}M฿ — กำลังติดตามอยู่`,color:'var(--purple)'});
-  const goalPct=done/GOALS_2568.deals.target*100;
-  if(goalPct<50) insights.push({icon:'🎯',text:`ปิดงานได้ ${done}/${GOALS_2568.deals.target} โปรเจกต์ — ยังเหลือ ${GOALS_2568.deals.target-done} โปรเจกต์เพื่อถึงเป้า`,color:'var(--orange)'});
-  else if(goalPct>=100) insights.push({icon:'🎉',text:`บรรลุเป้าหมายปิดงาน ${done} โปรเจกต์แล้ว!`,color:'var(--green)'});
+  const profitGoalPct=profit/GOALS_2569.profit.target*100;
+  if(profitGoalPct>=100) insights.push({icon:'🎉',text:`บรรลุเป้าหมายกำไรสุทธิ 1.5M฿ แล้ว!`,color:'var(--green)'});
+  else if(profitGoalPct>=70) insights.push({icon:'💰',text:`กำไรสุทธิ ${(profit/1e6).toFixed(2)}M฿ — ใกล้เป้า 1.5M฿ แล้ว`,color:'var(--gold)'});
   const insEl=document.getElementById('analyticsInsights');
   if(insEl) insEl.innerHTML=insights.length?insights.map(i=>`<div class="insight-item" style="border-left-color:${i.color}">${i.icon} ${i.text}</div>`).join(''):'<div style="color:var(--gray-400);font-size:12px">เพิ่ม Lead เพื่อดู Insights</div>';
 
@@ -2777,7 +2767,7 @@ window.exportAnalyticsReport=function(){
   const totalExp=filtLeads.reduce((s,l)=>s+pn(l.expense),0)+projects.reduce((s,p)=>s+pn(p.expense),0);
   const profit=totalRev-totalExp;
   const convRate=filtLeads.length>0?Math.round(done/filtLeads.length*100):0;
-  const periodLabels={month:'เดือนนี้',quarter:'ไตรมาสนี้',year:'ปี 2568',all:'ทั้งหมด'};
+  const periodLabels={month:'เดือนนี้',quarter:'ไตรมาสนี้',year:'ปี 2569',all:'ทั้งหมด'};
   const srcMap={};filtLeads.forEach(l=>{const s=l.src||'ไม่ระบุ';srcMap[s]=(srcMap[s]||0)+1;});
   function q(v){return '"'+String(v).replace(/"/g,'""')+'"';}
   const rows=[

@@ -1123,6 +1123,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
         <button class="ptab" onclick="showPTab('files',this)">📁 ไฟล์แบบ</button>
         <button class="ptab" onclick="showPTab('contractor',this)">🏗️ ผู้รับเหมา</button>
         <button class="ptab" onclick="showPTab('finance',this)">💰 การเงิน</button>
+        <button class="ptab" id="ptabAccess" onclick="showPTab('access',this)" style="display:none">👥 สิทธิ์</button>
       </div>
       <!-- INFO TAB -->
       <div class="ptab-content on" id="ptab-info">
@@ -1198,6 +1199,15 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
             <div class="fin-summary" id="pdFinCalc"></div>
           </div>
         </div>
+      <!-- ACCESS TAB -->
+      <div class="ptab-content" id="ptab-access">
+        <div style="margin-bottom:14px">
+          <div style="font-size:13px;font-weight:600;color:var(--gray-800);margin-bottom:4px">👥 กำหนดสิทธิ์การเข้าถึงโปรเจกต์</div>
+          <div style="font-size:12px;color:var(--gray-400)">เลือกพนักงานที่มีสิทธิ์เข้าถึงโปรเจกต์นี้ · Owner และ Admin เห็นทุกโปรเจกต์อยู่แล้ว</div>
+        </div>
+        <div id="projAccessGrid" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px"></div>
+        <button class="btn btn-green" onclick="saveProjAccess()">💾 บันทึกสิทธิ์</button>
+      </div>
       </div>
     </div>
   </div>
@@ -1852,8 +1862,10 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
       </div>
     </div>
     <div class="field" style="margin-bottom:12px"><label>อีเมล (ไม่บังคับ)</label><input id="m-email" placeholder="email@example.com" type="email"></div>
-    <div style="margin-bottom:4px;font-size:11px;color:var(--gray-500);font-weight:600;letter-spacing:0.03em">กำหนดโปรเจกต์ที่เข้าถึงได้ <span style="font-weight:400;color:var(--gray-400)">(ถ้าไม่เลือก = เห็นทั้งหมด)</span></div>
-    <div class="proj-assign-grid" id="projAssignGrid"></div>
+    <div style="margin-bottom:4px;font-size:11px;color:var(--gray-500);font-weight:600;letter-spacing:0.03em">โปรเจกต์ที่เข้าถึงได้</div>
+    <div id="projAssignGrid" style="font-size:12px;color:var(--gray-500);padding:8px 10px;background:var(--gray-50);border:1px solid var(--border);border-radius:var(--r-sm);line-height:1.7">
+      <span style="color:var(--gray-400)">ตั้งค่าสิทธิ์ได้ที่ โปรเจกต์ → tab 👥 สิทธิ์</span>
+    </div>
     <div class="modal-foot">
       <button class="btn btn-ghost" onclick="closeUserModal()">ยกเลิก</button>
       <button class="btn btn-green" onclick="saveUser()">💾 บันทึก</button>
@@ -3394,6 +3406,9 @@ window.openProjDetail = function(pid) {
     const el=document.getElementById(id);
     if(el) el.readOnly = !canEditFin();
   });
+  // Access tab — owner only
+  const ptabAccess=document.getElementById('ptabAccess');
+  if(ptabAccess) ptabAccess.style.display=isOwner()?'':'none';
   const firstTab=document.querySelector('.ptab'); if(firstTab) showPTab('info',firstTab);
 };
 
@@ -3439,6 +3454,7 @@ window.showPTab=function(tab,el){
   document.querySelectorAll('.ptab-content').forEach(c=>c.classList.remove('on'));
   if(el)el.classList.add('on');
   const tc=document.getElementById('ptab-'+tab); if(tc)tc.classList.add('on');
+  if(tab==='access') renderProjAccess();
 };
 
 window.convertProjToLead=function(){
@@ -3569,6 +3585,77 @@ window.addContractorUpdate=async function(){
   const p=projects.find(x=>x.id===currentProjId); if(!p)return;
   const upds=[...(p.contractorUpdates||[]),{text,by:currentUser.name,at:nowTH(),date:today()}];
   await saveProjToCloud({...p,contractorUpdates:upds}); renderContractorUpdates({...p,contractorUpdates:upds}); toast('บันทึกอัปเดต ✓','ok');
+};
+
+function renderProjAccess(){
+  if(!isOwner()) return;
+  const grid=document.getElementById('projAccessGrid'); if(!grid) return;
+  const p=projects.find(x=>x.id===currentProjId); if(!p) return;
+
+  // Roles that always see all projects — exclude from checkboxes
+  const alwaysAll=['owner','admin'];
+  const staffUsers=Object.entries(users).filter(([,u])=>!alwaysAll.includes(u.role));
+
+  if(!staffUsers.length){
+    grid.innerHTML='<div style="font-size:12px;color:var(--gray-400);padding:12px 0">ยังไม่มีพนักงานในระบบ</div>';
+    return;
+  }
+
+  const ROLE_TH={sales:'Sales',designer:'Designer',drafter:'Drafter',accounting:'Accounting',contractor:'Contractor',outsource:'Outsource'};
+  grid.innerHTML=staffUsers.map(([uid,u])=>{
+    const hasAccess=(u.projectAccess||[]).includes(p.id)||(u.projectAccess||[]).length===0;
+    // Show checked if user has explicit access OR has no restrictions (empty array = sees all)
+    const checked=(u.projectAccess||[]).includes(p.id);
+    const noRestrict=!(u.projectAccess||[]).length;
+    const rc=ROLE_COLOR[u.role]||'#999';
+    return `
+    <label style="display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:var(--r-sm);border:1px solid var(--border);background:var(--white);cursor:pointer;transition:background .1s"
+           onmouseover="this.style.background='var(--gray-50)'" onmouseout="this.style.background='var(--white)'">
+      <input type="checkbox" data-uid="${uid}" value="${p.id}" ${checked?'checked':''} style="accent-color:var(--gold);width:16px;height:16px;flex-shrink:0">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:500;color:var(--gray-800)">${u.name||uid}</div>
+        <div style="font-size:11px;color:var(--gray-400)">${uid}</div>
+      </div>
+      <span style="background:${rc}20;color:${rc};padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;flex-shrink:0">${ROLE_TH[u.role]||u.role}</span>
+      ${noRestrict?'<span style="font-size:10px;color:var(--gray-300);flex-shrink:0">ไม่มีข้อจำกัด</span>':''}
+    </label>`;
+  }).join('');
+
+  // Info note for owner/admin
+  grid.innerHTML+=`
+    <div style="margin-top:8px;padding:8px 12px;background:var(--gray-50);border-radius:var(--r-sm);font-size:11px;color:var(--gray-400)">
+      👑 Owner และ Admin เห็นทุกโปรเจกต์อัตโนมัติ · พนักงานที่ไม่มีข้อจำกัด (ช่องว่าง) = เห็นทุกโปรเจกต์เช่นกัน
+    </div>`;
+}
+
+window.saveProjAccess = async function(){
+  if(!isOwner()){toast('เฉพาะ Owner เท่านั้น','err');return;}
+  const p=projects.find(x=>x.id===currentProjId); if(!p) return;
+  const grid=document.getElementById('projAccessGrid'); if(!grid) return;
+
+  const checkedUids=new Set([...grid.querySelectorAll('input[type=checkbox]:checked')].map(cb=>cb.dataset.uid));
+
+  let changed=false;
+  for(const [uid,u] of Object.entries(users)){
+    if(['owner','admin'].includes(u.role)) continue; // never touch owner/admin
+    const currentAccess=u.projectAccess||[];
+    const hadAccess=currentAccess.includes(p.id);
+    const shouldHave=checkedUids.has(uid);
+    if(hadAccess===shouldHave) continue;
+    if(shouldHave){
+      users[uid].projectAccess=[...currentAccess, p.id];
+    } else {
+      users[uid].projectAccess=currentAccess.filter(id=>id!==p.id);
+    }
+    changed=true;
+  }
+
+  if(!changed){toast('ไม่มีการเปลี่ยนแปลง','ok');return;}
+  try{
+    await saveUsersToCloud();
+    toast('บันทึกสิทธิ์โปรเจกต์ ✓','ok');
+    renderProjAccess(); // re-render to reflect saved state
+  }catch(e){toast('บันทึกไม่สำเร็จ: '+e.message,'err');}
 };
 
 function renderProjFinCalc(p){
@@ -4480,7 +4567,7 @@ function renderAdmin(){
               ${isUOwner?'<span style="font-size:10px;color:#5b21b6;font-weight:600">👑 เจ้าของระบบ</span>':''}
               ${u.email?`<span style="font-size:11px;color:var(--gray-400)">${u.email}</span>`:''}
             </div>
-            ${projNames.length?`<div style="font-size:10px;color:var(--gray-400);margin-top:4px">📂 ${projNames.join(', ')}</div>`:'<div style="font-size:10px;color:var(--gray-400);margin-top:4px">📂 เข้าถึงได้ทั้งหมด</div>'}
+            ${['owner','admin'].includes(u.role)?'<div style="font-size:10px;color:var(--green);margin-top:4px">📂 เห็นทุกโปรเจกต์ (ตาม Role)</div>':projNames.length?`<div style="font-size:10px;color:var(--gray-400);margin-top:4px">📂 ${projNames.join(' · ')}</div>`:'<div style="font-size:10px;color:var(--gray-300);margin-top:4px">📂 ยังไม่ได้กำหนดโปรเจกต์ — ตั้งที่ โปรเจกต์ → 👥 สิทธิ์</div>'}
           </div>
           <div style="display:flex;gap:6px;flex-shrink:0;align-items:center">
             ${canImper_?`<button class="btn btn-gold btn-sm" onclick="impersonateUser('${uid}')" title="ดูระบบในมุมมองของ ${u.name||uid}">👁 ดูในฐานะ</button>`:''}
@@ -4511,15 +4598,18 @@ window.openUserModal=function(uid){
   // show/hide owner-only role options
   document.querySelectorAll('#m-role .opt-owner-only').forEach(el=>el.style.display=isOwner()?'':'none');
   document.getElementById('m-role').value=u?.role||'designer';
-  // Project assignment grid
+  // Show read-only project access info
   const grid=document.getElementById('projAssignGrid');
   const selected=u?.projectAccess||[];
-  grid.innerHTML=projects.length?projects.map(p=>`
-    <label style="display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:var(--r-sm);cursor:pointer;font-size:12px;border:1px solid var(--border);background:var(--gray-50)">
-      <input type="checkbox" value="${p.id}" ${selected.includes(p.id)?'checked':''} style="accent-color:var(--gold)">
-      <span style="font-family:monospace;font-size:11px;color:var(--blue)">${p.projId||p.id}</span>
-      <span style="flex:1">${p.name||p.client||'—'}</span>
-    </label>`).join(''):'<div style="font-size:12px;color:var(--gray-400);padding:8px 0">ยังไม่มีโปรเจกต์</div>';
+  const roleAlwaysSeeAll=['owner','admin'].includes(u?.role||'');
+  if(roleAlwaysSeeAll){
+    grid.innerHTML='<span style="color:var(--green);font-weight:500">✅ เห็นทุกโปรเจกต์ (ตาม Role)</span>';
+  } else if(!selected.length){
+    grid.innerHTML='<span style="color:var(--gray-400)">ยังไม่ได้กำหนด — ตั้งที่ โปรเจกต์ → tab 👥 สิทธิ์</span>';
+  } else {
+    const names=selected.map(pid=>{const p=projects.find(x=>x.id===pid);return p?(p.projId||p.name||pid):pid;});
+    grid.innerHTML=names.map(n=>`<span style="display:inline-block;background:var(--blue-light);color:var(--blue);padding:2px 8px;border-radius:10px;font-size:11px;margin:2px">${n}</span>`).join('');
+  }
   document.getElementById('userModal').classList.add('show');
 };
 
@@ -4541,9 +4631,8 @@ window.saveUser=async function(){
   if(!name){toast('กรุณาใส่ชื่อแสดง','err');return;}
   if(!editingUserId&&users[uid]){toast('Username นี้มีอยู่แล้ว','err');return;}
   if(isStrictAdmin()&&(role==='owner'||role==='admin')){toast('Admin ไม่สามารถตั้ง Role เป็น Owner หรือ Admin ได้','err');return;}
-  const projAccess=[...document.getElementById('projAssignGrid').querySelectorAll('input[type=checkbox]:checked')].map(cb=>cb.value);
   const existing=users[uid]||{};
-  users[uid]={...existing,pass,name,display:name,role,email,projectAccess:projAccess};
+  users[uid]={...existing,pass,name,display:name,role,email,projectAccess:existing.projectAccess||[]};
   try{
     await saveUsersToCloud();
     toast((editingUserId?'แก้ไข':'เพิ่ม')+`ผู้ใช้ "${name}" ✓`,'ok');

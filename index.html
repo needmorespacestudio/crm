@@ -1455,10 +1455,12 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
       <!-- Full Table -->
       <div class="fin-dash-card">
         <div class="fin-dash-title">รายละเอียดทุกโปรเจกต์</div>
-        <table class="fin-tbl" style="box-shadow:none">
-          <thead><tr><th>โปรเจกต์</th><th>งบลูกค้า</th><th>รายรับจริง</th><th>รายจ่ายจริง</th><th>กำไรสุทธิ</th><th>Margin</th><th>สถานะ</th></tr></thead>
-          <tbody id="finBody"></tbody>
-        </table>
+        <div id="finTableWrap" style="overflow-x:auto">
+          <table class="fin-tbl fin-table" style="box-shadow:none">
+            <thead><tr><th>โปรเจกต์</th><th>งบลูกค้า</th><th>รายรับจริง</th><th>รายจ่ายจริง</th><th>กำไรสุทธิ</th><th>Margin</th><th>สถานะ</th></tr></thead>
+            <tbody id="finBody"></tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
@@ -1708,7 +1710,7 @@ const isAdmin=()=>['owner','admin'].includes(currentUser?.role);
 const isStrictAdmin=()=>currentUser?.role==='admin';
 const canDelete=()=>isAdmin();
 const canSeeFin=()=>['owner','admin','accounting'].includes(currentUser?.role);
-const canEditFin=()=>['owner','admin','accounting'].includes(currentUser?.role);
+const canEditFin=()=>['owner','admin','accounting','sales'].includes(currentUser?.role);
 const canSeeAll=()=>['owner','admin','accounting'].includes(currentUser?.role);
 const canEdit=()=>['owner','admin','sales'].includes(currentUser?.role);
 const canAdd=()=>['owner','admin','sales'].includes(currentUser?.role);
@@ -1834,6 +1836,10 @@ function setupNavUI(){
   document.getElementById('tabAdmin').style.display=isAdmin()?'':'none';
   document.getElementById('btnNew').style.display=canAdd()?'':'none';
   document.getElementById('tabAccDocs').style.display=canSeeFin()?'':'none';
+  const bnavFinBtn = document.getElementById('bnavFinBtn');
+  if(bnavFinBtn) bnavFinBtn.style.display = canSeeFin()?'':'none';
+  const bnavAdminBtn = document.getElementById('bnavAdminBtn');
+  if(bnavAdminBtn) bnavAdminBtn.style.display = isAdmin()?'':'none';
   // Greeting
   const now=new Date();
   const hr=now.getHours();
@@ -3015,6 +3021,12 @@ window.createProject = async function() {
   };
   try {
     await saveProjToCloud(newProj);
+    if (leadId) {
+      const lRef = leads.find(x=>x.id===leadId);
+      if (lRef) {
+        await saveToCloud({...lRef, linkedProjectId: pid, updatedBy: currentUser.name, updated: new Date().toISOString()});
+      }
+    }
     document.getElementById('newProjModal').classList.remove('show');
     toast('สร้างโปรเจกต์ใหม่ ✓','ok');
     setTimeout(()=>openProjDetail(pid),400);
@@ -3069,6 +3081,24 @@ window.openProjDetail = function(pid) {
   renderContractorUpdates(p); renderProjFinCalc(p);
   const btnFL=document.getElementById('btnAddFileLink');
   if(btnFL) btnFL.style.display=isAdmin()?'':'none';
+  // Lead link in project detail header
+  const pdLeadLink = document.getElementById('pdLeadLink');
+  if (pdLeadLink) {
+    const linkedLead = p.leadId ? leads.find(l=>l.id===p.leadId) : null;
+    pdLeadLink.innerHTML = linkedLead
+      ? `<span style="font-size:12px;color:var(--blue);cursor:pointer;padding:4px 10px;background:var(--blue-light,#eff6ff);border-radius:20px;border:1px solid #bfdbfe" onclick="showPage('pipeline',document.getElementById('tabPipeline'));setTimeout(()=>openPanel('${linkedLead.id}'),300)">🔗 Lead: ${linkedLead.name}</span>`
+      : '';
+  }
+  // Finance tab visibility
+  const finTab = document.querySelector('.ptab[onclick*="finance"]');
+  if (finTab) finTab.style.display = canEditFin() ? '' : 'none';
+  // Finance readonly note and input lock
+  const finReadNote = document.getElementById('ptabFinReadNote');
+  if (finReadNote) finReadNote.style.display = canEditFin() ? 'none' : 'block';
+  ['pd-budget','pd-dfee','pd-mgmt','pd-revenue','pd-expense'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.readOnly = !canEditFin();
+  });
   const firstTab=document.querySelector('.ptab'); if(firstTab) showPTab('info',firstTab);
 };
 
@@ -3082,13 +3112,17 @@ window.saveProjDetail = async function() {
   if(!currentProjId) return;
   const p=projects.find(x=>x.id===currentProjId)||{id:currentProjId};
   const gv=id=>document.getElementById(id)?.value||'';
+  const existing_p = projects.find(x=>x.id===currentProjId)||{};
   const updated={...p,
     client:gv('pd-client'),phone:gv('pd-phone'),line:gv('pd-line'),email:gv('pd-email'),
     pain:gv('pd-pain'),name:gv('pd-name'),size:gv('pd-size'),loc:gv('pd-loc'),
     start:gv('pd-start'),deadline:gv('pd-deadline'),drive:gv('pd-drive'),
     designer:gv('pd-designer'),drafter:gv('pd-drafter'),
-    budget:gv('pd-budget'),designFee:gv('pd-dfee'),mgmtFee:gv('pd-mgmt'),
-    revenue:gv('pd-revenue'),expense:gv('pd-expense'),
+    budget:canEditFin()?gv('pd-budget'):(existing_p.budget||''),
+    designFee:canEditFin()?gv('pd-dfee'):(existing_p.designFee||''),
+    mgmtFee:canEditFin()?gv('pd-mgmt'):(existing_p.mgmtFee||''),
+    revenue:canEditFin()?gv('pd-revenue'):(existing_p.revenue||''),
+    expense:canEditFin()?gv('pd-expense'):(existing_p.expense||''),
     contractor:gv('pd-contractor'),contractorPhone:gv('pd-contractor-phone'),
     updatedBy:currentUser.name,updatedAt:new Date().toISOString()
   };
@@ -3912,6 +3946,27 @@ window.stopImpersonating = function(){
   startSync();
   showPage('admin', document.getElementById('tabAdmin'));
   toast('กลับมาเป็น Admin แล้ว ✓','ok');
+};
+
+// ── Mobile Nav Functions ──
+window.updateBNav = function(page) {
+  document.querySelectorAll('.bnav-btn').forEach(b=>b.classList.remove('on'));
+  const map = {home:'bnavHome',pipeline:'bnavPipeline',projects:'bnavProjects',analytics:'bnavAnalytics'};
+  const btn = map[page] ? document.getElementById(map[page]) : document.getElementById('bnavMore');
+  if(btn) btn.classList.add('on');
+};
+window.toggleMobileMenu = function() {
+  document.getElementById('mobileMoreModal').classList.add('show');
+};
+window.closeMobileMenu = function() {
+  document.getElementById('mobileMoreModal').classList.remove('show');
+};
+
+// ── Lead-Project Navigation ──
+window.goToLinkedProject = function(pid) {
+  closePanel();
+  showPage('projects', document.getElementById('tabProjects'));
+  setTimeout(() => openProjDetail(pid), 300);
 };
 
 // ── Init ──

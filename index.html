@@ -275,9 +275,9 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
 .rp-contractor{background:var(--orange-light);color:var(--orange)}
 
 /* ── USER MODAL ── */
-.modal-ov{display:none;position:fixed;inset:0;background:rgba(26,23,20,.4);z-index:60;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
+.modal-ov{display:none;position:fixed;inset:0;background:rgba(26,23,20,.4);z-index:60;align-items:center;justify-content:center;backdrop-filter:blur(2px);overflow:hidden}
 .modal-ov.show{display:flex}
-.modal{background:var(--white);border-radius:var(--r-lg);padding:28px;width:100%;max-width:480px;box-shadow:var(--shadow-lg);max-height:90vh;overflow-y:auto}
+.modal{background:var(--white);border-radius:var(--r-lg);padding:28px;width:100%;max-width:480px;box-shadow:var(--shadow-lg);max-height:90vh;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
 .modal-title{font-family:'Instrument Serif',serif;font-size:20px;margin-bottom:4px}
 .modal-sub{font-size:12px;color:var(--gray-400);margin-bottom:20px}
 .modal-foot{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
@@ -593,9 +593,9 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
 .cal-legend{display:flex;gap:14px;padding:10px 20px;border-top:1px solid var(--border);flex-wrap:wrap}
 .cleg{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--gray-500)}
 .cleg-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
-.ev-modal-ov{display:none;position:fixed;inset:0;background:rgba(26,23,20,.35);z-index:60;align-items:center;justify-content:center;backdrop-filter:blur(1px)}
+.ev-modal-ov{display:none;position:fixed;inset:0;background:rgba(26,23,20,.35);z-index:60;align-items:center;justify-content:center;backdrop-filter:blur(1px);overflow:hidden}
 .ev-modal-ov.show{display:flex}
-.ev-modal{background:var(--white);border-radius:var(--r-lg);padding:24px;width:100%;max-width:440px;box-shadow:var(--shadow-lg)}
+.ev-modal{background:var(--white);border-radius:var(--r-lg);padding:24px;width:100%;max-width:440px;box-shadow:var(--shadow-lg);max-height:90vh;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
 
 /* ── DESIGNER/CONTRACTOR LANDING ── */
 .clanding-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 80px);padding:24px}
@@ -755,19 +755,25 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
   .admin-wrap{padding:14px}
 
   /* ─ Modals → bottom sheet ─ */
-  .modal-ov{align-items:flex-end}
+  .modal-ov{align-items:flex-end;overflow:hidden}
   .modal{
     border-radius:20px 20px 0 0 !important;
     max-width:100% !important;
     width:100% !important;
     max-height:88vh !important;
     margin:0 !important;
-    padding:0 20px 24px !important;
+    padding:0 20px env(safe-area-inset-bottom,20px) !important;
+    padding-bottom:max(24px,env(safe-area-inset-bottom)) !important;
+    overflow-y:auto !important;
+    -webkit-overflow-scrolling:touch !important;
+    overscroll-behavior:contain !important;
+    touch-action:pan-y !important;
   }
   .modal::before{
     content:'';display:block;width:36px;height:4px;
     background:var(--gray-200);border-radius:2px;
     margin:12px auto 18px;
+    flex-shrink:0;
   }
   .modal-title{margin-top:0}
 
@@ -4857,6 +4863,34 @@ window.importJSON = function(){
   };
   input.click();
 };
+
+// ── Body scroll lock when any modal-ov is open (iOS fix) ──
+(function(){
+  let scrollY=0;
+  function lockBody(){
+    scrollY=window.scrollY;
+    document.body.style.overflow='hidden';
+    document.body.style.position='fixed';
+    document.body.style.top=`-${scrollY}px`;
+    document.body.style.width='100%';
+  }
+  function unlockBody(){
+    document.body.style.overflow='';
+    document.body.style.position='';
+    document.body.style.top='';
+    document.body.style.width='';
+    window.scrollTo(0,scrollY);
+  }
+  const obs=new MutationObserver(()=>{
+    const anyOpen=document.querySelector('.modal-ov.show,.ev-modal-ov.show');
+    if(anyOpen) lockBody(); else unlockBody();
+  });
+  document.addEventListener('DOMContentLoaded',()=>{
+    document.querySelectorAll('.modal-ov,.ev-modal-ov').forEach(el=>{
+      obs.observe(el,{attributes:true,attributeFilter:['class']});
+    });
+  });
+})();
 
 // ── Init ──
 document.getElementById('loginSync').textContent='✅ Firebase พร้อมใช้งาน';

@@ -528,6 +528,67 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
 .proj-fin-bar{height:100%;border-radius:3px;background:var(--green)}
 .proj-fin-val{font-size:12px;font-family:'DM Mono',monospace;min-width:60px;text-align:right}
 
+/* ── CALENDAR ── */
+.cal-page{padding:20px;max-width:1100px;margin:0 auto}
+.cal-shell{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden}
+.cal-hd{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:10px}
+.cal-nav{display:flex;align-items:center;gap:10px}
+.cal-month-lbl{font-family:'Instrument Serif',serif;font-size:20px;color:var(--gray-800);min-width:160px}
+.cal-nav-btn{width:30px;height:30px;border-radius:var(--r-sm);border:1px solid var(--border-md);background:var(--white);cursor:pointer;font-size:16px;color:var(--gray-500);display:flex;align-items:center;justify-content:center;transition:all .13s}
+.cal-nav-btn:hover{background:var(--gray-100);color:var(--gray-800)}
+.cal-today-btn{padding:4px 12px;border-radius:var(--r-sm);border:1px solid var(--border-md);background:var(--white);font-size:12px;color:var(--gray-600);cursor:pointer;font-family:inherit;transition:all .13s}
+.cal-today-btn:hover{background:var(--gray-100)}
+.cal-fchips{display:flex;gap:6px;flex-wrap:wrap}
+.cal-fchip{padding:4px 12px;border-radius:20px;font-size:12px;border:1px solid var(--border-md);background:var(--white);color:var(--gray-500);cursor:pointer;font-family:inherit;transition:all .13s;font-weight:500}
+.cal-fchip:hover{border-color:var(--gray-300)}
+.cal-fchip.cfc-on{background:var(--gray-800);color:var(--white);border-color:var(--gray-800)}
+.cal-body{display:grid;grid-template-columns:1fr 290px}
+.cal-grid-area{border-right:1px solid var(--border);padding:12px}
+.cal-day-labels{display:grid;grid-template-columns:repeat(7,1fr);margin-bottom:4px}
+.cal-day-lbl{text-align:center;font-size:11px;color:var(--gray-400);padding:4px 0;font-weight:600;font-family:'DM Mono',monospace}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.cal-cell{min-height:80px;border-radius:var(--r-sm);padding:5px;cursor:pointer;border:1px solid transparent;transition:all .13s;position:relative}
+.cal-cell:hover{background:var(--gray-50);border-color:var(--border)}
+.cal-cell.cc-today{background:var(--blue-light);border-color:rgba(37,99,168,.2)}
+.cal-cell.cc-sel{border-color:var(--gray-400)!important;background:var(--white)}
+.cal-cell.cc-other{opacity:.35}
+.cc-date{font-size:12px;font-weight:600;color:var(--gray-500);margin-bottom:3px;display:flex;align-items:center;justify-content:space-between}
+.cal-cell.cc-today .cc-date{color:var(--blue)}
+.ev-pill{font-size:10px;padding:2px 5px;border-radius:3px;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.4;font-weight:500}
+.evp-lead{background:#E6F1FB;color:#0C447C}
+.evp-proj{background:#FAEEDA;color:#633806}
+.evp-deadline{background:#FCEBEB;color:#791F1F}
+.evp-meeting{background:#E1F5EE;color:#085041}
+.evp-more{font-size:10px;color:var(--gray-400);padding:1px 3px}
+.cal-sidebar{padding:16px;min-height:400px}
+.cal-sb-date{font-size:12px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px;font-family:'DM Mono',monospace}
+.cal-ev-card{background:var(--gray-50);border-radius:var(--r);padding:10px 12px;margin-bottom:8px;border-left:3px solid transparent;cursor:pointer;transition:all .13s}
+.cal-ev-card:hover{background:var(--white);box-shadow:var(--shadow-sm)}
+.cec-lead{border-left-color:var(--blue)}
+.cec-proj{border-left-color:var(--gold)}
+.cec-deadline{border-left-color:var(--red)}
+.cec-meeting{border-left-color:var(--green)}
+.cec-time{font-size:10px;color:var(--gray-400);font-family:'DM Mono',monospace;margin-bottom:3px}
+.cec-title{font-size:13px;font-weight:600;color:var(--gray-800);margin-bottom:2px}
+.cec-sub{font-size:11px;color:var(--gray-500)}
+.cec-type-badge{font-size:10px;font-weight:700;padding:1px 6px;border-radius:4px;display:inline-block;margin-top:4px}
+.cal-add-btn{width:100%;margin-top:4px;padding:8px;border:1px dashed var(--border-md);border-radius:var(--r-sm);background:none;font-size:12px;color:var(--gray-400);cursor:pointer;font-family:inherit;transition:all .13s;text-align:center}
+.cal-add-btn:hover{border-color:var(--gold);color:var(--gold)}
+.cal-detail{border-top:1px solid var(--border);padding:16px 20px}
+.cal-detail-hd{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px}
+.cal-detail-title{font-family:'Instrument Serif',serif;font-size:18px;color:var(--gray-800)}
+.cal-detail-sub{font-size:12px;color:var(--gray-500);margin-top:2px}
+.cal-detail-row{display:flex;gap:12px;padding:7px 0;border-bottom:1px solid var(--border);font-size:13px}
+.cal-detail-row:last-child{border-bottom:none}
+.cdr-label{color:var(--gray-400);width:90px;flex-shrink:0;font-size:12px}
+.cdr-val{color:var(--gray-800);font-weight:500;flex:1}
+.cal-legend{display:flex;gap:14px;padding:10px 20px;border-top:1px solid var(--border);flex-wrap:wrap}
+.cleg{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--gray-500)}
+.cleg-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+.ev-modal-ov{display:none;position:fixed;inset:0;background:rgba(26,23,20,.35);z-index:60;align-items:center;justify-content:center;backdrop-filter:blur(1px)}
+.ev-modal-ov.show{display:flex}
+.ev-modal{background:var(--white);border-radius:var(--r-lg);padding:24px;width:100%;max-width:440px;box-shadow:var(--shadow-lg)}
+
 @media(max-width:768px){
   .stats{grid-template-columns:repeat(3,1fr)}
   .panel{width:100vw}
@@ -572,6 +633,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
       <button class="ntab" id="tabProjects" onclick="showPage('projects',this)">🗂️ โปรเจกต์</button>
       <button class="ntab" id="tabDocs" onclick="showPage('docs',this)">📄 เอกสาร</button>
       <button class="ntab" id="tabUpload" onclick="showPage('upload',this)">☁️ อัปโหลด</button>
+      <button class="ntab" id="tabCal" onclick="showPage('cal',this)">📅 ปฏิทิน</button>
       <button class="ntab" id="tabPipeline" onclick="showPage('pipeline',this)">📋 Lead CRM</button>
       <button class="ntab" id="tabAnalytics" onclick="showPage('analytics',this)">📊 Analytics</button>
       <button class="ntab" id="tabFin" onclick="showPage('finance',this)">💰 การเงิน</button>
@@ -990,6 +1052,110 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
       <div style="margin-top:24px">
         <div style="font-size:12px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;font-family:monospace">ประวัติการอัปโหลดล่าสุด</div>
         <div id="upHistory"><div style="color:var(--gray-400);font-size:13px">กำลังโหลด...</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CALENDAR -->
+  <div class="page" id="page-cal">
+    <div class="cal-page">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+        <div>
+          <div class="a-title">ปฏิทินงาน</div>
+          <div class="a-sub">นัดหมาย · Deadline · ติดตามงานทุกโปรเจกต์</div>
+        </div>
+        <button class="btn btn-gold btn-sm" onclick="openAddEventModal()">+ เพิ่มกิจกรรม</button>
+      </div>
+
+      <div class="cal-shell">
+        <!-- Header -->
+        <div class="cal-hd">
+          <div class="cal-nav">
+            <button class="cal-nav-btn" onclick="calChangeMonth(-1)">&#8249;</button>
+            <div class="cal-month-lbl" id="calMonthLbl">—</div>
+            <button class="cal-nav-btn" onclick="calChangeMonth(1)">&#8250;</button>
+            <button class="cal-today-btn" onclick="calGoToday()">วันนี้</button>
+          </div>
+          <div class="cal-fchips">
+            <button class="cal-fchip cfc-on" onclick="calSetFilter('all',this)">ทั้งหมด</button>
+            <button class="cal-fchip" onclick="calSetFilter('lead',this)">Lead</button>
+            <button class="cal-fchip" onclick="calSetFilter('proj',this)">โปรเจกต์</button>
+            <button class="cal-fchip" onclick="calSetFilter('deadline',this)">Deadline</button>
+            <button class="cal-fchip" onclick="calSetFilter('meeting',this)">นัดหมาย</button>
+          </div>
+        </div>
+
+        <!-- Body -->
+        <div class="cal-body">
+          <div class="cal-grid-area">
+            <div class="cal-day-labels">
+              <div class="cal-day-lbl">อา</div><div class="cal-day-lbl">จ</div>
+              <div class="cal-day-lbl">อ</div><div class="cal-day-lbl">พ</div>
+              <div class="cal-day-lbl">พฤ</div><div class="cal-day-lbl">ศ</div>
+              <div class="cal-day-lbl">ส</div>
+            </div>
+            <div class="cal-grid" id="calGrid"></div>
+          </div>
+          <div class="cal-sidebar">
+            <div class="cal-sb-date" id="calSbDate">—</div>
+            <div id="calSbEvents"><div style="font-size:12px;color:var(--gray-400)">กำลังโหลด...</div></div>
+            <button class="cal-add-btn" onclick="openAddEventModal()">+ เพิ่มกิจกรรมวันนี้</button>
+          </div>
+        </div>
+
+        <!-- Detail Panel -->
+        <div class="cal-detail" id="calDetail" style="display:none">
+          <div class="cal-detail-hd">
+            <div>
+              <div class="cal-detail-title" id="calDetailTitle">—</div>
+              <div class="cal-detail-sub" id="calDetailSub">—</div>
+            </div>
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-ghost btn-sm" id="calDetailGoBtn" onclick="calGoToSource()">→ ดูรายละเอียด</button>
+              <button class="btn btn-ghost btn-sm" onclick="calCloseDetail()">✕</button>
+            </div>
+          </div>
+          <div id="calDetailRows"></div>
+        </div>
+
+        <!-- Legend -->
+        <div class="cal-legend">
+          <div class="cleg"><div class="cleg-dot" style="background:var(--blue)"></div>Lead / นัดลูกค้า</div>
+          <div class="cleg"><div class="cleg-dot" style="background:var(--gold)"></div>โปรเจกต์ / นำเสนอ</div>
+          <div class="cleg"><div class="cleg-dot" style="background:var(--red)"></div>Deadline ส่งงาน</div>
+          <div class="cleg"><div class="cleg-dot" style="background:var(--green)"></div>ประชุม / ตรวจงาน</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD EVENT MODAL -->
+  <div class="ev-modal-ov" id="evModal">
+    <div class="ev-modal">
+      <div class="modal-title">เพิ่มกิจกรรม</div>
+      <div class="modal-sub">เพิ่มนัดหมาย Deadline หรือกิจกรรมลงปฏิทิน</div>
+      <div class="prow2">
+        <div class="field"><label>วันที่ *</label><input type="date" id="ev-date"></div>
+        <div class="field"><label>เวลา</label><input type="time" id="ev-time" value="10:00"></div>
+      </div>
+      <div class="prow1"><div class="field"><label>ชื่อกิจกรรม *</label><input id="ev-title" placeholder="เช่น ประชุมทีม, ตรวจงาน, โทรติดตาม..."></div></div>
+      <div class="prow2">
+        <div class="field"><label>ประเภท</label>
+          <select id="ev-type">
+            <option value="meeting">ประชุม / ตรวจงาน</option>
+            <option value="lead">Lead / นัดลูกค้า</option>
+            <option value="proj">โปรเจกต์ / นำเสนอ</option>
+            <option value="deadline">Deadline ส่งงาน</option>
+          </select>
+        </div>
+        <div class="field"><label>โปรเจกต์ที่เกี่ยวข้อง</label>
+          <select id="ev-proj"><option value="">— ไม่ระบุ —</option></select>
+        </div>
+      </div>
+      <div class="prow1"><div class="field"><label>บันทึก</label><textarea id="ev-note" rows="2" placeholder="รายละเอียดเพิ่มเติม..."></textarea></div></div>
+      <div class="modal-foot">
+        <button class="btn btn-ghost" onclick="document.getElementById('evModal').classList.remove('show')">ยกเลิก</button>
+        <button class="btn btn-green" onclick="saveEvent()">💾 บันทึก</button>
       </div>
     </div>
   </div>
@@ -1435,6 +1601,7 @@ async function startApp(){
   await loadUsers();
   setupNavUI();
   startSync();
+  setTimeout(()=>{if(document.getElementById('page-cal')?.classList.contains('on'))calStartSync();},1000);
   checkLocalMigration();
   renderHome();
   setInterval(renderHome,60000);
@@ -1526,7 +1693,7 @@ function renderHome(){
 
   // Menu by role
   const menus={
-    admin:[{icon:'📋',title:'Lead CRM',desc:'Pipeline & ติดตามลูกค้า',page:'pipeline'},{icon:'🗂️',title:'โปรเจกต์',desc:'จัดการทุกโปรเจกต์',page:'projects'},{icon:'📄',title:'เอกสาร',desc:'ใบเสนอราคา · ใบแจ้งหนี้',page:'docs'},{icon:'☁️',title:'Smart Upload',desc:'อัปโหลดไฟล์ + ตั้งชื่ออัตโนมัติ',page:'upload'},{icon:'💰',title:'การเงิน',desc:'รายรับ-รายจ่าย-กำไร',page:'finance'},{icon:'⚙️',title:'Admin Panel',desc:'จัดการผู้ใช้ & สิทธิ์',page:'admin'}],
+    admin:[{icon:'📋',title:'Lead CRM',desc:'Pipeline & ติดตามลูกค้า',page:'pipeline'},{icon:'🗂️',title:'โปรเจกต์',desc:'จัดการทุกโปรเจกต์',page:'projects'},{icon:'📄',title:'เอกสาร',desc:'ใบเสนอราคา · ใบแจ้งหนี้',page:'docs'},{icon:'☁️',title:'Smart Upload',desc:'อัปโหลดไฟล์ + ตั้งชื่ออัตโนมัติ',page:'upload'},{icon:'💰',title:'การเงิน',desc:'รายรับ-รายจ่าย-กำไร',page:'finance'},{icon:'📅',title:'ปฏิทินงาน',desc:'นัดหมาย · Deadline',page:'cal'},{icon:'⚙️',title:'Admin Panel',desc:'จัดการผู้ใช้ & สิทธิ์',page:'admin'}],
     sales:[{icon:'📋',title:'Lead CRM',desc:'Pipeline & ติดตามลูกค้า',page:'pipeline'},{icon:'📊',title:'Analytics',desc:'ภาพรวม Lead',page:'analytics'}],
     designer:[{icon:'📋',title:'โปรเจกต์ของฉัน',desc:'Checklist & ไฟล์งาน',page:'pipeline'},{icon:'📊',title:'ภาพรวม',desc:'สถานะงาน',page:'analytics'}],
     drafter:[{icon:'📋',title:'งานของฉัน',desc:'Checklist & อัปโหลดแบบ',page:'pipeline'},{icon:'📊',title:'ภาพรวม',desc:'สถานะงาน',page:'analytics'}],
@@ -1536,7 +1703,7 @@ function renderHome(){
   };
   const m=menus[currentUser.role]||menus.outsource;
   document.getElementById('homeMenu').innerHTML=m.map(x=>{
-    const tabMap={'home':'tabHome','projects':'tabProjects','pipeline':'tabPipeline','analytics':'tabAnalytics','finance':'tabFin','docs':'tabDocs','upload':'tabUpload','admin':'tabAdmin'};
+    const tabMap={'home':'tabHome','projects':'tabProjects','pipeline':'tabPipeline','analytics':'tabAnalytics','finance':'tabFin','docs':'tabDocs','upload':'tabUpload','cal':'tabCal','admin':'tabAdmin'};
     return `<div class="menu-card" onclick="showPage('${x.page}',document.getElementById('${tabMap[x.page]||'tabHome'}'))">
       <div class="menu-card-icon">${x.icon}</div>
       <div class="menu-card-title">${x.title}</div>
@@ -2054,6 +2221,226 @@ function upInitSubChips(){
 }
 
 // ══════════════════════════════════════════
+// CALENDAR MODULE — Phase 7
+// ══════════════════════════════════════════
+const MONTHS_TH=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+const SHORT_MONTHS_TH=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+
+let calYear=new Date().getFullYear(), calMonth=new Date().getMonth();
+let calSelDay=new Date().getDate(), calFilter='all', calDetailEvent=null;
+let calCustomEvents=[], calEvUnsubscribe=null;
+
+const CAL_TYPE_LABEL={lead:'Lead',proj:'โปรเจกต์',deadline:'Deadline',meeting:'นัดหมาย'};
+const CAL_TYPE_PILL={lead:'evp-lead',proj:'evp-proj',deadline:'evp-deadline',meeting:'evp-meeting'};
+const CAL_TYPE_CARD={lead:'cec-lead',proj:'cec-proj',deadline:'cec-deadline',meeting:'cec-meeting'};
+const CAL_TYPE_COLOR={lead:'var(--blue)',proj:'var(--gold)',deadline:'var(--red)',meeting:'var(--green)'};
+const CAL_TYPE_BG={lead:'var(--blue-light)',proj:'var(--gold-light)',deadline:'var(--red-light)',meeting:'var(--green-light)'};
+
+// Collect all events from leads, projects, and custom
+function calGetAllEvents(){
+  const evs=[];
+  // From leads — nextdate
+  leads.forEach(l=>{
+    if(!l.nextdate) return;
+    evs.push({
+      id:'lead_'+l.id, date:l.nextdate, type:'lead',
+      title:(l.nextstep||'ติดตาม')+' — '+(l.name||'ลูกค้า'),
+      sub:l.proj||l.src||'—', time:l.nexttime||'',
+      sourceId:l.id, sourceType:'lead',
+      detail:{ลูกค้า:l.name||'—', เบอร์:l.phone||'—', โปรเจกต์:l.proj||'—', งบ:l.budget||'—', ที่ตั้ง:l.loc||'—', บันทึก:l.notes||'—'}
+    });
+  });
+  // From projects — deadline
+  projects.forEach(p=>{
+    if(p.deadline){
+      evs.push({
+        id:'proj_dl_'+p.id, date:p.deadline, type:'deadline',
+        title:'Deadline — '+(p.name||p.client||'โปรเจกต์'),
+        sub:(p.projId||p.id)+' · '+(p.client||'—'), time:'',
+        sourceId:p.id, sourceType:'project',
+        detail:{โปรเจกต์:p.name||'—', ลูกค้า:p.client||'—', ดีไซเนอร์:users[p.designer]?.name||p.designer||'—', คนเขียนแบบ:users[p.drafter]?.name||p.drafter||'—', ผู้รับเหมา:p.contractor||'—'}
+      });
+    }
+    // Timeline milestones with dates
+    (p.timeline||[]).forEach(tl=>{
+      if(!tl.date||tl.done) return;
+      evs.push({
+        id:'tl_'+p.id+'_'+tl.id, date:tl.date, type:'proj',
+        title:tl.label+' — '+(p.name||p.client||''),
+        sub:(p.projId||p.id), time:'',
+        sourceId:p.id, sourceType:'project',
+        detail:{Milestone:tl.label, โปรเจกต์:p.name||'—', บันทึก:tl.note||'—'}
+      });
+    });
+  });
+  // Custom events from Firebase
+  calCustomEvents.forEach(e=>evs.push(e));
+  return evs;
+}
+
+function calDateStr(y,m,d){ return y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0'); }
+
+function calEventsForDate(dateStr,filter){
+  return calGetAllEvents().filter(e=>e.date===dateStr&&(filter==='all'||e.type===filter));
+}
+
+function calRender(){
+  const thYear=calYear+543;
+  document.getElementById('calMonthLbl').textContent=MONTHS_TH[calMonth]+' '+thYear;
+  const firstDay=new Date(calYear,calMonth,1).getDay();
+  const daysInMonth=new Date(calYear,calMonth+1,0).getDate();
+  const prevDays=new Date(calYear,calMonth,0).getDate();
+  const todayD=new Date().getDate(),todayM=new Date().getMonth(),todayY=new Date().getFullYear();
+  let cells=[];
+  for(let i=0;i<firstDay;i++) cells.push({d:prevDays-firstDay+1+i,cur:false});
+  for(let d=1;d<=daysInMonth;d++) cells.push({d,cur:true});
+  while(cells.length%7!==0) cells.push({d:cells.length-daysInMonth-firstDay+1,cur:false});
+
+  document.getElementById('calGrid').innerHTML=cells.map(({d,cur})=>{
+    const isToday=cur&&d===todayD&&calMonth===todayM&&calYear===todayY;
+    const isSel=cur&&d===calSelDay;
+    const ds=calDateStr(calYear,calMonth,d);
+    const allEvs=calEventsForDate(ds,'all');
+    const filtEvs=calEventsForDate(ds,calFilter).slice(0,3);
+    const more=allEvs.length-filtEvs.length;
+    const hasEvs=allEvs.length>0;
+    return`<div class="cal-cell${isToday?' cc-today':''}${isSel?' cc-sel':''}${!cur?' cc-other':''}" onclick="${cur?`calSelectDay(${d})`:''}" style="${!cur?'cursor:default':''}">
+      <div class="cc-date">
+        <span>${d}</span>
+        ${hasEvs?`<span style="width:6px;height:6px;border-radius:50%;background:${CAL_TYPE_COLOR[allEvs[0].type]};display:inline-block"></span>`:''}
+      </div>
+      ${filtEvs.map(e=>`<div class="ev-pill ${CAL_TYPE_PILL[e.type]}" onclick="event.stopPropagation();calOpenDetail('${e.id}')">${e.time?e.time+' ':''}${e.title}</div>`).join('')}
+      ${more>0?`<div class="evp-more">+${more}</div>`:''}
+    </div>`;
+  }).join('');
+  calRenderSidebar();
+}
+
+function calRenderSidebar(){
+  const ds=calDateStr(calYear,calMonth,calSelDay);
+  const thYear=calYear+543;
+  document.getElementById('calSbDate').textContent=calSelDay+' '+SHORT_MONTHS_TH[calMonth]+' '+thYear;
+  const evs=calEventsForDate(ds,calFilter);
+  const el=document.getElementById('calSbEvents');
+  if(!evs.length){
+    el.innerHTML='<div style="font-size:12px;color:var(--gray-400);padding:8px 0">ไม่มีกิจกรรมวันนี้</div>';
+    return;
+  }
+  el.innerHTML=evs.map(e=>`
+    <div class="cal-ev-card ${CAL_TYPE_CARD[e.type]}" onclick="calOpenDetail('${e.id}')">
+      <div class="cec-time">${e.time||'ทั้งวัน'}
+        <span style="margin-left:6px;font-size:10px;font-weight:700;padding:1px 6px;border-radius:3px;background:${CAL_TYPE_BG[e.type]};color:${CAL_TYPE_COLOR[e.type]}">${CAL_TYPE_LABEL[e.type]}</span>
+      </div>
+      <div class="cec-title">${e.title}</div>
+      <div class="cec-sub">${e.sub}</div>
+    </div>`).join('');
+}
+
+window.calSelectDay=function(d){
+  calSelDay=d; calCloseDetail(); calRender();
+};
+
+window.calOpenDetail=function(evId){
+  const e=calGetAllEvents().find(x=>x.id===evId); if(!e) return;
+  calDetailEvent=e;
+  document.getElementById('calDetail').style.display='block';
+  document.getElementById('calDetailTitle').textContent=e.title;
+  document.getElementById('calDetailSub').textContent=(e.time?e.time+' · ':'')+e.sub+' · '+(CAL_TYPE_LABEL[e.type]||'');
+  const rows=Object.entries(e.detail||{}).filter(([,v])=>v&&v!=='—');
+  document.getElementById('calDetailRows').innerHTML=rows.map(([l,v])=>`
+    <div class="cal-detail-row"><span class="cdr-label">${l}</span><span class="cdr-val">${v}</span></div>`).join('');
+  const goBtn=document.getElementById('calDetailGoBtn');
+  if(e.sourceType==='lead') goBtn.textContent='→ เปิด Lead';
+  else if(e.sourceType==='project') goBtn.textContent='→ เปิดโปรเจกต์';
+  else goBtn.textContent='';
+  goBtn.style.display=e.sourceId?'flex':'none';
+};
+
+window.calGoToSource=function(){
+  if(!calDetailEvent) return;
+  if(calDetailEvent.sourceType==='lead'){
+    showPage('pipeline',document.getElementById('tabPipeline'));
+    setTimeout(()=>openPanel(calDetailEvent.sourceId),300);
+  } else if(calDetailEvent.sourceType==='project'){
+    showPage('projects',document.getElementById('tabProjects'));
+    setTimeout(()=>openProjDetail(calDetailEvent.sourceId),300);
+  }
+  calCloseDetail();
+};
+
+window.calCloseDetail=function(){
+  document.getElementById('calDetail').style.display='none';
+  calDetailEvent=null;
+};
+
+window.calChangeMonth=function(d){
+  calMonth+=d;
+  if(calMonth>11){calMonth=0;calYear++;}
+  if(calMonth<0){calMonth=11;calYear--;}
+  calSelDay=1; calCloseDetail(); calRender();
+};
+
+window.calGoToday=function(){
+  const n=new Date();calYear=n.getFullYear();calMonth=n.getMonth();calSelDay=n.getDate();
+  calCloseDetail(); calRender();
+};
+
+window.calSetFilter=function(f,el){
+  calFilter=f;
+  document.querySelectorAll('.cal-fchip').forEach(c=>c.classList.remove('cfc-on'));
+  el.classList.add('cfc-on'); calRender();
+};
+
+// Custom events (Firebase)
+function calStartSync(){
+  if(calEvUnsubscribe) calEvUnsubscribe();
+  try{
+    calEvUnsubscribe=onSnapshot(collection(db,'events'),
+      snap=>{calCustomEvents=snap.docs.map(d=>({...d.data(),id:d.id}));calRender();},
+      ()=>{calRender();}
+    );
+  }catch(e){calRender();}
+}
+
+window.openAddEventModal=function(){
+  const dateEl=document.getElementById('ev-date');
+  if(dateEl) dateEl.value=calDateStr(calYear,calMonth,calSelDay);
+  document.getElementById('ev-title').value='';
+  document.getElementById('ev-note').value='';
+  const pSel=document.getElementById('ev-proj');
+  const allP=[...projects.map(p=>({id:p.id,label:(p.projId||p.id)+' · '+(p.name||p.client||'—')})),
+    ...leads.filter(l=>l.projId).map(l=>({id:'lead_'+l.id,label:(l.projId||'')+' · '+(l.name||'—')}))];
+  pSel.innerHTML='<option value="">— ไม่ระบุ —</option>'+allP.map(p=>`<option value="${p.id}">${p.label}</option>`).join('');
+  document.getElementById('evModal').classList.add('show');
+};
+
+window.saveEvent=async function(){
+  const title=document.getElementById('ev-title').value.trim();
+  const date=document.getElementById('ev-date').value;
+  if(!title||!date){toast('กรอกชื่อและวันที่ก่อน','err');return;}
+  const evId='ev_'+Date.now().toString();
+  const evData={
+    id:evId, title, date, type:document.getElementById('ev-type').value,
+    time:document.getElementById('ev-time').value||'',
+    note:document.getElementById('ev-note').value||'',
+    projRef:document.getElementById('ev-proj').value||'',
+    sub:document.getElementById('ev-note').value||'',
+    createdBy:currentUser.name, createdAt:new Date().toISOString(),
+    sourceType:'custom', sourceId:'',
+    detail:{บันทึก:document.getElementById('ev-note').value||'—', เพิ่มโดย:currentUser.name}
+  };
+  try{
+    await setDoc(doc(db,'events',evId),evData);
+    document.getElementById('evModal').classList.remove('show');
+    toast('เพิ่มกิจกรรมแล้ว ✓','ok');
+    // Go to that date
+    const [y,m,d]=date.split('-').map(Number);
+    calYear=y;calMonth=m-1;calSelDay=d;
+    calRender();
+  }catch(e){toast('บันทึกไม่สำเร็จ: '+e.message,'err');}
+};
+
+// ══════════════════════════════════════════
 // ANALYTICS v2 — Phase 5
 // ══════════════════════════════════════════
 let analyticsPeriod = 'year';
@@ -2287,6 +2674,7 @@ window.showPage=function(id,el){
   else if(id==='finance'){renderFinance();}
   else if(id==='upload'){upPopulateProjects();upInitSubChips();upGen();upLoadHistory();
     const dt=document.getElementById('up-date');if(dt&&!dt.value)dt.value=today();}
+  else if(id==='cal'){calGoToday();if(!calEvUnsubscribe)calStartSync();else calRender();}
 };
 
 // ── Init ──

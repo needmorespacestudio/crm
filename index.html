@@ -1178,10 +1178,14 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
         <div style="display:flex;gap:8px;flex-wrap:wrap">
           <div class="doc-filter-tabs">
             <button class="doc-ftab on" onclick="setDocFilter('all',this)">ทั้งหมด</button>
-            <button class="doc-ftab" onclick="setDocFilter('quotation',this)">ใบเสนอราคา</button>
+            <button class="doc-ftab" onclick="setDocFilter('quotation_design',this)">QT ออกแบบ</button>
+            <button class="doc-ftab" onclick="setDocFilter('quotation_construction',this)">QT ก่อสร้าง</button>
+            <button class="doc-ftab" onclick="setDocFilter('contract_design',this)">สัญญาออกแบบ</button>
+            <button class="doc-ftab" onclick="setDocFilter('contract_construction',this)">สัญญาก่อสร้าง</button>
             <button class="doc-ftab" onclick="setDocFilter('invoice',this)">ใบแจ้งหนี้</button>
-            <button class="doc-ftab" onclick="setDocFilter('contract',this)">สัญญา</button>
+            <button class="doc-ftab" onclick="setDocFilter('payment_request',this)">ใบเบิกเงิน</button>
             <button class="doc-ftab" onclick="setDocFilter('receipt',this)">ใบรับเงิน</button>
+            <button class="doc-ftab" onclick="setDocFilter('delivery',this)">ใบส่งงาน</button>
           </div>
           <button class="btn btn-green" onclick="openNewDocModal()">+ สร้างเอกสาร</button>
         </div>
@@ -2455,9 +2459,9 @@ async function getNextSeq(type){
 async function genClientId(){ return 'NMS-C-'+ID_YEAR()+'-'+await getNextSeq('client'); }
 async function genProjectId(seq,type){ return 'NMS-P-'+ID_YEAR()+'-'+seq+'-'+(type||'D'); }
 async function genDocId(docType){
-  const prefixes={quotation:'QT',invoice:'IV',contract_design:'CD',contract_construction:'CC',payment_request:'PR',receipt:'RC',delivery:'DL',boq:'BQ',material_request:'MR'};
-  const prefix=prefixes[docType]||'DOC';
-  return 'NMS-'+prefix+'-'+ID_YEAR()+'-'+await getNextSeq(prefix.toLowerCase());
+  const prefix=DOC_PREFIX[docType]||'DOC';
+  const seqKey=prefix.toLowerCase().replace(/-/g,'');
+  return 'NMS-'+prefix+'-'+ID_YEAR()+'-'+await getNextSeq(seqKey);
 }
 function genStaffId(role){
   const prefixes={admin:'S',sales:'S',designer:'DS',drafter:'DR',accounting:'S',contractor:'CT',outsource:'EX'};
@@ -3129,6 +3133,7 @@ window.showPage=function(id,el){
 let projects = [], projUnsubscribe = null, currentProjId = null;
 let docUnsubscribe = null, docs = [], currentDocId = null, docFilter = 'all';
 let currentDocItems = [];
+let currentInstallments = [];
 
 async function saveProjToCloud(data) {
   const clean = sanitizeForFirestore({...data, _ts: new Date().toISOString()});
@@ -3477,12 +3482,78 @@ function renderProjFinCalc(p){
 // DOCUMENTS MODULE
 // ══════════════════════════════════════════
 const DOC_TYPE_LABEL={
-  quotation:'📋 ใบเสนอราคา',invoice:'🧾 ใบแจ้งหนี้',
-  contract_design:'📝 สัญญาออกแบบ',contract_construction:'📝 สัญญาก่อสร้าง',
-  contract:'📝 สัญญา',payment_request:'💸 ใบเบิกเงิน',
-  receipt:'✅ ใบรับเงิน',delivery:'📦 ใบส่งงาน',boq:'📊 BOQ'
+  'quotation_design':       '📋 ใบเสนอราคาออกแบบ',
+  'quotation_construction': '🏗️ ใบเสนอราคาก่อสร้าง',
+  'contract_design':        '📝 สัญญาออกแบบ',
+  'contract_construction':  '📝 สัญญาก่อสร้าง',
+  'invoice':                '🧾 ใบแจ้งหนี้',
+  'payment_request':        '💸 ใบเบิกเงิน',
+  'receipt':                '✅ ใบรับเงิน',
+  'delivery':               '📦 ใบส่งงาน',
+  'boq':                    '📊 BOQ',
+  // legacy keys
+  'quotation':'📋 ใบเสนอราคา','contract':'📝 สัญญา',
 };
 const DOC_STATUS_LABEL={draft:'📝 Draft',sent:'📤 ส่งแล้ว',approved:'✅ อนุมัติ',paid:'💰 ชำระแล้ว',cancelled:'❌ ยกเลิก'};
+
+// Who can CREATE, EDIT, VIEW each document type
+const DOC_ACCESS = {
+  'quotation_design':  { create:['owner','admin','sales'],        edit:['owner','admin','sales'],        view:['owner','admin','sales','designer','accounting'] },
+  'quotation_construction': { create:['owner','admin','sales'],   edit:['owner','admin','sales'],        view:['owner','admin','sales','accounting','contractor'] },
+  'contract_design':   { create:['owner','admin'],                edit:['owner','admin'],                view:['owner','admin','sales','designer','accounting'] },
+  'contract_construction': { create:['owner','admin'],           edit:['owner','admin'],                view:['owner','admin','sales','accounting','contractor'] },
+  'invoice':           { create:['owner','admin','accounting'],   edit:['owner','admin','accounting'],   view:['owner','admin','accounting'] },
+  'payment_request':   { create:['owner','admin','accounting'],   edit:['owner','admin','accounting'],   view:['owner','admin','accounting'] },
+  'receipt':           { create:['owner','admin','accounting'],   edit:['owner','admin','accounting'],   view:['owner','admin','accounting'] },
+  'delivery':          { create:['owner','admin','sales','designer'], edit:['owner','admin','sales','designer'], view:['owner','admin','sales','designer','accounting'] },
+  'boq':               { create:['owner','admin','sales'],        edit:['owner','admin','sales','designer'], view:['owner','admin','sales','designer','accounting','contractor'] },
+};
+
+function canAccessDoc(type, action) {
+  const role = currentUser?.role || '';
+  const access = DOC_ACCESS[type] || DOC_ACCESS['boq'];
+  return (access[action] || []).includes(role);
+}
+
+const DOC_PREFIX = {
+  'quotation_design':'QT-D','quotation_construction':'QT-C',
+  'contract_design':'CD','contract_construction':'CC',
+  'invoice':'IV','payment_request':'PR','receipt':'RC',
+  'delivery':'DL','boq':'BOQ',
+  'quotation':'QT','contract':'CT',
+};
+
+function getDefaultItems(type) {
+  if(type==='quotation_design') return [{id:'1',desc:'ค่าบริการออกแบบภายใน',qty:1,unit:'งาน',price:0,total:0}];
+  if(type==='quotation_construction') return [{id:'1',desc:'ค่าก่อสร้าง',qty:1,unit:'งาน',price:0,total:0}];
+  if(type==='invoice'||type==='receipt') return [{id:'1',desc:'ค่าบริการตามสัญญา งวดที่',qty:1,unit:'งาน',price:0,total:0}];
+  if(type==='delivery') return [{id:'1',desc:'แบบ Concept Design',qty:1,unit:'ชุด',price:0,total:0}];
+  return [{id:'1',desc:'รายการ',qty:1,unit:'งาน',price:0,total:0}];
+}
+
+function getDefaultInstallments(type) {
+  if(type==='quotation_design'||type==='contract_design') return [
+    {id:'1',label:'งวดที่ 1',desc:'เซ็นสัญญา',pct:30,amount:0,status:'pending'},
+    {id:'2',label:'งวดที่ 2',desc:'Concept อนุมัติ',pct:30,amount:0,status:'pending'},
+    {id:'3',label:'งวดที่ 3',desc:'Shop Drawing ครบ',pct:30,amount:0,status:'pending'},
+    {id:'4',label:'งวดที่ 4',desc:'ส่งมอบงาน',pct:10,amount:0,status:'pending'},
+  ];
+  if(type==='quotation_construction'||type==='contract_construction') return [
+    {id:'1',label:'งวดที่ 1',desc:'เซ็นสัญญา + วางมัดจำ',pct:25,amount:0,status:'pending'},
+    {id:'2',label:'งวดที่ 2',desc:'โครงสร้างเสร็จ',pct:25,amount:0,status:'pending'},
+    {id:'3',label:'งวดที่ 3',desc:'งานระบบ + ผนังเสร็จ',pct:25,amount:0,status:'pending'},
+    {id:'4',label:'งวดที่ 4',desc:'งาน Finishing เสร็จ',pct:20,amount:0,status:'pending'},
+    {id:'5',label:'งวดที่ 5',desc:'ส่งมอบ + ประกัน 1 ปี',pct:5,amount:0,status:'pending'},
+  ];
+  return [];
+}
+
+function getDefaultNotes(type) {
+  if(type==='quotation_design'||type==='quotation_construction') return 'ใบเสนอราคานี้มีอายุ 30 วัน\nชำระเงินโอนเข้าบัญชี ธ.กสิกรไทย';
+  if(type==='invoice') return 'กรุณาชำระภายใน 7 วัน\nโอนเข้าบัญชี ธ.กสิกรไทย สาขา...';
+  if(type==='contract_design') return 'สัญญาฉบับนี้มีผลบังคับใช้ตั้งแต่วันที่ลงนาม';
+  return 'ชำระภายใน 30 วัน · โอนเข้าบัญชี ธ.กสิกรไทย';
+}
 
 function startDocSync(){
   if(docUnsubscribe)docUnsubscribe();
@@ -3505,30 +3576,53 @@ window.openNewDocModal=function(){
   ndProj.innerHTML='<option value="">— เลือกโปรเจกต์ —</option>'+allProj.map(p=>'<option value="'+p.id+'">'+p.label+'</option>').join('');
   document.getElementById('nd-date').value=today();
   document.getElementById('nd-due').value='';
+  // filter type options by role
+  const ndType=document.getElementById('nd-type');
+  ndType.querySelectorAll('option[value]').forEach(opt=>{
+    if(!opt.value) return;
+    opt.style.display=canAccessDoc(opt.value,'create')?'':'none';
+  });
   document.getElementById('newDocModal').classList.add('show');
 };
 
 window.createDoc=async function(){
   const type=document.getElementById('nd-type').value;
+  if(!type){toast('กรุณาเลือกประเภทเอกสาร','err');return;}
   const projRef=document.getElementById('nd-proj').value;
   const date=document.getElementById('nd-date').value||today();
   const due=document.getElementById('nd-due').value;
   let docNum='';
   try{docNum=await genDocId(type);}catch(e){docNum='NMS-DOC-'+Date.now();}
-  let clientName='',clientDetail='',projName='';
+  let clientName='',clientDetail='',projName='',clientAddress='',clientTaxId='',projLocation='',projSize='';
+  let clientObj=null, projObj=null;
   if(projRef){
     const p=projects.find(x=>x.id===projRef);
     const l=leads.find(x=>'lead_'+x.id===projRef);
-    if(p){clientName=p.client||'';clientDetail=p.phone||'';projName=p.name||'';}
-    else if(l){clientName=l.name||'';clientDetail=l.phone||'';projName=l.proj||'';}
+    if(p){
+      clientObj=p; projObj=p;
+      clientName=p.client||'';clientDetail=p.phone||'';projName=p.name||'';
+      clientAddress=p.address||'';clientTaxId=p.taxId||'';
+      projLocation=p.loc||'';projSize=p.size||'';
+    } else if(l){
+      clientObj=l; projObj=l;
+      clientName=l.name||'';clientDetail=l.phone||'';projName=l.proj||'';
+    }
   }
   const docId=Date.now().toString();
   const newDoc={
     id:docId,docNum,type,projRef,date,due,status:'draft',
     clientName,clientDetail,projName,
-    items:[{id:'1',desc:'ค่าบริการออกแบบภายใน',qty:1,unit:'งาน',price:0,total:0}],
-    notes:'ชำระภายใน 30 วัน · โอนเข้าบัญชี ธ.กสิกรไทย',
-    vatRate:7,subtotal:0,vat:0,grandTotal:0,
+    clientAddress,clientTaxId,clientIsCompany:false,
+    projLocation,projSize,
+    items:getDefaultItems(type),
+    installments:getDefaultInstallments(type),
+    hasConstruction:false,
+    discountRate:0,discountAmt:0,
+    vatRate:7,withholdingTaxRate:0,
+    subtotal:0,discount:0,afterDiscount:0,
+    vat:0,withholdingTax:0,grandTotal:0,
+    refDocNum:'',refDocId:'',
+    notes:getDefaultNotes(type),
     createdBy:currentUser.name,createdAt:new Date().toISOString()
   };
   try{
@@ -3541,7 +3635,9 @@ window.createDoc=async function(){
 
 function renderDocGrid(){
   const grid=document.getElementById('docGrid'); if(!grid)return;
-  const filtered=docFilter==='all'?docs:docs.filter(d=>d.type===docFilter||(docFilter==='contract'&&d.type&&d.type.startsWith('contract')));
+  // filter by role-based view access
+  let filtered=docs.filter(d=>canAccessDoc(d.type||'boq','view'));
+  if(docFilter!=='all') filtered=filtered.filter(d=>d.type===docFilter);
   if(!filtered.length){
     grid.innerHTML='<div style="padding:40px;text-align:center;color:var(--gray-400)">ยังไม่มีเอกสาร — กด "+ สร้างเอกสาร" ด้านบน</div>';
     return;

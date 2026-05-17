@@ -893,7 +893,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
 .print-installments{display:none}
 @media print{
   body{background:white;font-size:12pt}
-  .nav,.sync-bar,.bottom-nav,.imper-bar,.imper-spacer,
+  .nav,.sync-bar,.bottom-nav,.imper-bar,.imper-spacer,#backupBanner,
   .page:not(.on),#docListView,.doc-toolbar,
   button,select,input[type=checkbox],
   #docExtras .doc-section{display:none !important}
@@ -939,6 +939,14 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
 
 <!-- ═══ APP ═══ -->
 <div id="appScreen">
+  <!-- BACKUP REMINDER BANNER -->
+  <div id="backupBanner" style="display:none;background:#7c3aed;color:#fff;padding:8px 20px;font-size:12px;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+    <span>⚠️ <span id="backupBannerTxt">ยังไม่เคย Backup</span></span>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button onclick="showPage('admin',document.getElementById('tabAdmin'));checkBackupReminder()" style="background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:6px;padding:4px 12px;font-size:11px;cursor:pointer;font-family:inherit">ไป Admin → Backup</button>
+      <button onclick="document.getElementById('backupBanner').style.display='none'" style="background:none;color:rgba(255,255,255,.7);border:none;cursor:pointer;font-size:14px;padding:0 4px">✕</button>
+    </div>
+  </div>
   <div class="sync-bar">
     <div><span class="sdot sdot-off" id="sdot"></span><span id="smsg">กำลังเชื่อมต่อ...</span></div>
     <div id="stime" style="font-size:10px;opacity:.6"></div>
@@ -958,7 +966,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
       <button class="ntab" id="tabPipeline" onclick="showPage('pipeline',this)">📋 Lead CRM</button>
       <button class="ntab" id="tabAnalytics" onclick="showPage('analytics',this)">📊 Analytics</button>
       <button class="ntab" id="tabFin" onclick="showPage('finance',this)">💰 การเงิน</button>
-      <button class="ntab" id="tabAdmin" onclick="showPage('admin',this)" style="display:none">⚙️ Admin</button>
+      <button class="ntab" id="tabAdmin" onclick="showPage('admin',this)" style="display:none">⚙️ Admin<span id="backupBadge" style="display:none;background:#ef4444;color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:8px;margin-left:4px;vertical-align:middle">!</span></button>
       <button class="ntab" id="tabAccDocs" onclick="showPage('accdocs',this)" style="display:none">📂 เอกสารบัญชี</button>
       <button class="ntab" id="tabClients" onclick="showPage('clients',this)" style="display:none">🪪 รหัสลูกค้า</button>
     </div>
@@ -2117,6 +2125,8 @@ function setupNavUI(){
   const greet=hr<12?'สวัสดีตอนเช้า':hr<17?'สวัสดีตอนบ่าย':'สวัสดีตอนเย็น';
   document.getElementById('greetingName').textContent=`${greet}, ${currentUser.name} 👋`;
   document.getElementById('greetingDate').textContent=now.toLocaleDateString('th-TH',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  // Show backup reminder for admin/owner only
+  if(isAdmin()) setTimeout(checkBackupReminder, 500);
 }
 
 // ── Page Nav ──
@@ -4413,7 +4423,34 @@ function renderAdmin(){
   });
   const roleCounts={};userList.forEach(([,u])=>{roleCounts[u.role]=(roleCounts[u.role]||0)+1;});
   const rcBadge=(role,count)=>{const c=ROLE_COLOR[role]||'#999';return`<span style="background:${c}20;color:${c};padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600">${ROLE_LABEL[role]||role.toUpperCase()} ${count}</span>`;};
+  const bkDays=getLastBackupDays();
+  const bkColor=bkDays===null||bkDays>=BACKUP_WARN_DAYS?'#ef4444':bkDays>=3?'#f59e0b':'#22c55e';
+  const bkLabel=bkDays===null?'ยังไม่เคย Backup':bkDays===0?'✅ Backup วันนี้แล้ว':`${bkDays} วันที่แล้ว`;
   wrap.innerHTML=`
+    <!-- BACKUP SECTION -->
+    <div class="admin-section" style="margin-bottom:20px;border-color:${bkDays===null||bkDays>=BACKUP_WARN_DAYS?'#c4b5fd':'var(--border)'}">
+      <div class="admin-section-hd" style="${bkDays===null||bkDays>=BACKUP_WARN_DAYS?'background:#f5f3ff':''}">
+        <div>
+          <div class="admin-section-title">💾 Backup & กู้คืนข้อมูล</div>
+          <div class="admin-section-sub">ดาวน์โหลด JSON ครบทุก collection เก็บไว้ใน Google Drive หรือคอมฯ</div>
+        </div>
+        <span style="font-size:12px;font-weight:600;color:${bkColor}" id="lastBackupInfo">${bkLabel}</span>
+      </div>
+      <div style="padding:16px 20px;display:flex;flex-wrap:wrap;gap:12px;align-items:center">
+        <button class="btn btn-gold" id="btnBackupAll" onclick="backupAll()" style="gap:8px">
+          💾 Backup ทั้งหมดทันที
+        </button>
+        <div style="flex:1;font-size:12px;color:var(--gray-500);line-height:1.6">
+          เก็บข้อมูล: leads · projects · documents · events · acc_bundles<br>
+          ไฟล์ชื่อ: <code style="background:var(--gray-100);padding:1px 5px;border-radius:3px">NMS-Backup-YYYY-MM-DD.json</code>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="importJSON()" style="white-space:nowrap">📂 กู้คืนจาก Backup</button>
+      </div>
+      ${bkDays===null||bkDays>=BACKUP_WARN_DAYS?`
+      <div style="background:#f5f3ff;border-top:1px solid #e9d5ff;padding:10px 20px;font-size:12px;color:#7c3aed;display:flex;align-items:center;gap:8px">
+        ⚠️ ${bkDays===null?'ยังไม่เคย Backup เลย — กรุณากด Backup เพื่อความปลอดภัยของข้อมูล':`ไม่ได้ Backup มา ${bkDays} วันแล้ว — แนะนำ Backup ทุก 7 วัน`}
+      </div>`:''}
+    </div>
     <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px">
       ${Object.entries(roleCounts).map(([r,n])=>rcBadge(r,n)).join('')}
     </div>
@@ -4619,6 +4656,117 @@ window.goToLinkedProject = function(pid) {
   closePanel();
   showPage('projects', document.getElementById('tabProjects'));
   setTimeout(() => openProjDetail(pid), 300);
+};
+
+// ══════════════════════════════════════════
+// BACKUP SYSTEM
+// ══════════════════════════════════════════
+const BACKUP_KEY = 'nms_last_backup';
+const BACKUP_WARN_DAYS = 7;
+
+function getLastBackupDays(){
+  const ts = localStorage.getItem(BACKUP_KEY);
+  if(!ts) return null;
+  return Math.floor((Date.now()-parseInt(ts))/(1000*60*60*24));
+}
+
+function markBackupDone(){
+  localStorage.setItem(BACKUP_KEY, Date.now().toString());
+  checkBackupReminder();
+}
+
+function checkBackupReminder(){
+  const days = getLastBackupDays();
+  const badge = document.getElementById('backupBadge');
+  const banner = document.getElementById('backupBanner');
+  const bannerTxt = document.getElementById('backupBannerTxt');
+
+  if(days === null || days >= BACKUP_WARN_DAYS){
+    const msg = days===null ? 'ยังไม่เคย Backup — กรุณา Backup ข้อมูลเพื่อความปลอดภัย' : `ไม่ได้ Backup มา ${days} วันแล้ว — แนะนำให้ Backup ทุก 7 วัน`;
+    if(badge) badge.style.display='inline-block';
+    if(banner){ banner.style.display='flex'; if(bannerTxt) bannerTxt.textContent=msg; }
+  } else {
+    if(badge) badge.style.display='none';
+    if(banner) banner.style.display='none';
+  }
+  const lastEl = document.getElementById('lastBackupInfo');
+  if(lastEl){
+    if(days===null) lastEl.textContent='ยังไม่เคย Backup';
+    else if(days===0) lastEl.textContent='Backup ล่าสุด: วันนี้';
+    else lastEl.textContent=`Backup ล่าสุด: ${days} วันที่แล้ว`;
+  }
+}
+
+window.backupAll = async function(){
+  const btn = document.getElementById('btnBackupAll');
+  if(btn){ btn.disabled=true; btn.textContent='⏳ กำลัง Backup...'; }
+  try{
+    const [leadsSnap, projSnap, docsSnap, evSnap, accSnap] = await Promise.all([
+      getDocs(collection(db,'leads')),
+      getDocs(collection(db,'projects')),
+      getDocs(collection(db,'documents')),
+      getDocs(collection(db,'events')),
+      getDocs(collection(db,'acc_bundles')),
+    ]);
+    const backup={
+      _meta:{ version:'v12', exportedAt:new Date().toISOString(), exportedBy:currentUser.name, totalLeads:leadsSnap.size, totalProjects:projSnap.size, totalDocs:docsSnap.size },
+      leads: leadsSnap.docs.map(d=>({id:d.id,...d.data()})),
+      projects: projSnap.docs.map(d=>({id:d.id,...d.data()})),
+      documents: docsSnap.docs.map(d=>({id:d.id,...d.data()})),
+      events: evSnap.docs.map(d=>({id:d.id,...d.data()})),
+      acc_bundles: accSnap.docs.map(d=>({id:d.id,...d.data()})),
+    };
+    const blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    const dateStr=new Date().toISOString().slice(0,10);
+    a.href=url; a.download=`NMS-Backup-${dateStr}.json`; a.click();
+    URL.revokeObjectURL(url);
+    markBackupDone();
+    toast(`✅ Backup สำเร็จ! ${backup.leads.length} leads · ${backup.projects.length} projects · ${backup.documents.length} docs`,'ok');
+    if(isAdmin()) renderAdmin();
+  }catch(e){
+    toast('Backup ไม่สำเร็จ: '+e.message,'err');
+  }finally{
+    if(btn){ btn.disabled=false; btn.textContent='💾 Backup ทั้งหมดทันที'; }
+  }
+};
+
+window.exportCSV = function(){
+  if(!leads.length){ toast('ไม่มีข้อมูล Leads','err'); return; }
+  const headers=['วันที่','ชื่อ','เบอร์','Line','อีเมล','แหล่งที่มา','ขั้นตอน','งบประมาณ','พื้นที่','รหัสลูกค้า','รหัสโปรเจกต์'];
+  const rows=leads.map(l=>[l.date||'',l.name||'',l.phone||'',l.line||'',l.email||'',l.source||'',l.step||'',l.budget||'',l.size||'',l.clientId||'',l.projId||''].map(v=>`"${String(v).replace(/"/g,'""')}"`));
+  const csv='﻿'+[headers,...rows].map(r=>r.join(',')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download=`NMS-Leads-${new Date().toISOString().slice(0,10)}.csv`; a.click();
+  URL.revokeObjectURL(url);
+  toast('Export CSV สำเร็จ ✓','ok');
+};
+
+window.importJSON = function(){
+  const input=document.createElement('input');
+  input.type='file'; input.accept='.json';
+  input.onchange=async(e)=>{
+    const file=e.target.files[0]; if(!file) return;
+    try{
+      const text=await file.text();
+      const data=JSON.parse(text);
+      // Support both full backup format and leads-only format
+      const leadsArr=data.leads||data;
+      if(!Array.isArray(leadsArr)){toast('รูปแบบไฟล์ไม่ถูกต้อง','err');return;}
+      if(!confirm(`นำเข้า ${leadsArr.length} leads?\n(ข้อมูลที่มี ID ซ้ำจะถูก overwrite)`))return;
+      let ok=0,fail=0;
+      for(const l of leadsArr){
+        if(!l.id)continue;
+        try{ await setDoc(doc(db,'leads',l.id),sanitizeForFirestore(l)); ok++; }
+        catch(e){ fail++; }
+      }
+      toast(`นำเข้าสำเร็จ ${ok} รายการ${fail?' · ล้มเหลว '+fail:''}  ✓`,'ok');
+    }catch(e){ toast('อ่านไฟล์ไม่ได้: '+e.message,'err'); }
+  };
+  input.click();
 };
 
 // ── Init ──

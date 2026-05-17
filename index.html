@@ -607,7 +607,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
 <div id="loginScreen" class="active">
   <div class="login-box">
     <div class="login-logo">Need More Space</div>
-    <div class="login-sub">STUDIO SYSTEM — v7.0</div>
+    <div class="login-sub">STUDIO SYSTEM — v12.0</div>
     <div class="lf"><label>USERNAME</label><input id="lu" placeholder="username" autocomplete="username"></div>
     <div class="lf"><label>PASSWORD</label><input id="lp" type="password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
     <button class="login-btn" onclick="doLogin()">เข้าสู่ระบบ →</button>
@@ -626,7 +626,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
     <div class="nav-brand" onclick="showPage('home',document.getElementById('tabHome'))">
       <div class="nav-logo">Need More Space</div>
       <div class="nav-dot"></div>
-      <div class="nav-ver">Studio v7</div>
+      <div class="nav-ver">Studio v12</div>
     </div>
     <div class="nav-tabs">
       <button class="ntab on" id="tabHome" onclick="showPage('home',this)">🏠 Home</button>
@@ -1544,7 +1544,7 @@ function setSyncUI(on,msg=''){
 }
 
 // ── Session ──
-const SESS='nms_sess_v7';
+const SESS='nms_sess_v12';
 function loadSession(){try{const r=sessionStorage.getItem(SESS)||localStorage.getItem(SESS);if(!r)return null;const s=JSON.parse(r);if(s.exp&&Date.now()>s.exp){clearSession();return null;}return s;}catch(e){return null;}}
 function saveSession(u){const s={...u,exp:Date.now()+30*24*60*60*1000};sessionStorage.setItem(SESS,JSON.stringify(s));localStorage.setItem(SESS,JSON.stringify(s));}
 function clearSession(){sessionStorage.removeItem(SESS);localStorage.removeItem(SESS);}

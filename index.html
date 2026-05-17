@@ -646,10 +646,35 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
   .home-grid{grid-template-columns:1fr 1fr}
   .home-cols{grid-template-columns:1fr}
   .menu-grid{grid-template-columns:1fr}
+  .imper-bar{flex-direction:column;gap:6px;text-align:center}
 }
+
+/* ── IMPERSONATE BAR ── */
+.imper-bar{display:none;position:fixed;top:0;left:0;right:0;z-index:9999;background:linear-gradient(135deg,#c05c1a,#c0392b);color:#fff;padding:10px 20px;align-items:center;gap:12px;box-shadow:0 2px 12px rgba(0,0,0,.25);font-size:13px}
+.imper-bar.show{display:flex}
+.imper-bar-icon{font-size:20px;flex-shrink:0}
+.imper-bar-text{flex:1}.imper-bar-name{font-weight:700;font-size:14px}
+.imper-bar-role{opacity:.85;font-size:12px;margin-top:1px}
+.imper-bar-proj{opacity:.7;font-size:11px;margin-top:2px}
+.imper-back{background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:6px;padding:7px 16px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;transition:background .15s}
+.imper-back:hover{background:rgba(255,255,255,.35)}
+.imper-spacer{height:56px;display:none}
+.imper-spacer.show{display:block}
 </style>
 </head>
 <body>
+
+<!-- ═══ IMPERSONATE BAR ═══ -->
+<div class="imper-bar" id="imperBar">
+  <div class="imper-bar-icon">👁</div>
+  <div class="imper-bar-text">
+    <div class="imper-bar-name" id="imperName">—</div>
+    <div class="imper-bar-role" id="imperRole">—</div>
+    <div class="imper-bar-proj" id="imperProj"></div>
+  </div>
+  <button class="imper-back" onclick="stopImpersonating()">← กลับไป Admin</button>
+</div>
+<div class="imper-spacer" id="imperSpacer"></div>
 
 <!-- ═══ LOGIN ═══ -->
 <div id="loginScreen" class="active">
@@ -3636,6 +3661,7 @@ function renderAdmin(){
             ${projNames.length?`<div style="font-size:10px;color:var(--gray-400);margin-top:4px">📂 ${projNames.join(', ')}</div>`:'<div style="font-size:10px;color:var(--gray-400);margin-top:4px">📂 เข้าถึงได้ทั้งหมด</div>'}
           </div>
           <div style="display:flex;gap:6px;flex-shrink:0">
+            ${uid!==currentUser.user?`<button class="btn btn-gold btn-sm" onclick="impersonateUser('${uid}')" title="ดูระบบในมุมมองของ ${u.name||uid}">👁 ดูในฐานะ</button>`:'<span style="font-size:11px;color:var(--gray-400);padding:4px 8px">คุณ</span>'}
             <button class="btn btn-ghost btn-sm" onclick="editUser('${uid}')">✏️ แก้ไข</button>
             ${uid!==currentUser.user?`<button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="deleteUser('${uid}')">🗑</button>`:''}
           </div>
@@ -3705,6 +3731,76 @@ window.deleteUser=async function(uid){
     toast(`ลบผู้ใช้ "${u?.name||uid}" แล้ว`,'ok');
     renderAdmin();
   }catch(e){toast('ลบไม่สำเร็จ: '+e.message,'err');}
+};
+
+// ══════════════════════════════════════════
+// IMPERSONATE MODULE
+// ══════════════════════════════════════════
+function _resetListeners(){
+  if(unsubscribe){unsubscribe();unsubscribe=null;}
+  if(projUnsubscribe){projUnsubscribe();projUnsubscribe=null;}
+  if(accUnsubscribe){accUnsubscribe();accUnsubscribe=null;}
+  if(docUnsubscribe){docUnsubscribe();docUnsubscribe=null;}
+  if(calEvUnsubscribe){calEvUnsubscribe();calEvUnsubscribe=null;}
+  leads=[]; projects=[]; accBundles=[];
+}
+const IMPER_KEY = 'nms_imper_backup';
+
+window.impersonateUser = function(uid){
+  const targetUser = users[uid];
+  if(!targetUser){ toast('ไม่พบ user นี้','err'); return; }
+  if(!isAdmin()){ toast('เฉพาะ Admin เท่านั้น','err'); return; }
+
+  // backup admin session
+  sessionStorage.setItem(IMPER_KEY, JSON.stringify(currentUser));
+
+  // switch to target user (ไม่ save session ลง localStorage เพื่อป้องกัน refresh แล้วค้างเป็น user อื่น)
+  const projAccess = targetUser.projectAccess || [];
+  currentUser = { user: uid, ...targetUser, projectAccess: projAccess };
+
+  // update impersonate bar
+  const projNames = projAccess.map(pid => {
+    const p = projects.find(x => x.id === pid);
+    return p ? (p.projId || p.name) : pid;
+  }).filter(Boolean);
+
+  document.getElementById('imperName').textContent = `กำลังดูในฐานะ: ${targetUser.name||uid}`;
+  document.getElementById('imperRole').textContent = `Role: ${ROLE_LABEL[targetUser.role]||targetUser.role}`;
+  document.getElementById('imperProj').textContent = projNames.length
+    ? `โปรเจกต์: ${projNames.join(', ')}`
+    : 'โปรเจกต์: เข้าถึงได้ทั้งหมด';
+  document.getElementById('imperBar').classList.add('show');
+  document.getElementById('imperSpacer').classList.add('show');
+
+  // restart UI as target user
+  _resetListeners();
+  setupNavUI();
+  startSync();
+  const role = currentUser.role;
+  if(role === 'accounting'){
+    showPage('accdocs', document.getElementById('tabAccDocs'));
+    startAccSync();
+  } else {
+    showClanding();
+  }
+  toast(`👁 ดูระบบในฐานะ ${targetUser.name||uid} (${ROLE_LABEL[targetUser.role]||targetUser.role})`,'ok');
+};
+
+window.stopImpersonating = function(){
+  const backup = sessionStorage.getItem(IMPER_KEY);
+  if(!backup){ toast('ไม่พบข้อมูล admin backup','err'); return; }
+  sessionStorage.removeItem(IMPER_KEY);
+
+  currentUser = JSON.parse(backup);
+
+  document.getElementById('imperBar').classList.remove('show');
+  document.getElementById('imperSpacer').classList.remove('show');
+
+  _resetListeners();
+  setupNavUI();
+  startSync();
+  showPage('admin', document.getElementById('tabAdmin'));
+  toast('กลับมาเป็น Admin แล้ว ✓','ok');
 };
 
 // ── Init ──

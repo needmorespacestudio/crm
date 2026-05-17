@@ -263,6 +263,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
 .admin-tbl tr:last-child td{border-bottom:none}
 .admin-tbl tr:hover td{background:var(--gray-50)}
 .role-pill{font-size:10px;font-weight:700;padding:2px 8px;border-radius:8px;font-family:'DM Mono',monospace;display:inline-block}
+.rp-owner{background:#ede9fe;color:#5b21b6;font-weight:700}
 .rp-admin{background:#fde8e8;color:var(--red)}
 .rp-sales{background:var(--gold-light);color:var(--gold)}
 .rp-designer{background:var(--blue-light);color:var(--blue)}
@@ -1489,8 +1490,9 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
       <div class="field"><label>ชื่อแสดง *</label><input id="m-name" placeholder="เช่น คุณแพร"></div>
       <div class="field"><label>Role *</label>
         <select id="m-role">
-          <option value="admin">Admin — สิทธิ์สูงสุด</option>
-          <option value="sales">Sales — CRM & Lead</option>
+          <option value="owner" class="opt-owner-only" style="display:none">👑 Owner — เจ้าของระบบ</option>
+          <option value="admin" class="opt-owner-only" style="display:none">Admin — จัดการระบบ</option>
+          <option value="sales">Sales — CRM &amp; Lead</option>
           <option value="designer">Designer — ออกแบบ</option>
           <option value="drafter">Drafter — เขียนแบบ</option>
           <option value="accounting">Accounting — การเงิน</option>
@@ -1575,14 +1577,14 @@ const db = getFirestore(app);
 
 // ── Default Users (fallback ถ้า Firestore ยังไม่มีข้อมูล) ──
 const DEFAULT_USERS = {
-  'panupongtr': { pass:'Pong4911*', role:'admin', name:'ภาณุ', display:'ภาณุ (Admin)', email:'' },
+  'panupongtr': { pass:'Pong4911*', role:'owner', name:'ภาณุ', display:'ภาณุ (เจ้าของ)', email:'' },
   'admin':      { pass:'needmorespace', role:'admin', name:'Admin', display:'Admin', email:'' },
   'nms':        { pass:'nms2024', role:'admin', name:'NMS', display:'NMS Admin', email:'' },
 };
 
-const ROLE_COLOR = { admin:'#c0392b', sales:'#c49a3c', designer:'#2563a8', drafter:'#2563a8', accounting:'#2d7a5a', contractor:'#c05c1a', outsource:'#7a7268' };
-const ROLE_LABEL = { admin:'ADMIN', sales:'SALES', designer:'DESIGNER', drafter:'DRAFTER', accounting:'ACCOUNTING', contractor:'CONTRACTOR', outsource:'OUTSOURCE' };
-const ROLE_CLASS = { admin:'rp-admin', sales:'rp-sales', designer:'rp-designer', drafter:'rp-designer', accounting:'rp-accounting', contractor:'rp-outsource', outsource:'rp-outsource' };
+const ROLE_COLOR = { owner:'#5b21b6', admin:'#c0392b', sales:'#c49a3c', designer:'#2563a8', drafter:'#2563a8', accounting:'#2d7a5a', contractor:'#c05c1a', outsource:'#7a7268' };
+const ROLE_LABEL = { owner:'OWNER', admin:'ADMIN', sales:'SALES', designer:'DESIGNER', drafter:'DRAFTER', accounting:'ACCOUNTING', contractor:'CONTRACTOR', outsource:'OUTSOURCE' };
+const ROLE_CLASS = { owner:'rp-owner', admin:'rp-admin', sales:'rp-sales', designer:'rp-designer', drafter:'rp-designer', accounting:'rp-accounting', contractor:'rp-outsource', outsource:'rp-outsource' };
 
 const STEPS = [
   {id:'waiting_contact',label:'รอติดต่อ',long:'รอติดต่อไป'},
@@ -1622,14 +1624,16 @@ const fmtN=n=>(!n||n===0)?'0':parseInt(String(n).replace(/[,฿]/g,'')).toLocale
 const today=()=>new Date().toISOString().split('T')[0];
 const nowTH=()=>new Date().toLocaleString('th-TH',{dateStyle:'short',timeStyle:'short'});
 const isOverdue=l=>{if(!l.nextdate||l.step==='delivered')return false;return new Date(l.nextdate)<new Date(today());};
-const canDelete=()=>currentUser?.role==='admin';
-const canSeeFin=()=>['admin','accounting'].includes(currentUser?.role);
-const canEditFin=()=>['admin','accounting'].includes(currentUser?.role);
-const canSeeAll=()=>['admin','accounting'].includes(currentUser?.role);
-const canEdit=()=>['admin','sales'].includes(currentUser?.role);
-const canAdd=()=>['admin','sales'].includes(currentUser?.role);
-const isCL=()=>['admin','designer','drafter','outsource','contractor'].includes(currentUser?.role);
-const isAdmin=()=>currentUser?.role==='admin';
+const isOwner=()=>currentUser?.role==='owner';
+const isAdmin=()=>['owner','admin'].includes(currentUser?.role);
+const isStrictAdmin=()=>currentUser?.role==='admin';
+const canDelete=()=>isAdmin();
+const canSeeFin=()=>['owner','admin','accounting'].includes(currentUser?.role);
+const canEditFin=()=>['owner','admin','accounting'].includes(currentUser?.role);
+const canSeeAll=()=>['owner','admin','accounting'].includes(currentUser?.role);
+const canEdit=()=>['owner','admin','sales'].includes(currentUser?.role);
+const canAdd=()=>['owner','admin','sales'].includes(currentUser?.role);
+const isCL=()=>['owner','admin','designer','drafter','outsource','contractor'].includes(currentUser?.role);
 
 // ── Toast ──
 let tTimer;
@@ -1707,7 +1711,7 @@ async function startApp(){
   if(role==='accounting'){
     showPage('accdocs',document.getElementById('tabAccDocs'));
     startAccSync();
-  } else if(['admin','sales','designer','drafter','contractor','outsource'].includes(role)){
+  } else if(['owner','admin','sales','designer','drafter','contractor','outsource'].includes(role)){
     showClanding();
   } else {
     renderHome();
@@ -1761,7 +1765,7 @@ function showClanding(){
     {icon:'🗂️',title:'เลือกโปรเจค',desc:'ดูข้อมูล Checklist ไฟล์งาน<br>& อัปเดตสถานะโปรเจค',page:'projects',tab:'tabProjects'},
     {icon:'📋',title:'Lead CRM',desc:'Pipeline & ติดตามลูกค้า<br>เพิ่ม Lead & ติดตาม',page:'pipeline',tab:'tabPipeline'},
   ];
-  const showLead=['admin','sales'].includes(role);
+  const showLead=['owner','admin','sales'].includes(role);
   const cards=showLead?allCards:allCards.slice(0,2);
   const cols=cards.length===3?'grid-template-columns:1fr 1fr 1fr;max-width:780px':'grid-template-columns:1fr 1fr;max-width:560px';
   document.getElementById('clandingCards').style.cssText=cols;
@@ -3635,7 +3639,10 @@ function renderFinance(){
 function renderAdmin(){
   if(!isAdmin())return;
   const wrap=document.getElementById('adminContent'); if(!wrap) return;
-  const userList=Object.entries(users).sort((a,b)=>a[0].localeCompare(b[0]));
+  const userList=Object.entries(users).sort((a,b)=>{
+    const order={owner:0,admin:1,sales:2,accounting:3,designer:4,drafter:5,contractor:6,outsource:7};
+    return (order[a[1].role]??9)-(order[b[1].role]??9)||a[0].localeCompare(b[0]);
+  });
   const roleCounts={};userList.forEach(([,u])=>{roleCounts[u.role]=(roleCounts[u.role]||0)+1;});
   const rcBadge=(role,count)=>{const c=ROLE_COLOR[role]||'#999';return`<span style="background:${c}20;color:${c};padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600">${ROLE_LABEL[role]||role.toUpperCase()} ${count}</span>`;};
   wrap.innerHTML=`
@@ -3649,21 +3656,32 @@ function renderAdmin(){
     <div style="display:flex;flex-direction:column;gap:8px">
       ${userList.map(([uid,u])=>{
         const rc=ROLE_COLOR[u.role]||'#999';
+        const isMe=uid===currentUser.user;
+        const isUOwner=u.role==='owner';
+        const isUAdmin=u.role==='admin';
+        const iAmOwner=isOwner();
         const projNames=(u.projectAccess||[]).map(pid=>{const p=projects.find(x=>x.id===pid);return p?p.projId||p.name:pid;}).filter(Boolean);
-        return`<div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:12px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        // admin พนักงานแตะ owner/admin อื่นไม่ได้
+        const canEdit_=isMe||iAmOwner||(isStrictAdmin()&&!isUOwner&&!isUAdmin);
+        const canDelete_=!isMe&&(iAmOwner||(isStrictAdmin()&&!isUOwner&&!isUAdmin));
+        const canImper_=!isMe&&!isUOwner;
+        const ownerBorder=isUOwner?'border-color:#c4b5fd;':'';
+        return`<div style="background:var(--white);border:1px solid var(--border);${ownerBorder}border-radius:var(--r);padding:12px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
           <div style="width:36px;height:36px;border-radius:50%;background:${rc}20;color:${rc};display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0">${(u.name||uid)[0].toUpperCase()}</div>
           <div style="flex:1;min-width:160px">
-            <div style="font-size:14px;font-weight:600;color:var(--gray-800)">${u.name||uid} <span style="font-size:11px;font-weight:400;color:var(--gray-400)">(${uid})</span></div>
+            <div style="font-size:14px;font-weight:600;color:var(--gray-800)">${u.name||uid}${isMe?' <span style="font-size:11px;font-weight:400;color:var(--gray-400)">(คุณ)</span>':''} <span style="font-size:11px;font-weight:400;color:var(--gray-400)">(${uid})</span></div>
             <div style="display:flex;align-items:center;gap:8px;margin-top:3px;flex-wrap:wrap">
               <span style="background:${rc}20;color:${rc};padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600">${ROLE_LABEL[u.role]||u.role}</span>
+              ${isUOwner?'<span style="font-size:10px;color:#5b21b6;font-weight:600">👑 เจ้าของระบบ</span>':''}
               ${u.email?`<span style="font-size:11px;color:var(--gray-400)">${u.email}</span>`:''}
             </div>
             ${projNames.length?`<div style="font-size:10px;color:var(--gray-400);margin-top:4px">📂 ${projNames.join(', ')}</div>`:'<div style="font-size:10px;color:var(--gray-400);margin-top:4px">📂 เข้าถึงได้ทั้งหมด</div>'}
           </div>
-          <div style="display:flex;gap:6px;flex-shrink:0">
-            ${uid!==currentUser.user?`<button class="btn btn-gold btn-sm" onclick="impersonateUser('${uid}')" title="ดูระบบในมุมมองของ ${u.name||uid}">👁 ดูในฐานะ</button>`:'<span style="font-size:11px;color:var(--gray-400);padding:4px 8px">คุณ</span>'}
-            <button class="btn btn-ghost btn-sm" onclick="editUser('${uid}')">✏️ แก้ไข</button>
-            ${uid!==currentUser.user?`<button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="deleteUser('${uid}')">🗑</button>`:''}
+          <div style="display:flex;gap:6px;flex-shrink:0;align-items:center">
+            ${canImper_?`<button class="btn btn-gold btn-sm" onclick="impersonateUser('${uid}')" title="ดูระบบในมุมมองของ ${u.name||uid}">👁 ดูในฐานะ</button>`:''}
+            ${canEdit_?`<button class="btn btn-ghost btn-sm" onclick="editUser('${uid}')">✏️ แก้ไข</button>`:''}
+            ${canDelete_?`<button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="deleteUser('${uid}')">🗑</button>`:''}
+            ${!canEdit_&&!canDelete_&&!canImper_&&!isMe?`<span style="font-size:11px;color:var(--gray-400)">🔒 protected</span>`:''}
           </div>
         </div>`;
       }).join('')}
@@ -3671,15 +3689,22 @@ function renderAdmin(){
 }
 
 window.openUserModal=function(uid){
+  const targetUser=uid?users[uid]:null;
+  // admin พนักงานแก้ไข owner/admin อื่นไม่ได้
+  if(uid&&isStrictAdmin()&&(targetUser?.role==='owner'||targetUser?.role==='admin')){
+    toast('Admin ไม่สามารถแก้ไข Owner หรือ Admin คนอื่นได้','err'); return;
+  }
   editingUserId=uid||null;
-  document.getElementById('modalTitle').textContent=uid?'แก้ไขผู้ใช้':'เพิ่มผู้ใช้ใหม่';
+  document.getElementById('modalTitle').textContent=uid?`แก้ไข — ${targetUser?.name||uid}`:'เพิ่มผู้ใช้ใหม่';
   document.getElementById('modalSub').textContent=uid?`แก้ไขข้อมูลของ ${uid}`:'กรอกข้อมูลผู้ใช้งานระบบ';
-  const u=uid?users[uid]:null;
+  const u=targetUser;
   document.getElementById('m-user').value=uid||'';
   document.getElementById('m-user').disabled=!!uid;
   document.getElementById('m-pass').value=u?.pass||'';
   document.getElementById('m-name').value=u?.name||'';
   document.getElementById('m-email').value=u?.email||'';
+  // show/hide owner-only role options
+  document.querySelectorAll('#m-role .opt-owner-only').forEach(el=>el.style.display=isOwner()?'':'none');
   document.getElementById('m-role').value=u?.role||'designer';
   // Project assignment grid
   const grid=document.getElementById('projAssignGrid');
@@ -3710,6 +3735,7 @@ window.saveUser=async function(){
   if(!pass){toast('กรุณาใส่ Password','err');return;}
   if(!name){toast('กรุณาใส่ชื่อแสดง','err');return;}
   if(!editingUserId&&users[uid]){toast('Username นี้มีอยู่แล้ว','err');return;}
+  if(isStrictAdmin()&&(role==='owner'||role==='admin')){toast('Admin ไม่สามารถตั้ง Role เป็น Owner หรือ Admin ได้','err');return;}
   const projAccess=[...document.getElementById('projAssignGrid').querySelectorAll('input[type=checkbox]:checked')].map(cb=>cb.value);
   const existing=users[uid]||{};
   users[uid]={...existing,pass,name,display:name,role,email,projectAccess:projAccess};
@@ -3724,6 +3750,8 @@ window.saveUser=async function(){
 window.deleteUser=async function(uid){
   if(uid===currentUser.user){toast('ไม่สามารถลบตัวเองได้','err');return;}
   const u=users[uid];
+  if(u?.role==='owner'){toast('ไม่สามารถลบบัญชี Owner ได้','err');return;}
+  if(isStrictAdmin()&&u?.role==='admin'){toast('Admin ไม่สามารถลบ Admin คนอื่นได้','err');return;}
   if(!confirm(`ลบผู้ใช้ "${u?.name||uid}" ออกจากระบบ?`))return;
   delete users[uid];
   try{
@@ -3749,7 +3777,8 @@ const IMPER_KEY = 'nms_imper_backup';
 window.impersonateUser = function(uid){
   const targetUser = users[uid];
   if(!targetUser){ toast('ไม่พบ user นี้','err'); return; }
-  if(!isAdmin()){ toast('เฉพาะ Admin เท่านั้น','err'); return; }
+  if(!isAdmin()){ toast('เฉพาะ Admin/Owner เท่านั้น','err'); return; }
+  if(targetUser.role==='owner'){ toast('ไม่สามารถ Impersonate บัญชี Owner ได้','err'); return; }
 
   // backup admin session
   sessionStorage.setItem(IMPER_KEY, JSON.stringify(currentUser));

@@ -1436,18 +1436,6 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
         <div class="drive-row"><input id="f-drive" placeholder="https://drive.google.com/..."><button class="drive-btn" onclick="openDrive()">🔗 เปิด</button></div>
       </div></div>
     </div>
-    <div class="psec" id="finSec">
-      <div class="psec-title">💰 Financial Tracking</div>
-      <div class="fin-grid2">
-        <div class="field"><label>รายรับจริง (บาท)</label><input id="f-revenue" placeholder="0"></div>
-        <div class="field"><label>รายจ่ายจริง (บาท)</label><input id="f-expense" placeholder="0"></div>
-      </div>
-      <div class="fin-grid2">
-        <div class="field"><label>Management Fee (บาท)</label><input id="f-mgmt" placeholder="0"></div>
-        <div class="field"><label>Design Fee (บาท)</label><input id="f-dfee" placeholder="0"></div>
-      </div>
-      <div class="fin-summary" id="finCalc"></div>
-    </div>
     <div class="psec">
       <div class="psec-title">Action & นัดหมาย</div>
       <div class="prow1"><div class="field"><label>Action ถัดไป</label>
@@ -1458,10 +1446,6 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
         <div class="field"><label>เวลา</label><input id="f-nexttime" type="time" value="10:00"></div>
       </div>
       <div class="prow1"><div class="field"><label>บันทึก</label><textarea id="f-notes" placeholder="สิ่งที่ลูกค้าบอก ข้อตกลง..."></textarea></div></div>
-    </div>
-    <div class="psec" id="clSec" style="display:none">
-      <div class="psec-title" style="display:flex;justify-content:space-between"><span>✅ Design Checklist</span><span id="clPct" style="font-size:11px;color:var(--green);font-weight:600"></span></div>
-      <div id="clContainer"></div>
     </div>
     <div class="psec" id="actSec" style="display:none">
       <div class="psec-title">📋 Audit Trail</div>
@@ -2037,10 +2021,7 @@ window.openPanel=function(id){
   document.getElementById('calStrip').style.display=l?'flex':'none';
   document.getElementById('moveStrip').style.display=(l&&canEdit())?'flex':'none';
   document.getElementById('actSec').style.display=l?'block':'none';
-  document.getElementById('clSec').style.display=(l&&isCL())?'block':'none';
-  document.getElementById('finSec').style.display=canSeeFin()?'block':'none';
   document.getElementById('calSt').textContent='';
-  ['f-revenue','f-expense','f-mgmt','f-dfee'].forEach(fid=>{const el=document.getElementById(fid);if(el){if(!canEditFin()){el.setAttribute('readonly','');el.style.opacity='.5';}else{el.removeAttribute('readonly');el.style.opacity='1';}}});
   curStep=l?.step||STEPS[0].id;
   renderProgress(curStep);if(l)renderMoveSelect(curStep);
 
@@ -2057,10 +2038,7 @@ window.openPanel=function(id){
   gv('f-nextdate',l?.nextdate);gv('f-nexttime',l?.nexttime||'10:00');
   document.getElementById('f-nextstep').value=l?.nextstep||'';gv('f-notes',l?.notes);
   document.getElementById('f-assigned').value=l?.assignedTo||'';
-  gv('f-revenue',l?.revenue);gv('f-expense',l?.expense);gv('f-mgmt',l?.mgmtFee);gv('f-dfee',l?.designFee);
-  updateFinCalc(l);
-  if(l){renderActivityLog(l);if(isCL())renderChecklist(l);}
-  ['f-revenue','f-expense','f-mgmt','f-dfee'].forEach(fid=>{const el=document.getElementById(fid);if(el)el.oninput=()=>updateFinCalc(null);});
+  if(l){renderActivityLog(l);}
   document.getElementById('panelOv').classList.add('show');
   setTimeout(()=>document.getElementById('panel').classList.add('open'),10);
 };
@@ -2068,37 +2046,6 @@ window.openPanel=function(id){
 function closePanel(){document.getElementById('panel').classList.remove('open');document.getElementById('panelOv').classList.remove('show');setTimeout(()=>{eid=null;},260);}
 window.closePanel=closePanel;
 
-function updateFinCalc(l){
-  const rev=pn(document.getElementById('f-revenue').value||(l?.revenue));
-  const exp=pn(document.getElementById('f-expense').value||(l?.expense));
-  const profit=rev-exp;
-  const el=document.getElementById('finCalc');
-  if(!canSeeFin()){if(el)el.innerHTML='';return;}
-  el.innerHTML=`<div class="fin-row"><span style="color:var(--gray-500)">รายรับจริง</span><span style="color:var(--green)">+${fmtN(rev)}฿</span></div>
-    <div class="fin-row"><span style="color:var(--gray-500)">รายจ่ายจริง</span><span style="color:var(--red)">-${fmtN(exp)}฿</span></div>
-    <div class="fin-row"><span>กำไรสุทธิ</span><span style="font-size:15px;font-weight:700;color:${profit>=0?'var(--green)':'var(--red)'}">${profit>=0?'+':''}${fmtN(profit)}฿</span></div>`;
-}
-
-function renderChecklist(l){
-  const items=l.checklist||DEFAULT_CHECKLIST.map(c=>({...c}));
-  const done=items.filter(c=>c.status==='approved').length;
-  document.getElementById('clPct').textContent=`${done}/${items.length} ผ่านแล้ว`;
-  document.getElementById('clContainer').innerHTML=items.map((c,i)=>`
-    <div class="cl-item"><div style="flex:1"><div class="cl-label">${i+1}. ${c.label}</div>
-    <div style="margin-top:5px"><select class="cl-sel" onchange="updateCL('${c.id}','${l.id}',this.value)">
-      <option value="pending" ${c.status==='pending'?'selected':''}>⏳ รอดำเนินการ</option>
-      <option value="working" ${c.status==='working'?'selected':''}>🔨 กำลังทำ</option>
-      <option value="review" ${c.status==='review'?'selected':''}>👁️ ส่งตรวจ</option>
-      <option value="approved" ${c.status==='approved'?'selected':''}>✅ ผ่านแล้ว</option>
-      <option value="rejected" ${c.status==='rejected'?'selected':''}>❌ ส่งแก้ไข</option>
-    </select></div></div></div>`).join('');
-}
-window.updateCL=async function(cid,lid,status){
-  const l=leads.find(x=>x.id===lid);if(!l)return;
-  const checklist=(l.checklist||DEFAULT_CHECKLIST.map(c=>({...c}))).map(c=>c.id===cid?{...c,status,by:currentUser.name,at:nowTH()}:c);
-  try{await saveToCloud({...l,checklist,updated:new Date().toISOString()});renderChecklist({...l,checklist});toast('Checklist อัปเดตแล้ว ✓','ok');}
-  catch(err){toast('บันทึกไม่สำเร็จ','err');}
-};
 
 function renderActivityLog(l){
   const acts=l.activities||[];const el=document.getElementById('actList');
@@ -2130,7 +2077,8 @@ window.syncCal=function(){
 function getForm(){
   const gv=id=>document.getElementById(id)?.value?.trim()||'';
   const src=gv('f-src');if(src&&!customSources.includes(src)){customSources.unshift(src);saveSources();}
-  return {step:curStep,name:gv('f-name'),phone:gv('f-phone'),line:gv('f-line'),src,temp:document.getElementById('f-temp').value,date:gv('f-date')||today(),proj:gv('f-proj'),size:gv('f-size'),budget:gv('f-budget'),loc:gv('f-loc'),tl:gv('f-tl'),pain:gv('f-pain'),contractor:gv('f-contractor'),drive:gv('f-drive'),nextdate:gv('f-nextdate'),nexttime:gv('f-nexttime'),nextstep:document.getElementById('f-nextstep').value,notes:gv('f-notes'),assignedTo:document.getElementById('f-assigned').value,revenue:canEditFin()?gv('f-revenue'):(leads.find(l=>l.id===eid)?.revenue||''),expense:canEditFin()?gv('f-expense'):(leads.find(l=>l.id===eid)?.expense||''),mgmtFee:canEditFin()?gv('f-mgmt'):(leads.find(l=>l.id===eid)?.mgmtFee||''),designFee:canEditFin()?gv('f-dfee'):(leads.find(l=>l.id===eid)?.designFee||''),updated:new Date().toISOString(),updatedBy:currentUser.name};
+  const existing_=leads.find(l=>l.id===eid);
+  return {step:curStep,name:gv('f-name'),phone:gv('f-phone'),line:gv('f-line'),src,temp:document.getElementById('f-temp').value,date:gv('f-date')||today(),proj:gv('f-proj'),size:gv('f-size'),budget:gv('f-budget'),loc:gv('f-loc'),tl:gv('f-tl'),pain:gv('f-pain'),contractor:gv('f-contractor'),drive:gv('f-drive'),nextdate:gv('f-nextdate'),nexttime:gv('f-nexttime'),nextstep:document.getElementById('f-nextstep').value,notes:gv('f-notes'),assignedTo:document.getElementById('f-assigned').value,revenue:existing_?.revenue||'',expense:existing_?.expense||'',mgmtFee:existing_?.mgmtFee||'',designFee:existing_?.designFee||'',updated:new Date().toISOString(),updatedBy:currentUser.name};
 }
 
 window.saveLead=async function(){
@@ -2152,8 +2100,7 @@ window.saveLead=async function(){
     document.getElementById('calStrip').style.display='flex';
     document.getElementById('moveStrip').style.display=canEdit()?'flex':'none';
     document.getElementById('actSec').style.display='block';
-    document.getElementById('clSec').style.display=isCL()?'block':'none';
-    renderMoveSelect(curStep);renderActivityLog(nl);if(isCL())renderChecklist(nl);
+    renderMoveSelect(curStep);renderActivityLog(nl);
     toast(isNew?'เพิ่ม Lead ใหม่ ✓':'บันทึกแล้ว ✓','ok');
   }catch(err){toast('บันทึกไม่สำเร็จ: '+err.message,'err');}
   finally{btn.textContent='💾 บันทึก & Sync';btn.disabled=false;}

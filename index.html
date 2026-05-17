@@ -763,7 +763,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
   .cc-date{font-size:13px;margin-bottom:2px}
   .ev-pill,.evp-more{display:none !important}
   .cal-dots{display:flex}
-  .cc-date>span:last-child{display:none}
+  .cc-ev-dot{display:none}
   .cal-sidebar{min-height:unset;padding:12px 14px;border-top:1px solid var(--border)}
   .cal-legend{padding:10px 14px;gap:8px}
   .cleg{font-size:10px}
@@ -2885,7 +2885,7 @@ function calRender(){
     return`<div class="cal-cell${isToday?' cc-today':''}${isSel?' cc-sel':''}${!cur?' cc-other':''}" onclick="${cur?`calSelectDay(${d})`:''}" style="${!cur?'cursor:default':''}">
       <div class="cc-date">
         <span>${d}</span>
-        ${hasEvs?`<span style="width:6px;height:6px;border-radius:50%;background:${CAL_TYPE_COLOR[allEvs[0].type]};display:inline-block"></span>`:''}
+      ${hasEvs?`<span class="cc-ev-dot" style="width:6px;height:6px;border-radius:50%;background:${CAL_TYPE_COLOR[allEvs[0].type]};display:inline-block"></span>`:''}
       </div>
       ${filtEvs.map(e=>`<div class="ev-pill ${CAL_TYPE_PILL[e.type]}" onclick="event.stopPropagation();calOpenDetail('${e.id}')">${e.time?e.time+' ':''}${e.title}</div>`).join('')}
       ${more>0?`<div class="evp-more">+${more}</div>`:''}

@@ -298,6 +298,10 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
 .ps-construct{background:var(--orange-light);color:var(--orange)}
 .ps-done{background:var(--green-light);color:var(--green)}
 .proj-card-name{font-family:'Instrument Serif',serif;font-size:17px;color:var(--gray-800);margin-bottom:4px;padding-right:70px}
+.proj-card-id{font-size:10px;font-weight:700;color:var(--gray-400);font-family:'DM Mono',monospace;letter-spacing:.05em;margin-bottom:6px}
+.proj-card-row{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
+.doc-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:16px 20px;cursor:pointer;transition:all .15s}
+.doc-card:hover{border-color:var(--gold);box-shadow:var(--shadow-sm)}
 .proj-card-client{font-size:12px;color:var(--gray-500);margin-bottom:12px}
 .proj-card-meta{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px}
 .proj-meta-item{font-size:11px;color:var(--gray-600);display:flex;align-items:center;gap:3px}
@@ -2712,6 +2716,506 @@ window.showPage=function(id,el){
     setTimeout(()=>calRender(), 2000);
   }
 };
+
+// ══════════════════════════════════════════
+// PROJECTS MODULE
+// ══════════════════════════════════════════
+let projects = [], projUnsubscribe = null, currentProjId = null;
+let docUnsubscribe = null, docs = [], currentDocId = null, docFilter = 'all';
+let currentDocItems = [];
+
+async function saveProjToCloud(data) {
+  const clean = sanitizeForFirestore({...data, _ts: new Date().toISOString()});
+  await setDoc(doc(db, 'projects', data.id), clean);
+}
+
+function startProjSync() {
+  if (projUnsubscribe) projUnsubscribe();
+  projUnsubscribe = onSnapshot(collection(db, 'projects'),
+    snap => {
+      projects = snap.docs.map(d => ({id: d.id, ...d.data()}));
+      projects.sort((a,b) => new Date(b._ts||0) - new Date(a._ts||0));
+      renderProjGrid();
+      calRender();
+    },
+    () => { renderProjGrid(); }
+  );
+}
+
+function populateProjModal() {
+  const npLead = document.getElementById('np-lead');
+  if (npLead) {
+    npLead.innerHTML = '<option value="">— สร้างใหม่ —</option>' +
+      leads.filter(l=>l.name).map(l=>`<option value="${l.id}">${l.name}${l.clientId?' ('+l.clientId+')':''}</option>`).join('');
+  }
+  const npDes = document.getElementById('np-designer');
+  if (npDes) {
+    npDes.innerHTML = '<option value="">— ไม่ระบุ —</option>' +
+      Object.entries(users).map(([k,u])=>`<option value="${k}">${u.name}</option>`).join('');
+  }
+  ['np-name','np-client','np-phone','np-size','np-budget','np-deadline'].forEach(id=>{
+    const el = document.getElementById(id); if(el) el.value='';
+  });
+  const st = document.getElementById('np-start'); if(st) st.value=today();
+}
+
+window.openNewProjModal = function() {
+  populateProjModal();
+  document.getElementById('newProjModal').classList.add('show');
+};
+
+window.createProject = async function() {
+  const name = document.getElementById('np-name').value.trim();
+  const client = document.getElementById('np-client').value.trim();
+  if (!name || !client) { toast('ใส่ชื่อโปรเจกต์และลูกค้าด้วย', 'err'); return; }
+  const leadId = document.getElementById('np-lead').value;
+  const leadRef = leadId ? leads.find(l=>l.id===leadId) : null;
+  const pid = Date.now().toString();
+  let projId = '';
+  try { const seq = await getNextSeq('project'); projId = 'NMS-P-'+ID_YEAR()+'-'+seq+'-D'; }
+  catch(e) { projId = 'NMS-P-'+ID_YEAR()+'-'+Math.floor(Math.random()*900+100)+'-D'; }
+  const newProj = {
+    id:pid, projId, name, client:client||leadRef?.name||'',
+    phone:document.getElementById('np-phone').value.trim()||leadRef?.phone||'',
+    size:document.getElementById('np-size').value.trim(),
+    budget:document.getElementById('np-budget').value.trim(),
+    start:document.getElementById('np-start').value,
+    deadline:document.getElementById('np-deadline').value,
+    designer:document.getElementById('np-designer').value,
+    leadId:leadId||'', status:'active',
+    timeline:[], checklist:{design:[],draft:[]}, files:[],
+    revenue:'', expense:'', designFee:'', mgmtFee:'',
+    contractor:'', contractorPhone:'', contractorUpdates:[], drive:'',
+    createdBy:currentUser.name, createdAt:new Date().toISOString()
+  };
+  try {
+    await saveProjToCloud(newProj);
+    document.getElementById('newProjModal').classList.remove('show');
+    toast('สร้างโปรเจกต์ใหม่ ✓','ok');
+    setTimeout(()=>openProjDetail(pid),400);
+  } catch(e) { toast('บันทึกไม่สำเร็จ: '+e.message,'err'); }
+};
+
+function renderProjGrid() {
+  const grid = document.getElementById('projGrid'); if(!grid) return;
+  if(!projects.length){
+    grid.innerHTML='<div style="padding:40px;text-align:center;color:var(--gray-400)">ยังไม่มีโปรเจกต์ — กด "+ สร้างโปรเจกต์" ด้านบน</div>';
+    return;
+  }
+  const sl={active:'🟡 กำลังดำเนินการ',completed:'✅ เสร็จสิ้น',paused:'⏸️ หยุดชั่วคราว',cancelled:'❌ ยกเลิก'};
+  grid.innerHTML = projects.map(p=>`
+    <div class="proj-card" onclick="openProjDetail('${p.id}')">
+      <div class="proj-card-id">${p.projId||p.id}</div>
+      <div class="proj-card-name">${p.name||'—'}</div>
+      <div class="proj-card-client">👤 ${p.client||'—'}${p.phone?' · '+p.phone:''}</div>
+      <div class="proj-card-row">
+        <span class="proj-card-status">${sl[p.status]||'🟡 กำลังดำเนินการ'}</span>
+        ${p.deadline?'<span style="font-size:11px;color:var(--gray-400)">📅 '+p.deadline+'</span>':''}
+      </div>
+      ${p.budget?'<div style="font-size:11px;color:var(--gray-500);margin-top:4px">งบ: ฿'+p.budget+'</div>':''}
+    </div>`).join('');
+}
+
+window.openProjDetail = function(pid) {
+  const p = projects.find(x=>x.id===pid); if(!p) return;
+  currentProjId = pid;
+  document.getElementById('projListWrap').style.display='none';
+  document.getElementById('projDetail').style.display='block';
+  document.getElementById('pdTitle').textContent=p.name||'—';
+  document.getElementById('pdSub').textContent=(p.projId||'')+(p.client?' · '+p.client:'');
+  const fields={
+    'pd-client':p.client,'pd-phone':p.phone,'pd-line':p.line,'pd-email':p.email,
+    'pd-pain':p.pain,'pd-name':p.name,'pd-size':p.size,'pd-loc':p.loc,
+    'pd-start':p.start,'pd-deadline':p.deadline,'pd-drive':p.drive,
+    'pd-budget':p.budget,'pd-dfee':p.designFee,'pd-mgmt':p.mgmtFee,
+    'pd-revenue':p.revenue,'pd-expense':p.expense,
+    'pd-contractor':p.contractor,'pd-contractor-phone':p.contractorPhone
+  };
+  Object.entries(fields).forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.value=v||'';});
+  const uOpts='<option value="">— ไม่ระบุ —</option>'+
+    Object.entries(users).map(([k,u])=>`<option value="${k}">${u.name}</option>`).join('');
+  const des=document.getElementById('pd-designer'); if(des){des.innerHTML=uOpts;des.value=p.designer||'';}
+  const dra=document.getElementById('pd-drafter'); if(dra){dra.innerHTML=uOpts;dra.value=p.drafter||'';}
+  renderTimeline(p); renderProjChecklist(p); renderProjFiles(p);
+  renderContractorUpdates(p); renderProjFinCalc(p);
+  const firstTab=document.querySelector('.ptab'); if(firstTab) showPTab('info',firstTab);
+};
+
+window.closeProjDetail = function() {
+  currentProjId=null;
+  document.getElementById('projListWrap').style.display='block';
+  document.getElementById('projDetail').style.display='none';
+};
+
+window.saveProjDetail = async function() {
+  if(!currentProjId) return;
+  const p=projects.find(x=>x.id===currentProjId)||{id:currentProjId};
+  const gv=id=>document.getElementById(id)?.value||'';
+  const updated={...p,
+    client:gv('pd-client'),phone:gv('pd-phone'),line:gv('pd-line'),email:gv('pd-email'),
+    pain:gv('pd-pain'),name:gv('pd-name'),size:gv('pd-size'),loc:gv('pd-loc'),
+    start:gv('pd-start'),deadline:gv('pd-deadline'),drive:gv('pd-drive'),
+    designer:gv('pd-designer'),drafter:gv('pd-drafter'),
+    budget:gv('pd-budget'),designFee:gv('pd-dfee'),mgmtFee:gv('pd-mgmt'),
+    revenue:gv('pd-revenue'),expense:gv('pd-expense'),
+    contractor:gv('pd-contractor'),contractorPhone:gv('pd-contractor-phone'),
+    updatedBy:currentUser.name,updatedAt:new Date().toISOString()
+  };
+  try {
+    await saveProjToCloud(updated);
+    document.getElementById('pdTitle').textContent=updated.name||'—';
+    toast('บันทึกแล้ว ✓','ok');
+  } catch(e){toast('บันทึกไม่สำเร็จ: '+e.message,'err');}
+};
+
+window.openProjDrive=function(){
+  const url=document.getElementById('pd-drive').value.trim();
+  if(!url){toast('ใส่ลิงก์ Drive ก่อน','err');return;}
+  window.open(url,'_blank');
+};
+
+window.showPTab=function(tab,el){
+  document.querySelectorAll('.ptab').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.ptab-content').forEach(c=>c.classList.remove('on'));
+  if(el)el.classList.add('on');
+  const tc=document.getElementById('ptab-'+tab); if(tc)tc.classList.add('on');
+};
+
+window.convertProjToLead=function(){
+  const p=projects.find(x=>x.id===currentProjId);
+  if(!p?.leadId){toast('ไม่มี Lead ที่เชื่อมโยง','err');return;}
+  showPage('pipeline',document.getElementById('tabPipeline'));
+  setTimeout(()=>openPanel(p.leadId),400);
+};
+
+function renderTimeline(p){
+  const tl=document.getElementById('projTimeline'); if(!tl)return;
+  const items=p.timeline||[];
+  if(!items.length){tl.innerHTML='<div style="color:var(--gray-400);font-size:13px;padding:20px 0">ยังไม่มี Milestone</div>';return;}
+  tl.innerHTML=items.map((m,i)=>`
+    <div class="tl-item${m.done?' tl-done':''}">
+      <div class="tl-dot"></div>
+      <div class="tl-body">
+        <div class="tl-label">${m.label||'—'}</div>
+        <div class="tl-meta">${m.date||''}${m.note?' · '+m.note:''}</div>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-ghost btn-sm" onclick="toggleMilestone(${i})">${m.done?'↩️ เลิก':'✅ เสร็จ'}</button>
+        <button class="btn btn-ghost btn-sm" onclick="delMilestone(${i})">🗑️</button>
+      </div>
+    </div>`).join('');
+}
+
+window.addMilestone=async function(){
+  const label=prompt('ชื่อ Milestone:'); if(!label)return;
+  const date=prompt('วันที่ (YYYY-MM-DD):',today())||today();
+  const p=projects.find(x=>x.id===currentProjId); if(!p)return;
+  const tl=[...(p.timeline||[]),{id:Date.now().toString(),label,date,done:false,note:''}];
+  await saveProjToCloud({...p,timeline:tl}); renderTimeline({...p,timeline:tl}); toast('เพิ่ม Milestone ✓','ok');
+};
+
+window.toggleMilestone=async function(idx){
+  const p=projects.find(x=>x.id===currentProjId); if(!p)return;
+  const tl=[...(p.timeline||[])];
+  tl[idx]={...tl[idx],done:!tl[idx].done};
+  await saveProjToCloud({...p,timeline:tl}); renderTimeline({...p,timeline:tl});
+};
+
+window.delMilestone=async function(idx){
+  if(!confirm('ลบ Milestone นี้?'))return;
+  const p=projects.find(x=>x.id===currentProjId); if(!p)return;
+  const tl=(p.timeline||[]).filter((_,i)=>i!==idx);
+  await saveProjToCloud({...p,timeline:tl}); renderTimeline({...p,timeline:tl});
+};
+
+function renderProjChecklist(p){
+  ['design','draft'].forEach(role=>{
+    const cap=role.charAt(0).toUpperCase()+role.slice(1);
+    const el=document.getElementById('cl'+cap);
+    const progEl=document.getElementById('clProg'+cap);
+    if(!el)return;
+    const items=p.checklist?.[role]||[];
+    const done=items.filter(c=>c.done).length;
+    if(progEl)progEl.textContent=items.length?done+'/'+items.length+' ผ่านแล้ว':'';
+    el.innerHTML=items.map((c,i)=>`
+      <div class="cl-item${c.done?' cl-done':''}">
+        <input type="checkbox"${c.done?' checked':''} onchange="toggleProjChecklist('${role}',${i})">
+        <span>${c.label||'—'}</span>
+        <button class="cl-del" onclick="delProjChecklist('${role}',${i})">✕</button>
+      </div>`).join('')||'<div style="color:var(--gray-400);font-size:13px;padding:8px 0">ยังไม่มีรายการ</div>';
+  });
+}
+
+window.addChecklistItem=async function(role){
+  const label=prompt('รายการ:'); if(!label)return;
+  const p=projects.find(x=>x.id===currentProjId); if(!p)return;
+  const cl={...(p.checklist||{design:[],draft:[]})};
+  cl[role]=[...(cl[role]||[]),{id:Date.now().toString(),label,done:false}];
+  await saveProjToCloud({...p,checklist:cl}); renderProjChecklist({...p,checklist:cl});
+};
+
+window.toggleProjChecklist=async function(role,idx){
+  const p=projects.find(x=>x.id===currentProjId); if(!p)return;
+  const cl={...(p.checklist||{design:[],draft:[]})};
+  cl[role]=[...(cl[role]||[])]; cl[role][idx]={...cl[role][idx],done:!cl[role][idx].done};
+  await saveProjToCloud({...p,checklist:cl}); renderProjChecklist({...p,checklist:cl});
+};
+
+window.delProjChecklist=async function(role,idx){
+  const p=projects.find(x=>x.id===currentProjId); if(!p)return;
+  const cl={...(p.checklist||{design:[],draft:[]})};
+  cl[role]=(cl[role]||[]).filter((_,i)=>i!==idx);
+  await saveProjToCloud({...p,checklist:cl}); renderProjChecklist({...p,checklist:cl});
+};
+
+function renderProjFiles(p){
+  const el=document.getElementById('projFiles'); if(!el)return;
+  const files=p.files||[];
+  if(!files.length){el.innerHTML='<div style="color:var(--gray-400);font-size:13px;padding:20px 0">ยังไม่มีไฟล์</div>';return;}
+  el.innerHTML=files.map((f,i)=>`
+    <div class="file-item">
+      <span>📄 ${f.name||f.url||'ไฟล์'}</span>
+      <div style="display:flex;gap:6px">
+        ${f.url?'<a href="'+f.url+'" target="_blank" class="btn btn-ghost btn-sm">🔗 เปิด</a>':''}
+        <button class="btn btn-ghost btn-sm" onclick="delFileLink(${i})">🗑️</button>
+      </div>
+    </div>`).join('');
+}
+
+window.addFileLink=async function(){
+  const name=prompt('ชื่อไฟล์/เอกสาร:'); if(!name)return;
+  const url=prompt('ลิงก์ (Google Drive หรืออื่นๆ):')||'';
+  const p=projects.find(x=>x.id===currentProjId); if(!p)return;
+  const files=[...(p.files||[]),{name,url,by:currentUser.name,date:today()}];
+  await saveProjToCloud({...p,files}); renderProjFiles({...p,files}); toast('เพิ่มไฟล์ ✓','ok');
+};
+
+window.delFileLink=async function(idx){
+  if(!confirm('ลบไฟล์นี้?'))return;
+  const p=projects.find(x=>x.id===currentProjId); if(!p)return;
+  const files=(p.files||[]).filter((_,i)=>i!==idx);
+  await saveProjToCloud({...p,files}); renderProjFiles({...p,files});
+};
+
+function renderContractorUpdates(p){
+  const el=document.getElementById('contractorUpdates'); if(!el)return;
+  const upds=(p.contractorUpdates||[]).slice().reverse();
+  if(!upds.length){el.innerHTML='<div style="color:var(--gray-400);font-size:13px;padding:12px 0">ยังไม่มีอัปเดต</div>';return;}
+  el.innerHTML=upds.map(u=>`
+    <div class="update-item">
+      <div class="update-meta">${u.at||u.date||'—'} · ${u.by||'—'}</div>
+      <div class="update-text">${u.text||'—'}</div>
+    </div>`).join('');
+}
+
+window.addContractorUpdate=async function(){
+  const text=prompt('อัปเดตความคืบหน้า:'); if(!text)return;
+  const p=projects.find(x=>x.id===currentProjId); if(!p)return;
+  const upds=[...(p.contractorUpdates||[]),{text,by:currentUser.name,at:nowTH(),date:today()}];
+  await saveProjToCloud({...p,contractorUpdates:upds}); renderContractorUpdates({...p,contractorUpdates:upds}); toast('บันทึกอัปเดต ✓','ok');
+};
+
+function renderProjFinCalc(p){
+  const el=document.getElementById('pdFinCalc'); if(!el)return;
+  const rev=parseInt(String(p.revenue||'0').replace(/[,฿]/g,''))||0;
+  const exp=parseInt(String(p.expense||'0').replace(/[,฿]/g,''))||0;
+  const profit=rev-exp;
+  el.innerHTML=`<div style="display:flex;justify-content:space-between;padding:10px 0;border-top:1px solid var(--border-lt);margin-top:8px"><span style="font-weight:600">กำไรสุทธิ</span><span style="color:${profit>=0?'var(--green)':'var(--red)'};font-weight:700">${profit>=0?'':'-'}฿${Math.abs(profit).toLocaleString('th-TH')}</span></div>`;
+}
+
+// ══════════════════════════════════════════
+// DOCUMENTS MODULE
+// ══════════════════════════════════════════
+const DOC_TYPE_LABEL={
+  quotation:'📋 ใบเสนอราคา',invoice:'🧾 ใบแจ้งหนี้',
+  contract_design:'📝 สัญญาออกแบบ',contract_construction:'📝 สัญญาก่อสร้าง',
+  contract:'📝 สัญญา',payment_request:'💸 ใบเบิกเงิน',
+  receipt:'✅ ใบรับเงิน',delivery:'📦 ใบส่งงาน',boq:'📊 BOQ'
+};
+const DOC_STATUS_LABEL={draft:'📝 Draft',sent:'📤 ส่งแล้ว',approved:'✅ อนุมัติ',paid:'💰 ชำระแล้ว',cancelled:'❌ ยกเลิก'};
+
+function startDocSync(){
+  if(docUnsubscribe)docUnsubscribe();
+  docUnsubscribe=onSnapshot(collection(db,'documents'),
+    snap=>{
+      docs=snap.docs.map(d=>({id:d.id,...d.data()}));
+      docs.sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0));
+      renderDocGrid();
+    },
+    ()=>{renderDocGrid();}
+  );
+}
+
+window.openNewDocModal=function(){
+  const ndProj=document.getElementById('nd-proj');
+  const allProj=[
+    ...projects.map(p=>({id:p.id,label:(p.projId||p.id)+' · '+(p.name||p.client||'—')})),
+    ...leads.filter(l=>l.projId).map(l=>({id:'lead_'+l.id,label:(l.projId||'')+' · '+(l.name||'—')}))
+  ];
+  ndProj.innerHTML='<option value="">— เลือกโปรเจกต์ —</option>'+allProj.map(p=>'<option value="'+p.id+'">'+p.label+'</option>').join('');
+  document.getElementById('nd-date').value=today();
+  document.getElementById('nd-due').value='';
+  document.getElementById('newDocModal').classList.add('show');
+};
+
+window.createDoc=async function(){
+  const type=document.getElementById('nd-type').value;
+  const projRef=document.getElementById('nd-proj').value;
+  const date=document.getElementById('nd-date').value||today();
+  const due=document.getElementById('nd-due').value;
+  let docNum='';
+  try{docNum=await genDocId(type);}catch(e){docNum='NMS-DOC-'+Date.now();}
+  let clientName='',clientDetail='',projName='';
+  if(projRef){
+    const p=projects.find(x=>x.id===projRef);
+    const l=leads.find(x=>'lead_'+x.id===projRef);
+    if(p){clientName=p.client||'';clientDetail=p.phone||'';projName=p.name||'';}
+    else if(l){clientName=l.name||'';clientDetail=l.phone||'';projName=l.proj||'';}
+  }
+  const docId=Date.now().toString();
+  const newDoc={
+    id:docId,docNum,type,projRef,date,due,status:'draft',
+    clientName,clientDetail,projName,
+    items:[{id:'1',desc:'ค่าบริการออกแบบภายใน',qty:1,unit:'งาน',price:0,total:0}],
+    notes:'ชำระภายใน 30 วัน · โอนเข้าบัญชี ธ.กสิกรไทย',
+    vatRate:7,subtotal:0,vat:0,grandTotal:0,
+    createdBy:currentUser.name,createdAt:new Date().toISOString()
+  };
+  try{
+    await setDoc(doc(db,'documents',docId),sanitizeForFirestore({...newDoc,_ts:new Date().toISOString()}));
+    document.getElementById('newDocModal').classList.remove('show');
+    toast('สร้างเอกสาร ✓','ok');
+    setTimeout(()=>openDocEditor(docId),400);
+  }catch(e){toast('บันทึกไม่สำเร็จ: '+e.message,'err');}
+};
+
+function renderDocGrid(){
+  const grid=document.getElementById('docGrid'); if(!grid)return;
+  const filtered=docFilter==='all'?docs:docs.filter(d=>d.type===docFilter||(docFilter==='contract'&&d.type&&d.type.startsWith('contract')));
+  if(!filtered.length){
+    grid.innerHTML='<div style="padding:40px;text-align:center;color:var(--gray-400)">ยังไม่มีเอกสาร — กด "+ สร้างเอกสาร" ด้านบน</div>';
+    return;
+  }
+  grid.innerHTML=filtered.map(d=>`
+    <div class="doc-card" onclick="openDocEditor('${d.id}')">
+      <div style="font-size:11px;color:var(--gray-400);font-weight:600;margin-bottom:4px">${DOC_TYPE_LABEL[d.type]||d.type}</div>
+      <div style="font-weight:700;font-size:14px;color:var(--gray-800);margin-bottom:2px">${d.docNum||'—'}</div>
+      <div style="font-size:13px;color:var(--gray-600)">${d.clientName||'—'}</div>
+      <div style="font-size:12px;color:var(--gray-400);margin-bottom:6px">${d.projName||'—'}</div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:11px;padding:2px 8px;border-radius:20px;background:var(--gray-100);color:var(--gray-600)">${DOC_STATUS_LABEL[d.status]||d.status}</span>
+        <span style="font-size:11px;color:var(--gray-400)">${d.date||'—'}</span>
+      </div>
+      ${d.grandTotal?'<div style="font-size:13px;font-weight:700;color:var(--green);margin-top:6px">฿'+parseInt(d.grandTotal||0).toLocaleString('th-TH')+'</div>':''}
+    </div>`).join('');
+}
+
+window.setDocFilter=function(f,el){
+  docFilter=f;
+  document.querySelectorAll('.doc-ftab').forEach(b=>b.classList.remove('on'));
+  if(el)el.classList.add('on');
+  renderDocGrid();
+};
+
+window.openDocEditor=function(docId){
+  const d=docs.find(x=>x.id===docId); if(!d)return;
+  currentDocId=docId;
+  currentDocItems=(d.items||[]).map(i=>({...i}));
+  document.getElementById('docListView').style.display='none';
+  document.getElementById('docEditorView').style.display='block';
+  const tl={quotation:'ใบเสนอราคา',invoice:'ใบแจ้งหนี้',contract:'สัญญาออกแบบ',
+    contract_design:'สัญญาออกแบบ',contract_construction:'สัญญาก่อสร้าง',
+    receipt:'ใบรับเงิน',delivery:'ใบส่งงาน',payment_request:'ใบเบิกเงิน',boq:'BOQ'};
+  document.getElementById('docTypeTitle').textContent=tl[d.type]||d.type;
+  document.getElementById('docNumDisplay').textContent='เลขที่: '+(d.docNum||'—');
+  document.getElementById('docDateDisplay').textContent='วันที่: '+(d.date||'—');
+  document.getElementById('docDueDateDisplay').textContent=d.due?'ครบกำหนด: '+d.due:'';
+  document.getElementById('docClientName').textContent=d.clientName||'—';
+  document.getElementById('docClientDetail').textContent=d.clientDetail||'—';
+  document.getElementById('docProjName').textContent=d.projName||'—';
+  document.getElementById('docProjDetail').textContent=d.docNum||'—';
+  document.getElementById('docStatusSel').value=d.status||'draft';
+  document.getElementById('docNotes').value=d.notes||'';
+  document.getElementById('docClientSignName').textContent=d.clientName||'—';
+  document.getElementById('docVatRate').value=d.vatRate||7;
+  renderDocItems(); calcDocTotals();
+};
+
+window.closeDocEditor=function(){
+  currentDocId=null;
+  document.getElementById('docListView').style.display='block';
+  document.getElementById('docEditorView').style.display='none';
+};
+
+function renderDocItems(){
+  const tbody=document.getElementById('docItemsBody'); if(!tbody)return;
+  tbody.innerHTML=currentDocItems.map((item,i)=>`
+    <tr>
+      <td style="padding:6px;font-size:12px;color:var(--gray-400)">${i+1}</td>
+      <td style="padding:6px"><input value="${(item.desc||'').replace(/"/g,'&quot;')}" oninput="updateDocItem(${i},'desc',this.value)" style="width:100%;border:1px solid var(--border-lt);border-radius:4px;padding:4px 6px;font-size:13px;font-family:inherit"></td>
+      <td style="padding:6px"><input value="${item.qty||1}" type="number" min="0" step="0.01" oninput="updateDocItem(${i},'qty',this.value)" style="width:70px;border:1px solid var(--border-lt);border-radius:4px;padding:4px 6px;font-size:13px;text-align:right"></td>
+      <td style="padding:6px"><input value="${item.price||0}" type="number" min="0" oninput="updateDocItem(${i},'price',this.value)" style="width:110px;border:1px solid var(--border-lt);border-radius:4px;padding:4px 6px;font-size:13px;text-align:right"></td>
+      <td style="padding:6px;text-align:right;font-size:13px">${(parseFloat(item.qty||1)*parseFloat(item.price||0)).toLocaleString('th-TH')}</td>
+      <td style="padding:6px"><button onclick="delDocItem(${i})" style="background:none;border:none;cursor:pointer;color:var(--gray-400);font-size:16px">✕</button></td>
+    </tr>`).join('');
+}
+
+window.updateDocItem=function(idx,field,val){
+  currentDocItems[idx][field]=field==='qty'||field==='price'?parseFloat(val)||0:val;
+  currentDocItems[idx].total=parseFloat(currentDocItems[idx].qty||1)*parseFloat(currentDocItems[idx].price||0);
+  calcDocTotals();
+  if(field!=='desc')renderDocItems();
+};
+
+window.addDocItem=function(){
+  currentDocItems.push({id:Date.now().toString(),desc:'รายการ',qty:1,unit:'งาน',price:0,total:0});
+  renderDocItems(); calcDocTotals();
+};
+
+window.delDocItem=function(idx){
+  currentDocItems.splice(idx,1); renderDocItems(); calcDocTotals();
+};
+
+window.calcDocTotals=function(){
+  const subtotal=currentDocItems.reduce((s,i)=>s+(parseFloat(i.qty||1)*parseFloat(i.price||0)),0);
+  const vatRate=parseFloat(document.getElementById('docVatRate')?.value||7)/100;
+  const vat=subtotal*vatRate; const grand=subtotal+vat;
+  const fmt=n=>n.toLocaleString('th-TH');
+  const el1=document.getElementById('docSubtotal'); if(el1)el1.textContent=fmt(subtotal)+' ฿';
+  const el2=document.getElementById('docVatAmt'); if(el2)el2.textContent=fmt(vat)+' ฿';
+  const el3=document.getElementById('docGrandTotal'); if(el3)el3.textContent=fmt(grand)+' ฿';
+  return {subtotal,vat,grand};
+};
+
+window.updateDocStatus=async function(status){
+  if(!currentDocId)return;
+  const d=docs.find(x=>x.id===currentDocId); if(!d)return;
+  try{
+    await setDoc(doc(db,'documents',currentDocId),sanitizeForFirestore({...d,status,_ts:new Date().toISOString()}));
+    toast('อัปเดตสถานะ ✓','ok');
+  }catch(e){toast('บันทึกไม่สำเร็จ','err');}
+};
+
+window.saveDoc=async function(){
+  if(!currentDocId)return;
+  const d=docs.find(x=>x.id===currentDocId)||{id:currentDocId};
+  const {subtotal,vat,grand}=calcDocTotals();
+  const vatRate=parseFloat(document.getElementById('docVatRate')?.value||7);
+  const updated={...d,items:currentDocItems,
+    notes:document.getElementById('docNotes')?.value||'',
+    subtotal,vat,grandTotal:grand,vatRate,
+    status:document.getElementById('docStatusSel')?.value||d.status,
+    updatedBy:currentUser.name,updatedAt:new Date().toISOString()
+  };
+  try{
+    await setDoc(doc(db,'documents',currentDocId),sanitizeForFirestore({...updated,_ts:new Date().toISOString()}));
+    toast('บันทึกเอกสาร ✓','ok');
+  }catch(e){toast('บันทึกไม่สำเร็จ: '+e.message,'err');}
+};
+
+window.printDoc=function(){window.print();};
+
+
 
 // ── Init ──
 document.getElementById('loginSync').textContent='✅ Firebase พร้อมใช้งาน';

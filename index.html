@@ -1725,11 +1725,11 @@ function setupNavUI(){
     <div class="nav-avatar">${(currentUser.name||'?')[0]}</div>
     <span class="nav-uname">${currentUser.display||currentUser.name}</span>
     <span class="rbadge" style="background:${rc}20;color:${rc}">${ROLE_LABEL[currentUser.role]||currentUser.role.toUpperCase()}</span>`;
-  if(!canSeeFin())document.getElementById('tabFin').style.display='none';
-  if(!canSeeFin()&&!isAdmin())document.getElementById('tabDocs').style.display='none';
-  if(!isAdmin())document.getElementById('tabAdmin').style.display='none';
-  if(!canAdd())document.getElementById('btnNew').style.display='none';
-  if(canSeeFin())document.getElementById('tabAccDocs').style.display='';
+  document.getElementById('tabFin').style.display=canSeeFin()?'':'none';
+  document.getElementById('tabDocs').style.display=(canSeeFin()||isAdmin())?'':'none';
+  document.getElementById('tabAdmin').style.display=isAdmin()?'':'none';
+  document.getElementById('btnNew').style.display=canAdd()?'':'none';
+  document.getElementById('tabAccDocs').style.display=canSeeFin()?'':'none';
   // Greeting
   const now=new Date();
   const hr=now.getHours();

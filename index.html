@@ -344,16 +344,6 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
 .tl-title{font-size:13px;font-weight:600;color:var(--gray-800);margin-bottom:2px}
 .tl-date{font-size:11px;color:var(--gray-400);font-family:'DM Mono',monospace}
 .tl-note{font-size:12px;color:var(--gray-600);margin-top:4px;line-height:1.5}
-/* Checklist tab */
-.cl-section{margin-bottom:20px}
-.cl-section-title{font-size:12px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;padding:8px 12px;background:var(--gray-50);border-radius:var(--r-sm);font-family:'DM Mono',monospace;display:flex;align-items:center;justify-content:space-between}
-.cl-prog{font-size:11px;color:var(--gray-400);font-weight:400}
-.cl-row{display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--border);border-radius:var(--r-sm);margin-bottom:6px;background:var(--white);transition:all .13s}
-.cl-row:hover{border-color:var(--gold-mid)}
-.cl-row.cl-done{background:var(--green-light);border-color:rgba(45,122,90,.2)}
-.cl-row.cl-rejected{background:var(--red-light);border-color:rgba(192,57,43,.2)}
-.cl-row-label{flex:1;font-size:13px;color:var(--gray-800)}
-.cl-row-who{font-size:11px;color:var(--gray-400);font-family:'DM Mono',monospace}
 /* Files tab */
 .file-list{display:flex;flex-direction:column;gap:8px}
 .file-item{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--white);border:1px solid var(--border);border-radius:var(--r);transition:all .13s}
@@ -643,6 +633,26 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
 .acc-sum-lbl{font-size:10px;color:var(--gray-400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
 .acc-sum-val{font-size:16px;font-weight:600}
 
+/* ── MONTHLY FINANCE ARCHIVE ── */
+.mfin-wrap{padding:20px;max-width:800px;margin:0 auto}
+.mfin-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);margin-bottom:16px;overflow:hidden;box-shadow:var(--shadow-sm)}
+.mfin-card-hd{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px}
+.mfin-month{font-size:15px;font-weight:600;color:var(--gray-800);font-family:'Instrument Serif',serif}
+.mfin-card-body{padding:16px 20px}
+.mfin-badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:10px;font-family:'DM Mono',monospace;letter-spacing:.04em}
+.mfin-badge-locked{background:var(--gray-100);color:var(--gray-500)}
+.mfin-badge-unlocked{background:var(--green-light);color:var(--green)}
+.mfin-locked-msg{text-align:center;padding:20px;color:var(--gray-400);font-size:13px;font-style:italic}
+.mfin-file-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border-lt)}
+.mfin-file-row:last-child{border-bottom:none}
+.mfin-file-name{flex:1;font-size:13px;color:var(--gray-800);font-weight:500}
+.mfin-add-zone{margin-top:14px;padding-top:14px;border-top:1px solid var(--border-lt)}
+.mfin-add-label{font-size:10px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;font-family:'DM Mono',monospace}
+.mfin-add-row{display:flex;gap:8px;flex-wrap:wrap}
+.mfin-add-row input{border:1px solid var(--border-md);border-radius:var(--r-sm);padding:8px 10px;font-size:13px;font-family:inherit;background:var(--white)}
+.mfin-notes{margin-top:8px;width:100%;border:1px solid var(--border-md);border-radius:var(--r-sm);padding:8px 10px;font-size:12px;font-family:inherit;resize:vertical;color:var(--gray-700)}
+.mfin-notes-view{margin-top:8px;font-size:12px;color:var(--gray-600);background:var(--gray-50);padding:8px 10px;border-radius:var(--r-sm);line-height:1.6}
+
 /* ════════════════════════════════════════
    RESPONSIVE
 ════════════════════════════════════════ */
@@ -789,6 +799,10 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
   /* ─ Admin & Accounting ─ */
   .admin-wrap{padding:14px}
   .acc-summary{grid-template-columns:1fr !important}
+  /* ─ Monthly Finance ─ */
+  .mfin-wrap{padding:14px}
+  .mfin-add-row{flex-direction:column}
+  .mfin-add-row input{width:100%}
 
   /* ─ Modals → bottom sheet ─ */
   .modal-ov{align-items:flex-end;overflow:hidden}
@@ -826,7 +840,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
   .prog-lbl{font-size:7.5px}
 
   /* ─ Bottom padding for bottom nav ─ */
-  .page,.home-wrap,.proj-list-wrap,.proj-detail,.analytics-v2,.fin-dash,.doc-wrap,.admin-wrap,.cal-page,.acc-wrap{padding-bottom:80px !important}
+  .page,.home-wrap,.proj-list-wrap,.proj-detail,.analytics-v2,.fin-dash,.doc-wrap,.admin-wrap,.cal-page,.acc-wrap,.mfin-wrap{padding-bottom:80px !important}
 }
 
 /* ── SMALL MOBILE (≤ 480px) ── */
@@ -1020,6 +1034,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
       <button class="ntab" id="tabAnalytics" onclick="showPage('analytics',this)">📊 Analytics</button>
       <button class="ntab" id="tabFin" onclick="showPage('finance',this)">💰 การเงิน</button>
       <button class="ntab" id="tabAdmin" onclick="showPage('admin',this)" style="display:none">⚙️ Admin<span id="backupBadge" style="display:none;background:#ef4444;color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:8px;margin-left:4px;vertical-align:middle">!</span></button>
+      <button class="ntab" id="tabMonthlyFin" onclick="showPage('monthlyfinance',this)" style="display:none">📊 งบรายเดือน</button>
       <button class="ntab" id="tabAccDocs" onclick="showPage('accdocs',this)" style="display:none">📂 เอกสารบัญชี</button>
       <button class="ntab" id="tabClients" onclick="showPage('clients',this)" style="display:none">🪪 รหัสลูกค้า</button>
     </div>
@@ -1068,6 +1083,9 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
       </button>
       <button class="more-menu-item" onclick="showPage('docs',document.getElementById('tabDocs'));closeMobileMenu();updateBNav('docs')" id="bnavDocsBtn" style="display:none">
         <span class="more-menu-item-icon">📄</span>เอกสาร
+      </button>
+      <button class="more-menu-item" onclick="showPage('monthlyfinance',document.getElementById('tabMonthlyFin'));closeMobileMenu();updateBNav('monthlyfinance')" id="bnavMonthlyFinBtn" style="display:none">
+        <span class="more-menu-item-icon">📊</span>งบรายเดือน
       </button>
       <button class="more-menu-item" onclick="showPage('accdocs',document.getElementById('tabAccDocs'));closeMobileMenu();updateBNav('accdocs')" id="bnavAccDocsBtn" style="display:none">
         <span class="more-menu-item-icon">📂</span>เอกสารบัญชี
@@ -1176,7 +1194,6 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
         <button class="ptab" onclick="showPTab('presentation',this)">🖼️ Presentation</button>
         <button class="ptab" onclick="showPTab('drawing',this)">📐 Drawing</button>
         <button class="ptab" onclick="showPTab('timeline',this)">📅 Timeline</button>
-        <button class="ptab" onclick="showPTab('checklist',this)">☑️ Checklist</button>
         <button class="ptab" onclick="showPTab('contractor',this)">🏗️ ผู้รับเหมา</button>
         <button class="ptab" id="ptabAccess" onclick="showPTab('access',this)" style="display:none">👥 สิทธิ์</button>
       </div>
@@ -1299,19 +1316,6 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
           <button class="btn btn-ghost btn-sm" onclick="addMilestone()">+ เพิ่ม Milestone</button>
         </div>
         <div class="timeline" id="projTimeline"></div>
-      </div>
-      <!-- CHECKLIST TAB -->
-      <div class="ptab-content" id="ptab-checklist">
-        <div class="cl-section">
-          <div class="cl-section-title"><span>🎨 ดีไซเนอร์</span><span class="cl-prog" id="clProgDesign"></span></div>
-          <div id="clDesign"></div>
-          <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="addChecklistItem('design')">+ เพิ่มรายการ</button>
-        </div>
-        <div class="cl-section">
-          <div class="cl-section-title"><span>📐 คนเขียนแบบ</span><span class="cl-prog" id="clProgDraft"></span></div>
-          <div id="clDraft"></div>
-          <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="addChecklistItem('draft')">+ เพิ่มรายการ</button>
-        </div>
       </div>
       <!-- CONTRACTOR TAB -->
       <div class="ptab-content" id="ptab-contractor">
@@ -1750,6 +1754,15 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
     </div>
   </div>
 
+  <!-- MONTHLY FINANCE ARCHIVE -->
+  <div class="page" id="page-monthlyfinance">
+    <div class="mfin-wrap">
+      <div class="a-title">📊 งบการเงินรายเดือน</div>
+      <div class="a-sub" id="mfinSubTitle">รายรับ-รายจ่ายประจำเดือน — สำหรับตรวจสอบโดยบัญชี</div>
+      <div id="mfinList" style="margin-top:20px"><div style="text-align:center;padding:40px;color:var(--gray-400)">กำลังโหลด...</div></div>
+    </div>
+  </div>
+
   <!-- CLIENT CODES -->
   <div class="page" id="page-clients">
     <div class="acc-wrap">
@@ -2163,7 +2176,6 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
     </div>
   </div>
   <div class="panel-foot">
-    <button class="btn btn-red btn-sm" id="panelDel" style="display:none" onclick="delLead()">🗑️ ลบ</button>
     <div style="flex:1"></div>
     <button class="btn btn-ghost" onclick="closePanel()">ยกเลิก</button>
     <button class="btn btn-green" id="saveBtn" onclick="saveLead()">💾 บันทึก & Sync</button>
@@ -2188,9 +2200,8 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
           <option value="sales">Sales — CRM &amp; Lead</option>
           <option value="designer">Designer — ออกแบบ</option>
           <option value="drafter">Drafter — เขียนแบบ</option>
-          <option value="accounting">Accounting — การเงิน</option>
+          <option value="accounting">Accounting — บัญชีการเงิน</option>
           <option value="contractor">Contractor — ก่อสร้าง</option>
-          <option value="outsource">Outsource — งานภายนอก</option>
         </select>
       </div>
     </div>
@@ -2277,9 +2288,9 @@ const DEFAULT_USERS = {
   'nms':        { pass:'nms2024', role:'admin', name:'NMS', display:'NMS Admin', email:'' },
 };
 
-const ROLE_COLOR = { owner:'#5b21b6', admin:'#c0392b', sales:'#c49a3c', designer:'#2563a8', drafter:'#2563a8', accounting:'#2d7a5a', contractor:'#c05c1a', outsource:'#7a7268' };
-const ROLE_LABEL = { owner:'OWNER', admin:'ADMIN', sales:'SALES', designer:'DESIGNER', drafter:'DRAFTER', accounting:'ACCOUNTING', contractor:'CONTRACTOR', outsource:'OUTSOURCE' };
-const ROLE_CLASS = { owner:'rp-owner', admin:'rp-admin', sales:'rp-sales', designer:'rp-designer', drafter:'rp-designer', accounting:'rp-accounting', contractor:'rp-outsource', outsource:'rp-outsource' };
+const ROLE_COLOR = { owner:'#5b21b6', admin:'#c0392b', sales:'#c49a3c', designer:'#2563a8', drafter:'#2563a8', accounting:'#2d7a5a', contractor:'#c05c1a' };
+const ROLE_LABEL = { owner:'OWNER', admin:'ADMIN', sales:'SALES', designer:'DESIGNER', drafter:'DRAFTER', accounting:'ACCOUNTING', contractor:'CONTRACTOR' };
+const ROLE_CLASS = { owner:'rp-owner', admin:'rp-admin', sales:'rp-sales', designer:'rp-designer', drafter:'rp-designer', accounting:'rp-accounting', contractor:'rp-outsource' };
 
 const STEPS = [
   {id:'waiting_contact',label:'รอติดต่อ',long:'รอติดต่อไป'},
@@ -2296,14 +2307,6 @@ const STEPS = [
   {id:'delivered',label:'ส่งมอบงาน',long:'ส่งมอบงาน ✓'},
 ];
 const ACTIVE_STEPS = STEPS.map(s=>s.id).filter(id=>id!=='delivered');
-const DEFAULT_CHECKLIST = [
-  {id:'c1',label:'อัปโหลดแปลนพื้น (Floor Plan)',status:'pending'},
-  {id:'c2',label:'อัปโหลดแปลนฝ้าและแสงสว่าง',status:'pending'},
-  {id:'c3',label:'อัปโหลดรูปตัด (Section)',status:'pending'},
-  {id:'c4',label:'อัปโหลด 3D Render',status:'pending'},
-  {id:'c5',label:'อัปโหลด BOQ เบื้องต้น',status:'pending'},
-  {id:'c6',label:'ส่งตรวจ (Review)',status:'pending'},
-];
 const DEFAULT_SOURCES = ['Meta Ads — N1 Cold','Meta Ads — R1 Hot','Meta Ads — R2 Warm','Word of Mouth','IG Organic','Referral จากลูกค้าเก่า','Facebook Organic','TikTok','Website','Line OA','งานออกบูธ','อื่นๆ'];
 
 // ── State ──
@@ -2320,15 +2323,15 @@ const today=()=>new Date().toISOString().split('T')[0];
 const nowTH=()=>new Date().toLocaleString('th-TH',{dateStyle:'short',timeStyle:'short'});
 const isOverdue=l=>{if(!l.nextdate||l.step==='delivered')return false;return new Date(l.nextdate)<new Date(today());};
 const isOwner=()=>currentUser?.role==='owner';
-const isAdmin=()=>['owner','admin'].includes(currentUser?.role);
-const isStrictAdmin=()=>currentUser?.role==='admin';
-const canDelete=()=>isAdmin();
-const canSeeFin=()=>['owner','admin','accounting'].includes(currentUser?.role);
-const canEditFin=()=>['owner','admin','accounting','sales'].includes(currentUser?.role);
-const canSeeAll=()=>['owner','admin','accounting'].includes(currentUser?.role);
+const isAdmin=()=>currentUser?.role==='admin';
+const isOwnerOrAdmin=()=>['owner','admin'].includes(currentUser?.role);
+const canSeeFin=()=>currentUser?.role==='owner';
+const canEditFin=()=>['owner','admin'].includes(currentUser?.role);
+const canSeeAll=()=>['owner','admin'].includes(currentUser?.role);
 const canEdit=()=>['owner','admin','sales'].includes(currentUser?.role);
 const canAdd=()=>['owner','admin','sales'].includes(currentUser?.role);
-const isCL=()=>['owner','admin','designer','drafter','outsource','contractor'].includes(currentUser?.role);
+const canSeeMonthlyFin=()=>['owner','admin','accounting'].includes(currentUser?.role);
+const isCL=()=>['owner','admin','designer','drafter','contractor'].includes(currentUser?.role);
 
 // ── Toast ──
 let tTimer;
@@ -2429,9 +2432,9 @@ async function startApp(){
   checkLocalMigration();
   const role=currentUser?.role;
   if(role==='accounting'){
-    showPage('accdocs',document.getElementById('tabAccDocs'));
-    startAccSync();
-  } else if(['owner','admin','sales','designer','drafter','contractor','outsource'].includes(role)){
+    showPage('monthlyfinance',document.getElementById('tabMonthlyFin'));
+    startMfinSync();
+  } else if(['owner','admin','sales','designer','drafter','contractor'].includes(role)){
     showClanding();
   } else {
     renderHome();
@@ -2450,18 +2453,21 @@ function setupNavUI(){
   const canSeeClients = ['owner','admin','sales'].includes(role);
   document.getElementById('tabFin').style.display=canSeeFin()?'':'none';
   document.getElementById('tabDocs').style.display=canSeeDocs?'':'none';
-  document.getElementById('tabAdmin').style.display=isAdmin()?'':'none';
+  document.getElementById('tabAdmin').style.display=isOwner()?'':'none';
   document.getElementById('btnNew').style.display=canAdd()?'':'none';
-  document.getElementById('tabAccDocs').style.display=canSeeFin()?'':'none';
+  document.getElementById('tabMonthlyFin').style.display=canSeeMonthlyFin()?'':'none';
+  document.getElementById('tabAccDocs').style.display=isOwner()?'':'none';
   document.getElementById('tabClients').style.display=canSeeClients?'':'none';
   const bnavFinBtn = document.getElementById('bnavFinBtn');
   if(bnavFinBtn) bnavFinBtn.style.display = canSeeFin()?'':'none';
   const bnavAdminBtn = document.getElementById('bnavAdminBtn');
-  if(bnavAdminBtn) bnavAdminBtn.style.display = isAdmin()?'':'none';
+  if(bnavAdminBtn) bnavAdminBtn.style.display = isOwner()?'':'none';
   const bnavDocsBtn = document.getElementById('bnavDocsBtn');
   if(bnavDocsBtn) bnavDocsBtn.style.display = canSeeDocs?'':'none';
+  const bnavMonthlyFinBtn = document.getElementById('bnavMonthlyFinBtn');
+  if(bnavMonthlyFinBtn) bnavMonthlyFinBtn.style.display = canSeeMonthlyFin()?'':'none';
   const bnavAccDocsBtn = document.getElementById('bnavAccDocsBtn');
-  if(bnavAccDocsBtn) bnavAccDocsBtn.style.display = canSeeFin()?'':'none';
+  if(bnavAccDocsBtn) bnavAccDocsBtn.style.display = isOwner()?'':'none';
   const bnavClientsBtn = document.getElementById('bnavClientsBtn');
   if(bnavClientsBtn) bnavClientsBtn.style.display = canSeeClients?'':'none';
   // Greeting
@@ -2470,8 +2476,8 @@ function setupNavUI(){
   const greet=hr<12?'สวัสดีตอนเช้า':hr<17?'สวัสดีตอนบ่าย':'สวัสดีตอนเย็น';
   document.getElementById('greetingName').textContent=`${greet}, ${currentUser.name} 👋`;
   document.getElementById('greetingDate').textContent=now.toLocaleDateString('th-TH',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  // Show backup reminder for admin/owner only
-  if(isAdmin()) setTimeout(checkBackupReminder, 500);
+  // Show backup reminder for owner only
+  if(isOwner()) setTimeout(checkBackupReminder, 500);
 }
 
 // ── Page Nav ──
@@ -2479,8 +2485,10 @@ window.showPage=function(id,el){
   const role=currentUser?.role||'';
   if(id==='docs'&&!['owner','admin','sales'].includes(role)){toast('ไม่มีสิทธิ์เข้าถึงหน้านี้','err');return;}
   if(id==='clients'&&!['owner','admin','sales'].includes(role)){toast('ไม่มีสิทธิ์เข้าถึงหน้านี้','err');return;}
-  if(id==='accdocs'&&!canSeeFin()){toast('ไม่มีสิทธิ์เข้าถึงหน้านี้','err');return;}
-  if(id==='admin'&&!isAdmin()){toast('ไม่มีสิทธิ์เข้าถึงหน้านี้','err');return;}
+  if(id==='accdocs'&&!isOwner()){toast('ไม่มีสิทธิ์เข้าถึงหน้านี้','err');return;}
+  if(id==='admin'&&!isOwner()){toast('ไม่มีสิทธิ์เข้าถึงหน้านี้','err');return;}
+  if(id==='finance'&&!canSeeFin()){toast('ไม่มีสิทธิ์เข้าถึงหน้านี้','err');return;}
+  if(id==='monthlyfinance'&&!canSeeMonthlyFin()){toast('ไม่มีสิทธิ์เข้าถึงหน้านี้','err');return;}
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
   document.getElementById('page-'+id).classList.add('on');
   document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('on'));
@@ -2491,6 +2499,7 @@ window.showPage=function(id,el){
   else if(id==='home')renderHome();
   else if(id==='accdocs'){startAccSync();}
   else if(id==='clients'){renderClientCodes();}
+  else if(id==='monthlyfinance'){startMfinSync();}
   // sync bottom nav
   if(window.updateBNav) updateBNav(id);
 };
@@ -2590,17 +2599,17 @@ function renderHome(){
 
   // Menu by role
   const menus={
-    admin:[{icon:'📋',title:'Lead CRM',desc:'Pipeline & ติดตามลูกค้า',page:'pipeline'},{icon:'🗂️',title:'โปรเจกต์',desc:'จัดการทุกโปรเจกต์',page:'projects'},{icon:'📄',title:'เอกสาร',desc:'ใบเสนอราคา · ใบแจ้งหนี้',page:'docs'},{icon:'☁️',title:'Smart Upload',desc:'อัปโหลดไฟล์ + ตั้งชื่ออัตโนมัติ',page:'upload'},{icon:'💰',title:'การเงิน',desc:'รายรับ-รายจ่าย-กำไร',page:'finance'},{icon:'📅',title:'ปฏิทินงาน',desc:'นัดหมาย · Deadline',page:'cal'},{icon:'⚙️',title:'Admin Panel',desc:'จัดการผู้ใช้ & สิทธิ์',page:'admin'}],
+    owner:[{icon:'📋',title:'Lead CRM',desc:'Pipeline & ติดตามลูกค้า',page:'pipeline'},{icon:'🗂️',title:'โปรเจกต์',desc:'จัดการทุกโปรเจกต์',page:'projects'},{icon:'📄',title:'เอกสาร',desc:'ใบเสนอราคา · ใบแจ้งหนี้',page:'docs'},{icon:'💰',title:'การเงิน',desc:'รายรับ-รายจ่าย-กำไร',page:'finance'},{icon:'📊',title:'งบรายเดือน',desc:'ส่งให้บัญชีตรวจสอบ',page:'monthlyfinance'},{icon:'📅',title:'ปฏิทินงาน',desc:'นัดหมาย · Deadline',page:'cal'},{icon:'⚙️',title:'Admin Panel',desc:'จัดการผู้ใช้ & สิทธิ์',page:'admin'}],
+    admin:[{icon:'📋',title:'Lead CRM',desc:'Pipeline & ติดตามลูกค้า',page:'pipeline'},{icon:'🗂️',title:'โปรเจกต์',desc:'จัดการทุกโปรเจกต์',page:'projects'},{icon:'📄',title:'เอกสาร',desc:'ใบเสนอราคา · ใบแจ้งหนี้',page:'docs'},{icon:'☁️',title:'Smart Upload',desc:'อัปโหลดไฟล์ + ตั้งชื่ออัตโนมัติ',page:'upload'},{icon:'📊',title:'งบรายเดือน',desc:'ส่งรายรับ-รายจ่ายให้บัญชี',page:'monthlyfinance'},{icon:'📅',title:'ปฏิทินงาน',desc:'นัดหมาย · Deadline',page:'cal'}],
     sales:[{icon:'📋',title:'Lead CRM',desc:'Pipeline & ติดตามลูกค้า',page:'pipeline'},{icon:'📊',title:'Analytics',desc:'ภาพรวม Lead',page:'analytics'}],
-    designer:[{icon:'📋',title:'โปรเจกต์ของฉัน',desc:'Checklist & ไฟล์งาน',page:'pipeline'},{icon:'📊',title:'ภาพรวม',desc:'สถานะงาน',page:'analytics'}],
-    drafter:[{icon:'📋',title:'งานของฉัน',desc:'Checklist & อัปโหลดแบบ',page:'pipeline'},{icon:'📊',title:'ภาพรวม',desc:'สถานะงาน',page:'analytics'}],
-    accounting:[{icon:'💰',title:'การเงิน',desc:'รายรับ-รายจ่าย-กำไร',page:'finance'},{icon:'📊',title:'Analytics',desc:'สรุปรายงาน',page:'analytics'}],
+    designer:[{icon:'📋',title:'โปรเจกต์ของฉัน',desc:'ไฟล์งาน & สถานะ',page:'pipeline'},{icon:'📊',title:'ภาพรวม',desc:'สถานะงาน',page:'analytics'}],
+    drafter:[{icon:'📋',title:'งานของฉัน',desc:'อัปโหลดแบบ & สถานะ',page:'pipeline'},{icon:'📊',title:'ภาพรวม',desc:'สถานะงาน',page:'analytics'}],
+    accounting:[{icon:'📊',title:'งบการเงินรายเดือน',desc:'ตรวจสอบงบประจำเดือน',page:'monthlyfinance'}],
     contractor:[{icon:'📋',title:'งานก่อสร้าง',desc:'ดูแบบ & อัปเดตงาน',page:'pipeline'}],
-    outsource:[{icon:'📋',title:'งานของฉัน',desc:'Checklist & ส่งไฟล์',page:'pipeline'}],
   };
-  const m=menus[currentUser.role]||menus.outsource;
+  const m=menus[currentUser.role]||menus.contractor;
   document.getElementById('homeMenu').innerHTML=m.map(x=>{
-    const tabMap={'home':'tabHome','projects':'tabProjects','pipeline':'tabPipeline','analytics':'tabAnalytics','finance':'tabFin','docs':'tabDocs','upload':'tabUpload','cal':'tabCal','admin':'tabAdmin'};
+    const tabMap={'home':'tabHome','projects':'tabProjects','pipeline':'tabPipeline','analytics':'tabAnalytics','finance':'tabFin','docs':'tabDocs','upload':'tabUpload','cal':'tabCal','admin':'tabAdmin','monthlyfinance':'tabMonthlyFin'};
     return `<div class="menu-card" onclick="showPage('${x.page}',document.getElementById('${tabMap[x.page]||'tabHome'}'))">
       <div class="menu-card-icon">${x.icon}</div>
       <div class="menu-card-title">${x.title}</div>
@@ -2646,7 +2655,7 @@ window.migrateFromLocal=async function(){
   const old=window._oldLeads||[];if(!old.length)return;
   const btn=document.querySelector('#migrateBanner .btn-gold');btn.textContent='⏳ กำลังอัปโหลด...';btn.disabled=true;
   const cloudIds=new Set(leads.map(l=>l.id));let added=0;
-  for(const l of old){if(!cloudIds.has(l.id)){if(!l.checklist)l.checklist=DEFAULT_CHECKLIST.map(c=>({...c}));if(!l.activities)l.activities=[];await saveToCloud(l);added++;}}
+  for(const l of old){if(!cloudIds.has(l.id)){if(!l.activities)l.activities=[];await saveToCloud(l);added++;}}
   document.getElementById('migrateBanner').classList.add('hidden');
   toast('✅ อัปโหลด '+added+' Lead ขึ้น Cloud แล้ว','ok');
 };
@@ -2777,7 +2786,7 @@ window.openPanel=function(id){
   // Show IDs if exist
   const idBannerEl=document.getElementById('panelIdBanner');
   if(idBannerEl) idBannerEl.innerHTML=l?renderLeadIds(l):'';
-  document.getElementById('panelDel').style.display=l&&canDelete()?'flex':'none';
+  // delete disabled
   document.getElementById('calStrip').style.display=l?'flex':'none';
   document.getElementById('moveStrip').style.display=(l&&canEdit())?'flex':'none';
   document.getElementById('actSec').style.display=l?'block':'none';
@@ -2848,7 +2857,7 @@ window.saveLead=async function(){
   let formWithIds = form;
   if(isNew){ try{ formWithIds = await assignLeadIds(form); }catch(e){ console.log('ID gen err:',e); } }
   else { formWithIds = {...form, clientId:existing?.clientId||form.clientId, projId:existing?.projId||form.projId}; }
-  const nl={id,...formWithIds,checklist:existing?.checklist||DEFAULT_CHECKLIST.map(c=>({...c})),activities:existing?.activities||[],createdBy:existing?.createdBy||currentUser.name};
+  const nl={id,...formWithIds,activities:existing?.activities||[],createdBy:existing?.createdBy||currentUser.name};
   if(isNew){nl.activities=[{text:`เพิ่ม Lead ใหม่ — ที่มา: ${form.src||'ไม่ระบุ'}`,date:nowTH(),type:'note',user:currentUser.name}];}
   else if(existing?.step!==curStep){const from=STEPS.find(s=>s.id===existing.step)?.long||existing.step;const to=STEPS.find(s=>s.id===curStep)?.long||curStep;nl.activities=[...(existing?.activities||[]),{text:`เลื่อน: ${from} → ${to}`,date:nowTH(),type:'step',user:currentUser.name}];}
   else{nl.activities=[...(existing?.activities||[]),{text:'แก้ไขข้อมูล',date:nowTH(),type:'note',user:currentUser.name}];}
@@ -2905,7 +2914,7 @@ async function genDocId(docType){
   return 'NMS-'+prefix+'-'+ID_YEAR()+'-'+await getNextSeq(seqKey);
 }
 function genStaffId(role){
-  const prefixes={admin:'S',sales:'S',designer:'DS',drafter:'DR',accounting:'S',contractor:'CT',outsource:'EX'};
+  const prefixes={admin:'S',sales:'S',designer:'DS',drafter:'DR',accounting:'AC',contractor:'CT'};
   const p=prefixes[role]||'S';
   const existing=Object.values(users).filter(u=>{const pr2=prefixes[u.role]||'S';return pr2===p;});
   return 'NMS-'+p+'-'+String(existing.length+1).padStart(3,'0');
@@ -3656,7 +3665,7 @@ window.createProject = async function() {
     deadline:document.getElementById('np-deadline').value,
     designer:document.getElementById('np-designer').value,
     leadId:leadId||'', status:'active',
-    timeline:[], checklist:{design:[],draft:[]}, files:[],
+    timeline:[], files:[],
     revenue:'', expense:'', designFee:'', mgmtFee:'',
     contractor:'', contractorPhone:'', contractorUpdates:[], drive:'',
     createdBy:currentUser.name, createdAt:new Date().toISOString()
@@ -3720,7 +3729,7 @@ window.openProjDetail = function(pid) {
     Object.entries(users).map(([k,u])=>`<option value="${k}">${u.name}</option>`).join('');
   const des=document.getElementById('pd-designer'); if(des){des.innerHTML=uOpts;des.value=p.designer||'';}
   const dra=document.getElementById('pd-drafter'); if(dra){dra.innerHTML=uOpts;dra.value=p.drafter||'';}
-  renderTimeline(p); renderProjChecklist(p);
+  renderTimeline(p);
   renderContractorUpdates(p); renderProjFinCalc(p); renderProjFinanceTab(p);
   renderProjDocsTab(p);
   renderProjFilesTab('presentation','projPresentationList',p);
@@ -4000,46 +4009,6 @@ window.delMilestone=async function(idx){
   await saveProjToCloud({...p,timeline:tl}); renderTimeline({...p,timeline:tl});
 };
 
-function renderProjChecklist(p){
-  ['design','draft'].forEach(role=>{
-    const cap=role.charAt(0).toUpperCase()+role.slice(1);
-    const el=document.getElementById('cl'+cap);
-    const progEl=document.getElementById('clProg'+cap);
-    if(!el)return;
-    const items=p.checklist?.[role]||[];
-    const done=items.filter(c=>c.done).length;
-    if(progEl)progEl.textContent=items.length?done+'/'+items.length+' ผ่านแล้ว':'';
-    el.innerHTML=items.map((c,i)=>`
-      <div class="cl-item${c.done?' cl-done':''}">
-        <input type="checkbox"${c.done?' checked':''} onchange="toggleProjChecklist('${role}',${i})">
-        <span>${c.label||'—'}</span>
-        <button class="cl-del" onclick="delProjChecklist('${role}',${i})">✕</button>
-      </div>`).join('')||'<div style="color:var(--gray-400);font-size:13px;padding:8px 0">ยังไม่มีรายการ</div>';
-  });
-}
-
-window.addChecklistItem=async function(role){
-  const label=prompt('รายการ:'); if(!label)return;
-  const p=projects.find(x=>x.id===currentProjId); if(!p)return;
-  const cl={...(p.checklist||{design:[],draft:[]})};
-  cl[role]=[...(cl[role]||[]),{id:Date.now().toString(),label,done:false}];
-  await saveProjToCloud({...p,checklist:cl}); renderProjChecklist({...p,checklist:cl});
-};
-
-window.toggleProjChecklist=async function(role,idx){
-  const p=projects.find(x=>x.id===currentProjId); if(!p)return;
-  const cl={...(p.checklist||{design:[],draft:[]})};
-  cl[role]=[...(cl[role]||[])]; cl[role][idx]={...cl[role][idx],done:!cl[role][idx].done};
-  await saveProjToCloud({...p,checklist:cl}); renderProjChecklist({...p,checklist:cl});
-};
-
-window.delProjChecklist=async function(role,idx){
-  const p=projects.find(x=>x.id===currentProjId); if(!p)return;
-  const cl={...(p.checklist||{design:[],draft:[]})};
-  cl[role]=(cl[role]||[]).filter((_,i)=>i!==idx);
-  await saveProjToCloud({...p,checklist:cl}); renderProjChecklist({...p,checklist:cl});
-};
-
 function renderProjFiles(p){
   const el=document.getElementById('projFiles'); if(!el)return;
   const files=p.files||[];
@@ -4057,7 +4026,7 @@ function renderProjFiles(p){
 }
 
 window.addFileLink=async function(){
-  if(!isAdmin()){toast('เฉพาะ Admin เท่านั้นที่เพิ่มลิงก์ไฟล์ได้','err');return;}
+  if(!isOwnerOrAdmin()){toast('ไม่มีสิทธิ์เพิ่มลิงก์ไฟล์','err');return;}
   const name=prompt('ชื่อไฟล์/เอกสาร:'); if(!name)return;
   const url=prompt('ลิงก์ (Google Drive หรืออื่นๆ):')||'';
   const p=projects.find(x=>x.id===currentProjId); if(!p)return;
@@ -4191,7 +4160,7 @@ function renderProjAccess(){
     return;
   }
 
-  const ROLE_TH={sales:'Sales',designer:'Designer',drafter:'Drafter',accounting:'Accounting',contractor:'Contractor',outsource:'Outsource'};
+  const ROLE_TH={sales:'Sales',designer:'Designer',drafter:'Drafter',accounting:'Accounting',contractor:'Contractor'};
   grid.innerHTML=staffUsers.map(([uid,u])=>{
     const hasAccess=(u.projectAccess||[]).includes(p.id)||(u.projectAccess||[]).length===0;
     // Show checked if user has explicit access OR has no restrictions (empty array = sees all)
@@ -5275,7 +5244,7 @@ function renderAccDocs(){
   const grid=document.getElementById('accMonthGrid');
   if(!grid)return;
   const btnNew=document.getElementById('btnAccNewMonth');
-  if(btnNew)btnNew.style.display=isAdmin()?'':'none';
+  if(btnNew)btnNew.style.display=isOwner()?'':'none';
   if(!accBundles.length){
     grid.innerHTML='<div style="text-align:center;padding:60px;color:var(--gray-400);font-size:13px">📂 ยังไม่มีเดือนที่บันทึก<br><span style="font-size:11px;margin-top:4px;display:block">แอดมินกด "+ เพิ่มเดือน" เพื่อเริ่ม</span></div>';
     return;
@@ -5335,9 +5304,9 @@ function renderAccMonthCard(b){
     <div style="display:flex;gap:8px;margin-top:12px;justify-content:flex-end;flex-wrap:wrap">
       ${canSend?`<button class="btn btn-gold btn-sm" onclick="sendAccBundle('${b.id}')">📤 ส่งให้บัญชี</button>`:''}
       ${canConfirm?`<button class="btn btn-green btn-sm" onclick="confirmAccBundle('${b.id}')">✅ รับทราบแล้ว</button>`:''}
-      ${isAdmin()&&b.status==='sent'?`<button class="btn btn-ghost btn-sm" onclick="recallAccBundle('${b.id}')">↩ ดึงกลับแก้ไข</button>`:''}
-      ${isAdmin()?`<button class="btn btn-ghost btn-sm" onclick="openAccNote('${b.id}')">📝 หมายเหตุ</button>`:''}
-      ${isAdmin()?`<button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="deleteAccBundle('${b.id}')">🗑</button>`:''}
+      ${isOwner()&&b.status==='sent'?`<button class="btn btn-ghost btn-sm" onclick="recallAccBundle('${b.id}')">↩ ดึงกลับแก้ไข</button>`:''}
+      ${isOwner()?`<button class="btn btn-ghost btn-sm" onclick="openAccNote('${b.id}')">📝 หมายเหตุ</button>`:''}
+      ${isOwner()?`<button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="deleteAccBundle('${b.id}')">🗑</button>`:''}
     </div>
     <div style="font-size:11px;color:var(--gray-400);margin-top:6px;text-align:right">
       ${b.sentAt?`ส่ง: ${b.sentAt} โดย ${b.sentBy}<br>`:''}
@@ -5400,7 +5369,7 @@ window.addAccItem=async function(bundleId){
 
 window.delAccItem=async function(bundleId,idx){
   const b=accBundles.find(x=>x.id===bundleId);
-  if(!b||!isAdmin())return;
+  if(!b||!isOwner())return;
   if(!confirm('ลบรายการนี้?'))return;
   await setDoc(doc(db,'acc_bundles',bundleId),{...b,items:(b.items||[]).filter((_,i)=>i!==idx),updatedAt:nowTH()});
   toast('ลบแล้ว','ok');
@@ -5408,7 +5377,7 @@ window.delAccItem=async function(bundleId,idx){
 
 window.sendAccBundle=async function(bundleId){
   const b=accBundles.find(x=>x.id===bundleId);
-  if(!b||!isAdmin())return;
+  if(!b||!isOwner())return;
   if(!confirm(`ส่งรายการ "${b.monthLabel||b.month}" ให้ทีมบัญชีเลย?`))return;
   await setDoc(doc(db,'acc_bundles',bundleId),{...b,status:'sent',sentAt:nowTH(),sentBy:currentUser.name});
   toast('ส่งให้บัญชีแล้ว ✓','ok');
@@ -5424,14 +5393,14 @@ window.confirmAccBundle=async function(bundleId){
 
 window.recallAccBundle=async function(bundleId){
   const b=accBundles.find(x=>x.id===bundleId);
-  if(!b||!isAdmin())return;
+  if(!b||!isOwner())return;
   await setDoc(doc(db,'acc_bundles',bundleId),{...b,status:'draft',sentAt:'',sentBy:''});
   toast('ดึงกลับเพื่อแก้ไขแล้ว','ok');
 };
 
 window.openAccNote=async function(bundleId){
   const b=accBundles.find(x=>x.id===bundleId);
-  if(!b||!isAdmin())return;
+  if(!b||!isOwner())return;
   const note=prompt('หมายเหตุสำหรับทีมบัญชี:',b.note||'');
   if(note===null)return;
   await setDoc(doc(db,'acc_bundles',bundleId),{...b,note});
@@ -5440,7 +5409,7 @@ window.openAccNote=async function(bundleId){
 
 window.deleteAccBundle=async function(bundleId){
   const b=accBundles.find(x=>x.id===bundleId);
-  if(!b||!isAdmin())return;
+  if(!b||!isOwner())return;
   if(!confirm(`ลบโฟลเดอร์ "${b.monthLabel||b.month}" ทั้งหมด? ไม่สามารถกู้คืนได้`))return;
   await deleteDoc(doc(db,'acc_bundles',bundleId));
   toast('ลบโฟลเดอร์แล้ว','ok');
@@ -5528,10 +5497,10 @@ function renderFinance(){
 // ADMIN PANEL MODULE
 // ══════════════════════════════════════════
 function renderAdmin(){
-  if(!isAdmin())return;
+  if(!isOwner())return;
   const wrap=document.getElementById('adminContent'); if(!wrap) return;
   const userList=Object.entries(users).sort((a,b)=>{
-    const order={owner:0,admin:1,sales:2,accounting:3,designer:4,drafter:5,contractor:6,outsource:7};
+    const order={owner:0,admin:1,sales:2,accounting:3,designer:4,drafter:5,contractor:6};
     return (order[a[1].role]??9)-(order[b[1].role]??9)||a[0].localeCompare(b[0]);
   });
   const roleCounts={};userList.forEach(([,u])=>{roleCounts[u.role]=(roleCounts[u.role]||0)+1;});
@@ -5579,10 +5548,10 @@ function renderAdmin(){
         const isUAdmin=u.role==='admin';
         const iAmOwner=isOwner();
         const projNames=(u.projectAccess||[]).map(pid=>{const p=projects.find(x=>x.id===pid);return p?p.projId||p.name:pid;}).filter(Boolean);
-        // admin พนักงานแตะ owner/admin อื่นไม่ได้
-        const canEdit_=isMe||iAmOwner||(isStrictAdmin()&&!isUOwner&&!isUAdmin);
-        const canDelete_=!isMe&&(iAmOwner||(isStrictAdmin()&&!isUOwner&&!isUAdmin));
-        const canImper_=!isMe&&!isUOwner;
+        // เฉพาะ Owner จัดการ user ได้
+        const canEdit_=isMe||iAmOwner;
+        const canDelete_=!isMe&&iAmOwner&&!isUOwner;
+        const canImper_=!isMe&&!isUOwner&&iAmOwner;
         const ownerBorder=isUOwner?'border-color:#c4b5fd;':'';
         return`<div style="background:var(--white);border:1px solid var(--border);${ownerBorder}border-radius:var(--r);padding:12px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
           <div style="width:36px;height:36px;border-radius:50%;background:${rc}20;color:${rc};display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0">${(u.name||uid)[0].toUpperCase()}</div>
@@ -5609,7 +5578,7 @@ function renderAdmin(){
 window.openUserModal=function(uid){
   const targetUser=uid?users[uid]:null;
   // admin พนักงานแก้ไข owner/admin อื่นไม่ได้
-  if(uid&&isStrictAdmin()&&(targetUser?.role==='owner'||targetUser?.role==='admin')){
+  if(uid&&!isOwner()&&(targetUser?.role==='owner'||targetUser?.role==='admin')){
     toast('Admin ไม่สามารถแก้ไข Owner หรือ Admin คนอื่นได้','err'); return;
   }
   editingUserId=uid||null;
@@ -5656,7 +5625,7 @@ window.saveUser=async function(){
   if(!pass){toast('กรุณาใส่ Password','err');return;}
   if(!name){toast('กรุณาใส่ชื่อแสดง','err');return;}
   if(!editingUserId&&users[uid]){toast('Username นี้มีอยู่แล้ว','err');return;}
-  if(isStrictAdmin()&&(role==='owner'||role==='admin')){toast('Admin ไม่สามารถตั้ง Role เป็น Owner หรือ Admin ได้','err');return;}
+  if(!isOwner()&&(role==='owner'||role==='admin')){toast('เฉพาะ Owner เท่านั้นที่ตั้ง Role นี้ได้','err');return;}
   const existing=users[uid]||{};
   users[uid]={...existing,pass,name,display:name,role,email,projectAccess:existing.projectAccess||[]};
   try{
@@ -5671,7 +5640,7 @@ window.deleteUser=async function(uid){
   if(uid===currentUser.user){toast('ไม่สามารถลบตัวเองได้','err');return;}
   const u=users[uid];
   if(u?.role==='owner'){toast('ไม่สามารถลบบัญชี Owner ได้','err');return;}
-  if(isStrictAdmin()&&u?.role==='admin'){toast('Admin ไม่สามารถลบ Admin คนอื่นได้','err');return;}
+  if(!isOwner()&&(u?.role==='owner'||u?.role==='admin')){toast('เฉพาะ Owner เท่านั้นที่ลบบัญชีนี้ได้','err');return;}
   if(!confirm(`ลบผู้ใช้ "${u?.name||uid}" ออกจากระบบ?`))return;
   delete users[uid];
   try{
@@ -5697,7 +5666,7 @@ const IMPER_KEY = 'nms_imper_backup';
 window.impersonateUser = function(uid){
   const targetUser = users[uid];
   if(!targetUser){ toast('ไม่พบ user นี้','err'); return; }
-  if(!isAdmin()){ toast('เฉพาะ Admin/Owner เท่านั้น','err'); return; }
+  if(!isOwner()){ toast('เฉพาะ Owner เท่านั้น','err'); return; }
   if(targetUser.role==='owner'){ toast('ไม่สามารถ Impersonate บัญชี Owner ได้','err'); return; }
 
   // backup admin session
@@ -5839,7 +5808,7 @@ window.backupAll = async function(){
     URL.revokeObjectURL(url);
     markBackupDone();
     toast(`✅ Backup สำเร็จ! ${backup.leads.length} leads · ${backup.projects.length} projects · ${backup.documents.length} docs`,'ok');
-    if(isAdmin()) renderAdmin();
+    if(isOwner()) renderAdmin();
   }catch(e){
     toast('Backup ไม่สำเร็จ: '+e.message,'err');
   }finally{
@@ -5911,6 +5880,119 @@ window.importJSON = function(){
     });
   });
 })();
+
+// ══════════════════════════════════════════
+// MONTHLY FINANCE ARCHIVE
+// ══════════════════════════════════════════
+let monthlyFinData={};
+let _mfinUnsub=null;
+
+function startMfinSync(){
+  if(_mfinUnsub)_mfinUnsub();
+  const colRef=collection(db,'monthlyFinance');
+  _mfinUnsub=onSnapshot(colRef,snap=>{
+    monthlyFinData={};
+    snap.forEach(d=>{monthlyFinData[d.id]=d.data();});
+    renderMfinPage();
+  });
+}
+
+function renderMfinPage(){
+  const el=document.getElementById('mfinList'); if(!el)return;
+  const now=new Date();
+  const months=[];
+  for(let i=0;i<13;i++){
+    const d=new Date(now.getFullYear(),now.getMonth()-i,1);
+    const key=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+    months.push({key,d});
+  }
+  const role=currentUser?.role;
+  const canManage=isOwnerOrAdmin();
+  const canUnlock=isOwner();
+  const isAccounting=role==='accounting';
+  if(isAccounting){
+    document.getElementById('mfinSubTitle').textContent='ข้อมูลงบการเงินที่เจ้าของส่งมาให้ตรวจสอบ';
+  }
+  el.innerHTML=months.map(({key,d})=>{
+    const data=monthlyFinData[key]||{files:[],status:'locked',notes:''};
+    const isLocked=data.status!=='unlocked';
+    const monthLabel=d.toLocaleDateString('th-TH',{year:'numeric',month:'long'});
+    const files=data.files||[];
+    const filesHtml=files.length
+      ?files.map((f,i)=>`<div class="mfin-file-row">
+          <span class="mfin-file-name">${f.name||'ไฟล์'}</span>
+          <a href="${f.url}" target="_blank" rel="noopener" class="btn btn-ghost btn-sm">🔗 เปิดไฟล์</a>
+          ${canUnlock?`<button onclick="mfinRemoveFile('${key}',${i})" style="background:none;border:none;color:var(--gray-400);cursor:pointer;font-size:16px;padding:0 4px" title="ลบลิงก์">✕</button>`:''}
+        </div>`).join('')
+      :'<div style="font-size:12px;color:var(--gray-400);padding:8px 0">ยังไม่มีไฟล์</div>';
+    if(isAccounting&&isLocked){
+      return`<div class="mfin-card">
+        <div class="mfin-card-hd">
+          <div class="mfin-month">${monthLabel}</div>
+          <span class="mfin-badge mfin-badge-locked">🔒 รอเจ้าของอนุญาต</span>
+        </div>
+      </div>`;
+    }
+    return`<div class="mfin-card">
+      <div class="mfin-card-hd">
+        <div class="mfin-month">${monthLabel}</div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <span class="mfin-badge ${isLocked?'mfin-badge-locked':'mfin-badge-unlocked'}">${isLocked?'🔒 ยังไม่เปิดให้บัญชี':'🔓 บัญชีเข้าถึงได้แล้ว'}</span>
+          ${canUnlock?`<button class="btn btn-sm ${isLocked?'btn-green':'btn-ghost'}" onclick="mfinToggleLock('${key}',${isLocked})">${isLocked?'ปลดล็อกให้บัญชี':'ล็อกอีกครั้ง'}</button>`:''}
+        </div>
+      </div>
+      <div class="mfin-card-body">
+        ${filesHtml}
+        ${data.notes&&!canManage?`<div class="mfin-notes-view">${data.notes}</div>`:''}
+        ${canManage?`
+        <div class="mfin-add-zone">
+          <div class="mfin-add-label">เพิ่มไฟล์รายรับ-รายจ่าย</div>
+          <div class="mfin-add-row">
+            <input id="mfname_${key}" placeholder="ชื่อไฟล์ เช่น รายรับ พ.ค. 2569" style="flex:1;min-width:130px">
+            <input id="mfurl_${key}" placeholder="https://drive.google.com/..." style="flex:2;min-width:180px">
+            <button class="btn btn-green btn-sm" onclick="mfinAddFile('${key}')">+ เพิ่ม</button>
+          </div>
+          <textarea class="mfin-notes" id="mfnotes_${key}" rows="2" placeholder="หมายเหตุ เช่น ยอดรายได้รวม รายจ่ายสุทธิ ฯลฯ" onchange="mfinSaveNotes('${key}',this.value)">${data.notes||''}</textarea>
+        </div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+window.mfinAddFile=async function(monthKey){
+  const name=document.getElementById('mfname_'+monthKey)?.value?.trim();
+  const url=document.getElementById('mfurl_'+monthKey)?.value?.trim();
+  if(!name||!url){toast('ใส่ชื่อและลิงก์ก่อนนะครับ','err');return;}
+  if(!canSeeMonthlyFin()){toast('ไม่มีสิทธิ์','err');return;}
+  const existing=monthlyFinData[monthKey]||{files:[],status:'locked',notes:''};
+  const newFiles=[...(existing.files||[]),{name,url,addedBy:currentUser.name,addedAt:new Date().toISOString()}];
+  await setDoc(doc(db,'monthlyFinance',monthKey),{...existing,files:newFiles,month:monthKey},{merge:true});
+  toast('เพิ่มไฟล์แล้ว ✓','ok');
+};
+
+window.mfinRemoveFile=async function(monthKey,idx){
+  if(!isOwner()){toast('เฉพาะ Owner เท่านั้น','err');return;}
+  const existing=monthlyFinData[monthKey]||{files:[]};
+  const newFiles=(existing.files||[]).filter((_,i)=>i!==idx);
+  await setDoc(doc(db,'monthlyFinance',monthKey),{...existing,files:newFiles},{merge:true});
+  toast('ลบลิงก์แล้ว');
+};
+
+window.mfinToggleLock=async function(monthKey,isCurrentlyLocked){
+  if(!isOwner()){toast('เฉพาะ Owner เท่านั้นที่ปลดล็อกได้','err');return;}
+  const existing=monthlyFinData[monthKey]||{files:[],notes:''};
+  const newStatus=isCurrentlyLocked?'unlocked':'locked';
+  const extra=isCurrentlyLocked
+    ?{unlockedBy:currentUser.name,unlockedAt:new Date().toISOString()}
+    :{lockedBy:currentUser.name,lockedAt:new Date().toISOString()};
+  await setDoc(doc(db,'monthlyFinance',monthKey),{...existing,status:newStatus,...extra},{merge:true});
+  toast(isCurrentlyLocked?'🔓 ปลดล็อกแล้ว — บัญชีเห็นข้อมูลแล้ว':'🔒 ล็อกแล้ว','ok');
+};
+
+window.mfinSaveNotes=async function(monthKey,value){
+  const existing=monthlyFinData[monthKey]||{files:[],status:'locked'};
+  await setDoc(doc(db,'monthlyFinance',monthKey),{...existing,notes:value},{merge:true});
+};
 
 // ── Init ──
 document.getElementById('loginSync').textContent='✅ Firebase พร้อมใช้งาน';

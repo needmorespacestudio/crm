@@ -16,7 +16,7 @@
   --gold-mid:#f0d28a;--green:#2d7a5a;--green-light:#e6f4ed;--red:#c0392b;
   --red-light:#fdf0ee;--blue:#2563a8;--blue-light:#eff4fc;--orange:#c05c1a;
   --orange-light:#fdf2ea;--purple:#7c3aed;--purple-light:#f5f0ff;
-  --border:rgba(26,23,20,0.09);--border-md:rgba(26,23,20,0.15);
+  --border:rgba(26,23,20,0.09);--border-md:rgba(26,23,20,0.15);--border-lt:rgba(26,23,20,0.06);
   --shadow-sm:0 1px 2px rgba(26,23,20,0.06);
   --shadow:0 2px 8px rgba(26,23,20,0.08),0 1px 2px rgba(26,23,20,0.05);
   --shadow-lg:0 8px 32px rgba(26,23,20,0.12),0 2px 8px rgba(26,23,20,0.08);
@@ -749,6 +749,21 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
   .doc-filter-tabs{overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:2px}
   .doc-filter-tabs::-webkit-scrollbar{display:none}
 
+  /* ─ Document Editor ─ */
+  #docEditorView{padding:0 !important}
+  .doc-editor-toolbar{flex-wrap:wrap;padding:12px 14px;max-width:100% !important;margin:0 0 0 !important}
+  .doc-editor{padding:14px}
+  .doc-editor-hd{flex-direction:column-reverse;gap:12px;align-items:flex-start;margin-bottom:16px;padding-bottom:14px}
+  .doc-type-title{font-size:17px;text-align:left}
+  .doc-type-num{text-align:left}
+  .doc-parties{grid-template-columns:1fr;gap:14px;margin-bottom:16px}
+  .doc-items-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:16px}
+  .doc-items-table{min-width:440px}
+  .doc-totals{align-items:stretch}
+  .doc-total-row{justify-content:space-between}
+  .doc-total-label{text-align:left;min-width:unset}
+  .doc-sign-area{grid-template-columns:1fr;gap:20px}
+
   /* ─ Calendar ─ */
   .cal-page{padding:14px}
   .cal-hd{flex-direction:column;align-items:flex-start;gap:8px;padding:12px 14px}
@@ -771,8 +786,9 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
   .ev-modal{border-radius:20px 20px 0 0 !important;max-width:100% !important;width:100% !important;max-height:88vh !important;margin:0 !important;padding:0 20px max(24px,env(safe-area-inset-bottom)) !important;overflow-y:auto !important;-webkit-overflow-scrolling:touch !important}
   .ev-modal::before{content:'';display:block;width:36px;height:4px;background:var(--gray-200);border-radius:2px;margin:12px auto 16px}
 
-  /* ─ Admin ─ */
+  /* ─ Admin & Accounting ─ */
   .admin-wrap{padding:14px}
+  .acc-summary{grid-template-columns:1fr !important}
 
   /* ─ Modals → bottom sheet ─ */
   .modal-ov{align-items:flex-end;overflow:hidden}
@@ -918,23 +934,31 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
 /* ── PRINT / PDF ── */
 .print-installments{display:none}
 @media print{
-  body{background:white;font-size:12pt}
+  body{background:white;font-size:12pt;color:#111}
   .nav,.sync-bar,.bottom-nav,.imper-bar,.imper-spacer,#backupBanner,
   .page:not(.on),#docListView,.doc-toolbar,
-  button,select,input,textarea,
-  #docExtras .doc-section{display:none !important}
+  button,select,input[type=checkbox],input[type=file],input[type=radio],
+  #docExtras{display:none !important}
+  input:not([type=checkbox]):not([type=file]):not([type=radio]),textarea{border:none !important;background:transparent !important;outline:none !important;resize:none !important;padding:2pt 0 !important;font-size:inherit !important;font-family:inherit !important;color:#111 !important;width:auto !important}
+  .doc-items-table-wrap{display:block !important;overflow:visible !important;margin:0 !important}
   #docEditorView{display:block !important;padding:0 !important}
   .doc-editor{box-shadow:none !important;border:none !important;max-width:100% !important;padding:0 !important}
-  .doc-editor-hd{border-bottom:2px solid #333 !important;padding-bottom:16pt !important}
+  .doc-editor-hd{border-bottom:2px solid #111 !important;padding-bottom:14pt !important;margin-bottom:20pt !important;flex-direction:row !important;align-items:flex-start !important}
   .doc-company{font-size:16pt !important;font-weight:700 !important}
-  table{width:100%;border-collapse:collapse}
+  .doc-type-title{font-size:18pt !important;text-align:right !important}
+  .doc-parties{grid-template-columns:1fr 1fr !important;gap:20px !important;margin-bottom:20pt !important}
+  .doc-items-table{display:table !important;width:100% !important;border-collapse:collapse !important}
+  table{width:100%;border-collapse:collapse;page-break-inside:auto}
+  tr{page-break-inside:avoid}
   th,td{border:1px solid #ccc;padding:6pt 8pt;font-size:10pt}
-  th{background:#f5f5f5 !important;-webkit-print-color-adjust:exact}
+  th{background:#f5f5f5 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   .doc-total-row{font-weight:bold}
+  .doc-totals{align-items:flex-end !important}
+  .doc-total-label{text-align:right !important;min-width:100px !important}
   .print-installments{display:block !important}
   #qtDesignPrint,#invDesignPrint,#recDesignPrint{display:block !important}
   .inv-rec-print-mode .doc-editor-hd,.inv-rec-print-mode .doc-parties,.inv-rec-print-mode .doc-items-table,.inv-rec-print-mode .doc-totals,.inv-rec-print-mode .doc-note-area,.inv-rec-print-mode .doc-sign-area{display:none !important}
-  @page{size:A4;margin:15mm 20mm}
+  @page{size:A4 portrait;margin:15mm 20mm}
 }
 </style>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -1346,7 +1370,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
 
     <!-- Document Editor -->
     <div id="docEditorView" style="display:none;padding:20px">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;max-width:800px;margin:0 auto 20px">
+      <div class="doc-editor-toolbar" style="display:flex;align-items:center;gap:12px;margin-bottom:20px;max-width:800px;margin:0 auto 20px">
         <button class="btn btn-ghost btn-sm" onclick="closeDocEditor()">← กลับ</button>
         <div style="flex:1"></div>
         <select id="docStatusSel" onchange="updateDocStatus(this.value)" class="btn btn-ghost btn-sm" style="cursor:pointer">
@@ -1393,6 +1417,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
         </div>
 
         <!-- Items Table -->
+        <div class="doc-items-table-wrap">
         <table class="doc-items-table">
           <thead>
             <tr>
@@ -1406,6 +1431,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
           </thead>
           <tbody id="docItemsBody"></tbody>
         </table>
+        </div>
         <button class="btn btn-ghost btn-sm" onclick="addDocItem()" style="margin-bottom:16px">+ เพิ่มรายการ</button>
 
         <!-- Totals -->

@@ -932,7 +932,8 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
   th{background:#f5f5f5 !important;-webkit-print-color-adjust:exact}
   .doc-total-row{font-weight:bold}
   .print-installments{display:block !important}
-  #qtDesignPrint{display:block !important}
+  #qtDesignPrint,#invDesignPrint,#recDesignPrint{display:block !important}
+  .inv-rec-print-mode .doc-editor-hd,.inv-rec-print-mode .doc-parties,.inv-rec-print-mode .doc-items-table,.inv-rec-print-mode .doc-totals,.inv-rec-print-mode .doc-note-area,.inv-rec-print-mode .doc-sign-area{display:none !important}
   @page{size:A4;margin:15mm 20mm}
 }
 </style>
@@ -1214,17 +1215,62 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
       <!-- FINANCE TAB -->
       <div class="ptab-content" id="ptab-finance">
         <div id="ptabFinReadNote" style="display:none;background:#fef3c7;border:1px solid #fbbf24;border-radius:6px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:#92400e">⚠️ คุณมีสิทธิ์ดูเท่านั้น — ติดต่อ Admin เพื่อแก้ไขข้อมูลการเงิน</div>
-        <div class="info-grid">
-          <div class="info-card">
-            <div class="info-card-title">งบประมาณ</div>
-            <div class="prow1"><div class="field"><label>งบประมาณลูกค้า (บาท)</label><input id="pd-budget"></div></div>
-            <div class="prow2"><div class="field"><label>Design Fee (บาท)</label><input id="pd-dfee"></div><div class="field"><label>Management Fee (บาท)</label><input id="pd-mgmt"></div></div>
+
+        <!-- CONTRACT SETUP -->
+        <div class="info-card" style="margin-bottom:16px">
+          <div class="info-card-title">📋 ข้อมูลสัญญาออกแบบ</div>
+          <div class="prow2">
+            <div class="field"><label>พื้นที่ออกแบบ (ตร.ม.)</label><input id="pd-area" type="number" placeholder="88" oninput="recalcContract()"></div>
+            <div class="field"><label>ราคาต่อ ตร.ม. (บาท)</label><input id="pd-ppm" type="number" placeholder="1000" oninput="recalcContract()"></div>
           </div>
-          <div class="info-card">
-            <div class="info-card-title">รายรับ-รายจ่ายจริง</div>
-            <div class="prow2"><div class="field"><label>รายรับจริง (บาท)</label><input id="pd-revenue"></div><div class="field"><label>รายจ่ายจริง (บาท)</label><input id="pd-expense"></div></div>
-            <div class="fin-summary" id="pdFinCalc"></div>
+          <div class="prow2">
+            <div class="field"><label>ราคารวม (บาท)</label><input id="pd-total" type="number" placeholder="0" oninput="recalcContract()" style="background:var(--gray-50)"></div>
+            <div class="field">
+              <label>ส่วนลด</label>
+              <div style="display:flex;gap:6px;align-items:center">
+                <select id="pd-disc-type" onchange="recalcContract()" style="border:1px solid var(--border-md);border-radius:var(--r-sm);padding:8px 8px;font-size:13px;font-family:inherit;flex:1">
+                  <option value="none">ไม่มีส่วนลด</option>
+                  <option value="pct">% จากราคารวม</option>
+                  <option value="fixed">ลดเป็นจำนวนเงิน</option>
+                </select>
+                <input id="pd-disc-val" type="number" placeholder="0" oninput="recalcContract()" style="width:90px;border:1px solid var(--border-md);border-radius:var(--r-sm);padding:8px;font-size:13px">
+              </div>
+            </div>
           </div>
+          <div style="background:var(--gray-50);border-radius:var(--r);padding:12px 14px;margin-top:8px;display:flex;gap:24px;flex-wrap:wrap">
+            <div><div style="font-size:11px;color:var(--gray-400)">ส่วนลด</div><div id="pd-disc-amt" style="font-size:15px;font-weight:700;color:var(--red)">0 ฿</div></div>
+            <div><div style="font-size:11px;color:var(--gray-400)">ยอดสุดท้าย</div><div id="pd-final" style="font-size:18px;font-weight:700;color:var(--green)">0 ฿</div></div>
+          </div>
+          <div class="prow2" style="margin-top:12px">
+            <div class="field"><label>งบประมาณลูกค้า (บาท)</label><input id="pd-budget"></div>
+            <div class="field"><label>อ้างอิง QT-D ที่ลิงค์</label><select id="pd-qt-ref" style="width:100%;border:1px solid var(--border-md);border-radius:var(--r-sm);padding:8px 10px;font-size:13px;font-family:inherit"><option value="">— ยังไม่ลิงค์ —</option></select></div>
+          </div>
+        </div>
+
+        <!-- INSTALLMENT TABLE -->
+        <div class="info-card" style="margin-bottom:16px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+            <div class="info-card-title" style="margin-bottom:0">📅 ตารางงวดงาน</div>
+            <button class="btn btn-ghost btn-sm" onclick="addContractInstallment()">+ เพิ่มงวด</button>
+          </div>
+          <div id="contractInstTable"></div>
+          <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn btn-ghost btn-sm" onclick="resetDefaultInstallments()">↺ รีเซ็ตงวดมาตรฐาน (30/40/30%)</button>
+            <button class="btn btn-green btn-sm" onclick="saveContractSetup()">💾 บันทึกข้อมูลสัญญา</button>
+          </div>
+        </div>
+
+        <!-- RELATED DOCS -->
+        <div class="info-card" style="margin-bottom:16px">
+          <div class="info-card-title">📁 เอกสารที่เกี่ยวข้อง</div>
+          <div id="contractRelDocs" style="font-size:12px;color:var(--gray-400)">กำลังโหลด...</div>
+        </div>
+
+        <!-- ACTUAL P&L -->
+        <div class="info-card">
+          <div class="info-card-title">💹 รายรับ-รายจ่ายจริง</div>
+          <div class="prow2"><div class="field"><label>รายรับจริง (บาท)</label><input id="pd-revenue"></div><div class="field"><label>รายจ่ายจริง (บาท)</label><input id="pd-expense"></div></div>
+          <div class="fin-summary" id="pdFinCalc"></div>
         </div>
       <!-- ACCESS TAB -->
       <div class="ptab-content" id="ptab-access">
@@ -1254,6 +1300,8 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
             <button class="doc-ftab" onclick="setDocFilter('quotation_construction',this)">QT ก่อสร้าง</button>
             <button class="doc-ftab" onclick="setDocFilter('contract_design',this)">สัญญาออกแบบ</button>
             <button class="doc-ftab" onclick="setDocFilter('contract_construction',this)">สัญญาก่อสร้าง</button>
+            <button class="doc-ftab" onclick="setDocFilter('invoice_design',this)">ใบวางบิล</button>
+            <button class="doc-ftab" onclick="setDocFilter('receipt_design',this)">ใบเสร็จ</button>
             <button class="doc-ftab" onclick="setDocFilter('invoice',this)">ใบแจ้งหนี้</button>
             <button class="doc-ftab" onclick="setDocFilter('payment_request',this)">ใบเบิกเงิน</button>
             <button class="doc-ftab" onclick="setDocFilter('receipt',this)">ใบรับเงิน</button>
@@ -1476,38 +1524,61 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
       <div class="modal-sub">เลือกประเภทและโปรเจกต์</div>
       <div class="prow2">
         <div class="field"><label>ประเภทเอกสาร *</label>
-          <select id="nd-type">
+          <select id="nd-type" onchange="ndTypeChanged()">
             <option value="">— เลือกประเภทเอกสาร —</option>
-            <optgroup label="ใบเสนอราคา">
+            <optgroup label="🎨 งานออกแบบภายใน">
               <option value="quotation_design">📋 ใบเสนอราคาออกแบบ (QT-D)</option>
-              <option value="quotation_construction">🏗️ ใบเสนอราคาก่อสร้าง (QT-C)</option>
-            </optgroup>
-            <optgroup label="สัญญา">
               <option value="contract_design">📝 สัญญาออกแบบ (CD)</option>
+              <option value="invoice_design">📄 ใบวางบิล ออกแบบ (INV)</option>
+              <option value="receipt_design">✅ ใบเสร็จรับเงิน ออกแบบ (REC)</option>
+            </optgroup>
+            <optgroup label="🏗️ งานก่อสร้าง">
+              <option value="quotation_construction">🏗️ ใบเสนอราคาก่อสร้าง (QT-C)</option>
               <option value="contract_construction">📝 สัญญาก่อสร้าง (CC)</option>
             </optgroup>
-            <optgroup label="การเงิน">
+            <optgroup label="📄 เอกสารทั่วไป">
               <option value="invoice">🧾 ใบแจ้งหนี้ (IV)</option>
               <option value="payment_request">💸 ใบเบิกเงิน (PR)</option>
               <option value="receipt">✅ ใบรับเงิน (RC)</option>
-            </optgroup>
-            <optgroup label="อื่นๆ">
               <option value="delivery">📦 ใบส่งงาน (DL)</option>
               <option value="boq">📊 BOQ รายการวัสดุ</option>
             </optgroup>
           </select>
         </div>
         <div class="field"><label>โปรเจกต์ที่เชื่อมโยง</label>
-          <select id="nd-proj"><option value="">— เลือกโปรเจกต์ —</option></select>
+          <select id="nd-proj" onchange="ndProjChanged()"><option value="">— เลือกโปรเจกต์ —</option></select>
+        </div>
+      </div>
+      <!-- Installment selector (shown for invoice_design / receipt_design) -->
+      <div id="ndInstRow" style="display:none">
+        <div class="field"><label>งวดที่ <span style="color:var(--gray-400);font-weight:400">(จากข้อมูลสัญญาในโปรเจกต์)</span></label>
+          <select id="nd-inst" onchange="ndInstChanged()"><option value="">— เลือกงวด —</option></select>
+        </div>
+        <div id="ndInstPreview" style="background:var(--gray-50);border-radius:var(--r-sm);padding:10px 12px;margin-top:6px;font-size:12px;display:none">
+          <div id="ndInstPreviewContent"></div>
         </div>
       </div>
       <div class="prow2">
         <div class="field"><label>วันที่ออกเอกสาร</label><input id="nd-date" type="date"></div>
-        <div class="field"><label>วันครบกำหนด</label><input id="nd-due" type="date"></div>
+        <div class="field" id="ndDueRow"><label>วันครบกำหนด</label><input id="nd-due" type="date"></div>
       </div>
       <div class="modal-foot">
         <button class="btn btn-ghost" onclick="document.getElementById('newDocModal').classList.remove('show')">ยกเลิก</button>
         <button class="btn btn-green" onclick="createDoc()">✅ สร้างเอกสาร</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUICK GENERATE DOC MODAL (from project finance tab) -->
+  <div class="modal-ov" id="quickGenModal">
+    <div class="modal">
+      <div class="modal-title" id="qgModalTitle">สร้างเอกสาร</div>
+      <div class="modal-sub" id="qgModalSub">—</div>
+      <div class="field"><label>วันที่ออกเอกสาร</label><input id="qg-date" type="date"></div>
+      <div id="qgPreview" style="background:var(--gray-50);border-radius:var(--r-sm);padding:12px;margin-top:8px;font-size:12px;line-height:1.8"></div>
+      <div class="modal-foot">
+        <button class="btn btn-ghost" onclick="document.getElementById('quickGenModal').classList.remove('show')">ยกเลิก</button>
+        <button class="btn btn-green" id="qgConfirmBtn" onclick="confirmQuickGen()">✅ สร้างเอกสาร</button>
       </div>
     </div>
   </div>
@@ -1706,6 +1777,100 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
           <div class="cleg"><div class="cleg-dot" style="background:var(--gold)"></div>โปรเจกต์ / นำเสนอ</div>
           <div class="cleg"><div class="cleg-dot" style="background:var(--red)"></div>Deadline ส่งงาน</div>
           <div class="cleg"><div class="cleg-dot" style="background:var(--green)"></div>ประชุม / ตรวจงาน</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRINT-ONLY: Invoice Design (INV) Letter -->
+  <div id="invDesignPrint" style="display:none">
+    <div style="font-family:'Sarabun',sans-serif;font-size:11pt;line-height:1.9;padding:0">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20pt">
+        <div>
+          <div style="font-family:'DM Mono',monospace;font-size:22pt;font-weight:700;letter-spacing:-1px;line-height:1">need<span style="font-size:14pt">more</span><br><span style="font-size:22pt">space</span></div>
+          <div style="font-size:8pt;color:#888;margin-top:2pt">interior design studio</div>
+        </div>
+        <div style="text-align:right;font-size:10pt;color:#555">
+          <div>needmorespace.studio</div>
+          <div>7/226 หมู่บ้าน ชัยพฤกษ์ ทวีวัฒนา</div>
+          <div>เขต ทวีวัฒนา แขวง ศาลาธรรมสพน์ กรุงเทพฯ 10170</div>
+          <div id="invPrintDate" style="margin-top:4pt;font-weight:600"></div>
+        </div>
+      </div>
+      <div style="margin-bottom:14pt">
+        <div><strong>เรียน:</strong> <span id="invPrintClient"></span></div>
+        <div><strong>เรื่อง:</strong> <span id="invPrintSubject"></span></div>
+        <div><strong>อ้างอิงใบเสนอราคาเลขที่:</strong> <span id="invPrintQtNum"></span></div>
+        <div><strong>ใบวางบิล:</strong> <span id="invPrintDocNum"></span></div>
+        <div><strong>โครงการ:</strong> <span id="invPrintProj"></span></div>
+      </div>
+      <div style="margin-bottom:14pt;text-indent:32pt" id="invPrintBody"></div>
+      <div style="margin-bottom:14pt">
+        <div style="font-weight:700;margin-bottom:6pt">รายละเอียดการเบิกจ่าย:</div>
+        <div id="invPrintItems" style="margin-left:20pt"></div>
+      </div>
+      <div style="margin-bottom:18pt">
+        <div style="font-weight:700;margin-bottom:6pt">ช่องทางการชำระเงิน (Payment Information):</div>
+        <div style="margin-left:20pt">
+          <div>• ชื่อบัญชี: ภาณุพงษ์ ตรันเจริญ</div>
+          <div>• ธนาคาร: กสิกรไทย (Kasikorn Bank) บัญชีออมทรัพย์</div>
+          <div>• เลขที่บัญชี: 142-3-37293-8</div>
+        </div>
+      </div>
+      <div style="margin-bottom:28pt" id="invPrintFooter"></div>
+      <div style="text-align:right;margin-top:32pt">
+        <div style="display:inline-block;text-align:center">
+          <div style="border-bottom:1px solid #333;width:200pt;margin-bottom:4pt"></div>
+          <div>ลงชื่อ.............................................ผู้รับจ้าง</div>
+          <div style="margin-top:6pt">(ภาณุพงษ์ ตรันเจริญ)</div>
+          <div style="font-size:10pt;color:#555">Founder &amp; Lead Designer</div>
+          <div style="font-size:10pt;color:#555">needmorespace.studio</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRINT-ONLY: Receipt Design (REC) Letter -->
+  <div id="recDesignPrint" style="display:none">
+    <div style="font-family:'Sarabun',sans-serif;font-size:11pt;line-height:1.9;padding:0">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20pt">
+        <div>
+          <div style="font-family:'DM Mono',monospace;font-size:22pt;font-weight:700;letter-spacing:-1px;line-height:1">need<span style="font-size:14pt">more</span><br><span style="font-size:22pt">space</span></div>
+          <div style="font-size:8pt;color:#888;margin-top:2pt">interior design studio</div>
+        </div>
+        <div style="text-align:right;font-size:10pt;color:#555">
+          <div>needmorespace.studio</div>
+          <div>7/226 หมู่บ้าน ชัยพฤกษ์ ทวีวัฒนา</div>
+          <div>เขต ทวีวัฒนา แขวง ศาลาธรรมสพน์ กรุงเทพฯ 10170</div>
+          <div id="recPrintDate" style="margin-top:4pt;font-weight:600"></div>
+        </div>
+      </div>
+      <div style="margin-bottom:14pt">
+        <div><strong>เลขที่ใบเสร็จ:</strong> <span id="recPrintDocNum"></span></div>
+        <div><strong>อ้างอิงใบเสนอราคาเลขที่:</strong> <span id="recPrintQtNum"></span></div>
+        <div><strong>ได้รับเงินจาก (Client Name):</strong> <span id="recPrintClient"></span></div>
+        <div><strong>โครงการ:</strong> <span id="recPrintProj"></span></div>
+      </div>
+      <div style="margin-bottom:14pt;text-indent:32pt">ทาง needmorespace.studio ได้รับชำระเงินจากท่านเรียบร้อยแล้ว โดยมีรายละเอียดดังนี้:</div>
+      <div style="margin-bottom:14pt">
+        <div style="font-weight:700;margin-bottom:6pt">รายการชำระเงิน:</div>
+        <div id="recPrintItems" style="margin-left:20pt"></div>
+      </div>
+      <div style="margin-bottom:18pt">
+        <div style="font-weight:700;margin-bottom:6pt">รายละเอียดการรับชำระเงิน:</div>
+        <div style="margin-left:20pt">
+          <div>• ชำระผ่านช่องทาง: โอนเงินเข้าบัญชีธนาคาร กสิกรไทย (Kasikorn Bank)</div>
+          <div>• ชื่อบัญชี: ภาณุพงษ์ ตรันเจริญ เลขที่บัญชี 142-3-37293-8</div>
+        </div>
+      </div>
+      <div style="margin-bottom:28pt" id="recPrintFooter"></div>
+      <div style="text-align:right;margin-top:32pt">
+        <div style="display:inline-block;text-align:center">
+          <div style="border-bottom:1px solid #333;width:200pt;margin-bottom:4pt"></div>
+          <div>ลงชื่อ.............................................ผู้รับจ้าง</div>
+          <div style="margin-top:6pt">(ภาณุพงษ์ ตรันเจริญ)</div>
+          <div style="font-size:10pt;color:#555">Founder &amp; Lead Designer</div>
+          <div style="font-size:10pt;color:#555">needmorespace.studio</div>
         </div>
       </div>
     </div>
@@ -3498,7 +3663,7 @@ window.openProjDetail = function(pid) {
   const des=document.getElementById('pd-designer'); if(des){des.innerHTML=uOpts;des.value=p.designer||'';}
   const dra=document.getElementById('pd-drafter'); if(dra){dra.innerHTML=uOpts;dra.value=p.drafter||'';}
   renderTimeline(p); renderProjChecklist(p); renderProjFiles(p);
-  renderContractorUpdates(p); renderProjFinCalc(p);
+  renderContractorUpdates(p); renderProjFinCalc(p); renderProjFinanceTab(p);
   const btnFL=document.getElementById('btnAddFileLink');
   if(btnFL) btnFL.style.display=isAdmin()?'':'none';
   // Lead link in project detail header
@@ -3779,6 +3944,284 @@ function renderProjFinCalc(p){
   el.innerHTML=`<div style="display:flex;justify-content:space-between;padding:10px 0;border-top:1px solid var(--border-lt);margin-top:8px"><span style="font-weight:600">กำไรสุทธิ</span><span style="color:${profit>=0?'var(--green)':'var(--red)'};font-weight:700">${profit>=0?'':'-'}฿${Math.abs(profit).toLocaleString('th-TH')}</span></div>`;
 }
 
+function renderProjFinanceTab(p){
+  // Populate contract fields
+  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.value=v||'';};
+  set('pd-area',p.contractArea||'');
+  set('pd-ppm',p.contractPricePerSqm||'');
+  set('pd-total',p.contractTotal||'');
+  set('pd-disc-type',p.contractDiscountType||'none');
+  set('pd-disc-val',p.contractDiscountVal||'');
+  // Populate QT ref dropdown
+  const qtSel=document.getElementById('pd-qt-ref');
+  if(qtSel){
+    const qtDocs=docs.filter(d=>d.projRef===p.id&&d.type==='quotation_design');
+    qtSel.innerHTML='<option value="">— ยังไม่ลิงค์ —</option>'+qtDocs.map(d=>`<option value="${d.id}" ${p.contractQtRef===d.id?'selected':''}>${d.docNum}</option>`).join('');
+  }
+  // Restore installments
+  _contractInsts=(p.contractInstallments||[]).map(i=>({...i}));
+  const final=p.contractFinal||0;
+  const da=document.getElementById('pd-disc-amt');if(da)da.textContent=(p.contractDiscountAmt>0?'-':'')+Math.round(p.contractDiscountAmt||0).toLocaleString('th-TH')+' ฿';
+  const fi=document.getElementById('pd-final');if(fi)fi.textContent=Math.round(final).toLocaleString('th-TH')+' ฿';
+  renderContractInstTable(final);
+  renderContractRelDocs(p);
+}
+
+// ══════════════════════════════════════════
+// CONTRACT FINANCE SETUP (Project-centric)
+// ══════════════════════════════════════════
+
+window.recalcContract=function(){
+  const area=parseFloat(document.getElementById('pd-area')?.value)||0;
+  const ppm=parseFloat(document.getElementById('pd-ppm')?.value)||0;
+  const discType=document.getElementById('pd-disc-type')?.value||'none';
+  const discVal=parseFloat(document.getElementById('pd-disc-val')?.value)||0;
+  let total=parseFloat(document.getElementById('pd-total')?.value)||0;
+  if(area&&ppm){total=area*ppm;const t=document.getElementById('pd-total');if(t)t.value=total;}
+  let discAmt=0;
+  if(discType==='pct') discAmt=total*discVal/100;
+  else if(discType==='fixed') discAmt=discVal;
+  const final=Math.max(0,total-discAmt);
+  const fmt=n=>n.toLocaleString('th-TH',{maximumFractionDigits:0});
+  const da=document.getElementById('pd-disc-amt');if(da)da.textContent=(discAmt>0?'-':'')+fmt(discAmt)+' ฿';
+  const fi=document.getElementById('pd-final');if(fi)fi.textContent=fmt(final)+' ฿';
+  // recalc installment amounts
+  renderContractInstTable(final);
+};
+
+let _contractInsts=[];
+
+function renderContractInstTable(finalAmt){
+  const el=document.getElementById('contractInstTable');if(!el)return;
+  const p=currentProjId?projects.find(x=>x.id===currentProjId):null;
+  if(!_contractInsts.length&&p?.contractInstallments?.length) _contractInsts=[...p.contractInstallments.map(i=>({...i}))];
+  if(!_contractInsts.length) _contractInsts=[
+    {id:'1',label:'งวดที่ 1',desc:'ชำระเมื่ออนุมัติให้เริ่มงาน',pct:30,status:'pending',invDocId:'',recDocId:''},
+    {id:'2',label:'งวดที่ 2',desc:'ชำระเมื่อผู้ออกแบบส่งมอบภาพ 3D Perspective',pct:40,status:'pending',invDocId:'',recDocId:''},
+    {id:'3',label:'งวดที่ 3',desc:'ชำระเมื่อนำส่งแบบก่อสร้างเรียบร้อยแล้ว',pct:30,status:'pending',invDocId:'',recDocId:''},
+  ];
+  const total=parseFloat(document.getElementById('pd-final')?.textContent?.replace(/[,฿\s]/g,'')||finalAmt||0);
+  el.innerHTML=`<table style="width:100%;border-collapse:collapse;font-size:13px">
+    <thead><tr style="background:var(--gray-50)">
+      <th style="padding:8px 6px;text-align:left;font-size:11px;color:var(--gray-500);border-bottom:1px solid var(--border)">งวด</th>
+      <th style="padding:8px 6px;text-align:left;font-size:11px;color:var(--gray-500);border-bottom:1px solid var(--border)">รายละเอียด</th>
+      <th style="padding:8px 6px;text-align:right;font-size:11px;color:var(--gray-500);border-bottom:1px solid var(--border)">%</th>
+      <th style="padding:8px 6px;text-align:right;font-size:11px;color:var(--gray-500);border-bottom:1px solid var(--border)">จำนวน</th>
+      <th style="padding:8px 6px;text-align:center;font-size:11px;color:var(--gray-500);border-bottom:1px solid var(--border)">สถานะ</th>
+      <th style="padding:8px 6px;text-align:center;font-size:11px;color:var(--gray-500);border-bottom:1px solid var(--border)">เอกสาร</th>
+      <th style="width:30px;border-bottom:1px solid var(--border)"></th>
+    </tr></thead>
+    <tbody>${_contractInsts.map((inst,i)=>{
+      const amt=Math.round(total*parseFloat(inst.pct||0)/100);
+      const statColor={pending:'var(--gray-400)',invoiced:'var(--blue)',paid:'var(--green)'}[inst.status]||'var(--gray-400)';
+      const statLabel={pending:'⏳ รอ',invoiced:'📤 ออก INV แล้ว',paid:'✅ ชำระแล้ว'}[inst.status]||'—';
+      const invDoc=docs.find(x=>x.id===inst.invDocId);
+      const recDoc=docs.find(x=>x.id===inst.recDocId);
+      return`<tr style="border-bottom:1px solid var(--border)">
+        <td style="padding:8px 6px;font-weight:600">${inst.label}</td>
+        <td style="padding:8px 6px"><input value="${(inst.desc||'').replace(/"/g,'&quot;')}" oninput="_contractInsts[${i}].desc=this.value" style="width:100%;border:1px solid var(--border-lt);border-radius:4px;padding:4px 6px;font-size:12px;font-family:inherit"></td>
+        <td style="padding:8px 6px;text-align:right"><input value="${inst.pct||0}" type="number" min="0" max="100" oninput="_contractInsts[${i}].pct=parseFloat(this.value)||0;renderContractInstTable()" style="width:52px;border:1px solid var(--border-lt);border-radius:4px;padding:4px 6px;font-size:12px;text-align:right"></td>
+        <td style="padding:8px 6px;text-align:right;font-weight:600;color:var(--green)">฿${amt.toLocaleString('th-TH')}</td>
+        <td style="padding:8px 6px;text-align:center">
+          <select onchange="_contractInsts[${i}].status=this.value;renderContractInstTable()" style="font-size:11px;border:1px solid var(--border-md);border-radius:4px;padding:3px 6px;font-family:inherit;color:${statColor}">
+            <option value="pending" ${inst.status==='pending'?'selected':''}>⏳ รอ</option>
+            <option value="invoiced" ${inst.status==='invoiced'?'selected':''}>📤 ออก INV แล้ว</option>
+            <option value="paid" ${inst.status==='paid'?'selected':''}>✅ ชำระแล้ว</option>
+          </select>
+        </td>
+        <td style="padding:8px 6px;text-align:center">
+          <div style="display:flex;gap:4px;justify-content:center;flex-wrap:wrap">
+            ${invDoc?`<span style="font-size:10px;background:var(--blue-light);color:var(--blue);padding:2px 6px;border-radius:4px;cursor:pointer" onclick="openDocEditor('${invDoc.id}')">${invDoc.docNum}</span>`:`<button class="btn btn-ghost btn-sm" style="font-size:10px;padding:3px 8px" onclick="quickGenDoc('invoice_design',${i})">+ INV</button>`}
+            ${recDoc?`<span style="font-size:10px;background:var(--green-light);color:var(--green);padding:2px 6px;border-radius:4px;cursor:pointer" onclick="openDocEditor('${recDoc.id}')">${recDoc.docNum}</span>`:`<button class="btn btn-ghost btn-sm" style="font-size:10px;padding:3px 8px" onclick="quickGenDoc('receipt_design',${i})">+ REC</button>`}
+          </div>
+        </td>
+        <td style="padding:8px 6px"><button onclick="_contractInsts.splice(${i},1);renderContractInstTable()" style="background:none;border:none;cursor:pointer;color:var(--gray-300);font-size:14px">✕</button></td>
+      </tr>`;
+    }).join('')}</tbody>
+  </table>
+  <div style="padding:6px 8px;font-size:11px;color:var(--gray-400)">รวม ${_contractInsts.reduce((s,i)=>s+(parseFloat(i.pct)||0),0)}% ${Math.abs(_contractInsts.reduce((s,i)=>s+(parseFloat(i.pct)||0),0)-100)<0.1?'✅':'⚠️ ต้องรวมเป็น 100%'}</div>`;
+}
+
+function renderContractRelDocs(p){
+  const el=document.getElementById('contractRelDocs');if(!el)return;
+  const relDocs=docs.filter(d=>d.projRef===p.id);
+  if(!relDocs.length){el.innerHTML='<div style="padding:8px 0;color:var(--gray-300)">ยังไม่มีเอกสาร — สร้างเอกสารจากงวดด้านบนได้เลย</div>';return;}
+  el.innerHTML=relDocs.map(d=>`<div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border);cursor:pointer" onclick="showPage('docs',document.getElementById('tabDocs'));setTimeout(()=>openDocEditor('${d.id}'),300)">
+    <span style="font-size:12px;font-weight:600;color:var(--gray-700);flex:1">${d.docNum||'—'}</span>
+    <span style="font-size:11px;color:var(--gray-400)">${DOC_TYPE_LABEL[d.type]||d.type}</span>
+    <span style="font-size:11px;background:var(--gray-100);padding:2px 6px;border-radius:4px">${DOC_STATUS_LABEL[d.status]||d.status||'draft'}</span>
+    <span style="font-size:11px;color:var(--gray-400)">${d.date||''}</span>
+  </div>`).join('');
+}
+
+window.addContractInstallment=function(){
+  const n=_contractInsts.length+1;
+  _contractInsts.push({id:Date.now().toString(),label:'งวดที่ '+n,desc:'',pct:0,status:'pending',invDocId:'',recDocId:''});
+  renderContractInstTable();
+};
+
+window.resetDefaultInstallments=function(){
+  _contractInsts=[
+    {id:'1',label:'งวดที่ 1',desc:'ชำระเมื่ออนุมัติให้เริ่มงาน',pct:30,status:'pending',invDocId:'',recDocId:''},
+    {id:'2',label:'งวดที่ 2',desc:'ชำระเมื่อผู้ออกแบบส่งมอบภาพ 3D Perspective',pct:40,status:'pending',invDocId:'',recDocId:''},
+    {id:'3',label:'งวดที่ 3',desc:'ชำระเมื่อนำส่งแบบก่อสร้างเรียบร้อยแล้ว',pct:30,status:'pending',invDocId:'',recDocId:''},
+  ];
+  renderContractInstTable();
+};
+
+window.saveContractSetup=async function(){
+  const p=currentProjId?projects.find(x=>x.id===currentProjId):null;if(!p)return;
+  const area=parseFloat(document.getElementById('pd-area')?.value)||0;
+  const ppm=parseFloat(document.getElementById('pd-ppm')?.value)||0;
+  const discType=document.getElementById('pd-disc-type')?.value||'none';
+  const discVal=parseFloat(document.getElementById('pd-disc-val')?.value)||0;
+  const total=parseFloat(document.getElementById('pd-total')?.value)||area*ppm||0;
+  let discAmt=0;
+  if(discType==='pct') discAmt=total*discVal/100;
+  else if(discType==='fixed') discAmt=discVal;
+  const final=Math.max(0,total-discAmt);
+  const qtRef=document.getElementById('pd-qt-ref')?.value||'';
+  const qtDoc=docs.find(x=>x.id===qtRef);
+  const updated={...p,
+    contractArea:area,contractPricePerSqm:ppm,contractTotal:total,
+    contractDiscountType:discType,contractDiscountVal:discVal,contractDiscountAmt:discAmt,
+    contractFinal:final,contractInstallments:_contractInsts,
+    contractQtRef:qtRef,contractQtNum:qtDoc?.docNum||'',
+    budget:document.getElementById('pd-budget')?.value||p.budget||'',
+  };
+  try{
+    await saveProjToCloud(updated);
+    toast('บันทึกข้อมูลสัญญา ✓','ok');
+    renderContractInstTable(final);
+    renderContractRelDocs(updated);
+  }catch(e){toast('บันทึกไม่สำเร็จ','err');}
+};
+
+// Quick generate invoice_design or receipt_design from finance tab
+let _qgDocType='',_qgInstIdx=0;
+window.quickGenDoc=function(docType,instIdx){
+  const p=currentProjId?projects.find(x=>x.id===currentProjId):null;if(!p)return;
+  const inst=_contractInsts[instIdx];if(!inst)return;
+  _qgDocType=docType;_qgInstIdx=instIdx;
+  const final=p.contractFinal||0;
+  const amt=Math.round(final*parseFloat(inst.pct||0)/100);
+  const label=docType==='invoice_design'?'ใบวางบิล':'ใบเสร็จรับเงิน';
+  document.getElementById('qgModalTitle').textContent=`สร้าง${label} — ${inst.label}`;
+  document.getElementById('qgModalSub').textContent=`${p.name||''} · ${inst.desc||''}`;
+  document.getElementById('qg-date').value=today();
+  document.getElementById('qgPreview').innerHTML=`
+    <div style="display:flex;flex-direction:column;gap:4px">
+      <div><span style="color:var(--gray-400)">ลูกค้า:</span> <strong>${p.client||'—'}</strong></div>
+      <div><span style="color:var(--gray-400)">โปรเจกต์:</span> ${p.name||'—'}</div>
+      <div><span style="color:var(--gray-400)">งวด:</span> ${inst.label} (${inst.pct}%)</div>
+      <div><span style="color:var(--gray-400)">ยอด:</span> <strong style="color:var(--green)">฿${amt.toLocaleString('th-TH')}</strong></div>
+      <div><span style="color:var(--gray-400)">อ้างอิง QT:</span> ${p.contractQtNum||'—'}</div>
+    </div>`;
+  document.getElementById('quickGenModal').classList.add('show');
+};
+
+window.confirmQuickGen=async function(){
+  const p=currentProjId?projects.find(x=>x.id===currentProjId):null;if(!p)return;
+  const inst=_contractInsts[_qgInstIdx];if(!inst)return;
+  const date=document.getElementById('qg-date').value||today();
+  const final=p.contractFinal||0;
+  const amt=Math.round(final*parseFloat(inst.pct||0)/100);
+  const instNum=_qgInstIdx+1;
+  // Derive doc number from QT number or generate
+  let docNum='';
+  try{
+    const base=p.contractQtNum?p.contractQtNum.replace(/^QT-D-?/,'').replace(/^QT-?/,''):await genDocId(_qgDocType).then(n=>n.replace(/^(INV|REC)-/,''));
+    const prefix=_qgDocType==='invoice_design'?'INV':'REC';
+    docNum=`${prefix}-${base}.${instNum}`;
+  }catch(e){docNum=(_qgDocType==='invoice_design'?'INV':'REC')+'-'+Date.now();}
+  const docId=Date.now().toString();
+  const newDoc={
+    id:docId,docNum,type:_qgDocType,projRef:p.id,projId:p.projId||'',clientId:p.clientId||'',
+    date,due:'',status:'draft',
+    clientName:p.client||'',clientDetail:p.phone||'',
+    projName:p.name||'',projLocation:p.loc||p.projLocation||'',
+    projDescription:p.projDescription||'',
+    contractFinal:final,contractArea:p.contractArea||0,
+    installmentIndex:_qgInstIdx,installmentLabel:inst.label,
+    installmentPct:inst.pct,installmentAmt:amt,
+    installmentDesc:inst.desc||'',
+    refQtDocNum:p.contractQtNum||'',refQtDocId:p.contractQtRef||'',
+    specialNote:'',scopeImages:[],items:[],installments:[],
+    subtotal:amt,discountAmt:0,afterDiscount:amt,vatRate:0,vat:0,withholdingTax:0,grandTotal:amt,
+    notes:'',createdBy:currentUser.name,createdAt:new Date().toISOString(),
+  };
+  try{
+    await setDoc(doc(db,'documents',docId),sanitizeForFirestore({...newDoc,_ts:new Date().toISOString()}));
+    // Update installment status
+    if(_qgDocType==='invoice_design'){
+      _contractInsts[_qgInstIdx]={..._contractInsts[_qgInstIdx],status:'invoiced',invDocId:docId,invDocNum:docNum};
+    } else {
+      _contractInsts[_qgInstIdx]={..._contractInsts[_qgInstIdx],status:'paid',recDocId:docId,recDocNum:docNum};
+    }
+    await saveContractSetup();
+    document.getElementById('quickGenModal').classList.remove('show');
+    toast(`สร้าง ${docNum} ✓`,'ok');
+    renderContractRelDocs(p);
+    renderContractInstTable(final);
+  }catch(e){toast('บันทึกไม่สำเร็จ: '+e.message,'err');}
+};
+
+// ndTypeChanged / ndProjChanged / ndInstChanged for new modal
+window.ndTypeChanged=function(){
+  const type=document.getElementById('nd-type')?.value||'';
+  const showInst=['invoice_design','receipt_design'].includes(type);
+  document.getElementById('ndInstRow').style.display=showInst?'block':'none';
+  document.getElementById('ndDueRow').style.display=['invoice_design','receipt_design'].includes(type)?'none':'block';
+  if(showInst) ndProjChanged();
+};
+
+window.ndProjChanged=function(){
+  const type=document.getElementById('nd-type')?.value||'';
+  const projId=document.getElementById('nd-proj')?.value||'';
+  if(!['invoice_design','receipt_design'].includes(type)) return;
+  const p=projects.find(x=>x.id===projId);
+  const sel=document.getElementById('nd-inst');
+  if(!sel) return;
+  const insts=(p?.contractInstallments)||[];
+  sel.innerHTML='<option value="">— เลือกงวด —</option>'+insts.map((inst,i)=>{
+    const final=p?.contractFinal||0;
+    const amt=Math.round(final*parseFloat(inst.pct||0)/100);
+    return`<option value="${i}">${inst.label} — ${inst.pct}% — ฿${amt.toLocaleString('th-TH')} — ${{pending:'รอ',invoiced:'ออก INV แล้ว',paid:'ชำระแล้ว'}[inst.status]||'—'}</option>`;
+  }).join('');
+  document.getElementById('ndInstPreview').style.display='none';
+};
+
+window.ndInstChanged=function(){
+  const projId=document.getElementById('nd-proj')?.value||'';
+  const p=projects.find(x=>x.id===projId);
+  const idx=parseInt(document.getElementById('nd-inst')?.value??'-1');
+  const pv=document.getElementById('ndInstPreview');
+  const pc=document.getElementById('ndInstPreviewContent');
+  if(!p||idx<0||!pc){if(pv)pv.style.display='none';return;}
+  const inst=(p.contractInstallments||[])[idx];if(!inst){if(pv)pv.style.display='none';return;}
+  const final=p.contractFinal||0;
+  const amt=Math.round(final*parseFloat(inst.pct||0)/100);
+  pc.innerHTML=`ลูกค้า: <strong>${p.client||'—'}</strong> · โปรเจกต์: ${p.name||'—'} · ${inst.label} (${inst.pct}%) · <strong style="color:var(--green)">฿${amt.toLocaleString('th-TH')}</strong> · QT: ${p.contractQtNum||'—'}`;
+  if(pv)pv.style.display='block';
+};
+
+function thaiAmountText(amount){
+  const n=Math.round(parseFloat(amount)||0);
+  if(n===0)return'ศูนย์บาทถ้วน';
+  const d=['','หนึ่ง','สอง','สาม','สี่','ห้า','หก','เจ็ด','แปด','เก้า'];
+  function readBlock(num){
+    if(!num)return'';
+    let r='',s=String(num).padStart(6,'0').split('').map(Number);
+    if(s[0])r+=d[s[0]]+'แสน';if(s[1])r+=d[s[1]]+'หมื่น';if(s[2])r+=d[s[2]]+'พัน';
+    if(s[3])r+=d[s[3]]+'ร้อย';
+    if(s[4]){r+=s[4]===1?'สิบ':s[4]===2?'ยี่สิบ':d[s[4]]+'สิบ';}
+    if(s[5]){r+=(s[4]&&s[5]===1)?'เอ็ด':d[s[5]];}
+    return r;
+  }
+  const m=Math.floor(n/1000000),rem=n%1000000;
+  return(m?readBlock(m)+'ล้าน':'')+readBlock(rem)+'บาทถ้วน';
+}
+
 // ══════════════════════════════════════════
 // DOCUMENTS MODULE
 // ══════════════════════════════════════════
@@ -3787,12 +4230,13 @@ const DOC_TYPE_LABEL={
   'quotation_construction': '🏗️ ใบเสนอราคาก่อสร้าง',
   'contract_design':        '📝 สัญญาออกแบบ',
   'contract_construction':  '📝 สัญญาก่อสร้าง',
+  'invoice_design':         '📄 ใบวางบิล (ออกแบบ)',
+  'receipt_design':         '✅ ใบเสร็จรับเงิน (ออกแบบ)',
   'invoice':                '🧾 ใบแจ้งหนี้',
   'payment_request':        '💸 ใบเบิกเงิน',
   'receipt':                '✅ ใบรับเงิน',
   'delivery':               '📦 ใบส่งงาน',
   'boq':                    '📊 BOQ',
-  // legacy keys
   'quotation':'📋 ใบเสนอราคา','contract':'📝 สัญญา',
 };
 const DOC_STATUS_LABEL={draft:'📝 Draft',sent:'📤 ส่งแล้ว',approved:'✅ อนุมัติ',paid:'💰 ชำระแล้ว',cancelled:'❌ ยกเลิก'};
@@ -3803,6 +4247,8 @@ const DOC_ACCESS = {
   'quotation_construction': { create:['owner','admin','sales'], edit:['owner','admin','sales'], view:['owner','admin','sales'] },
   'contract_design':        { create:['owner','admin'],         edit:['owner','admin'],         view:['owner','admin','sales'] },
   'contract_construction':  { create:['owner','admin'],         edit:['owner','admin'],         view:['owner','admin','sales'] },
+  'invoice_design':         { create:['owner','admin','sales'], edit:['owner','admin','sales'], view:['owner','admin','sales'] },
+  'receipt_design':         { create:['owner','admin','sales'], edit:['owner','admin','sales'], view:['owner','admin','sales'] },
   'invoice':                { create:['owner','admin','sales'], edit:['owner','admin','sales'], view:['owner','admin','sales'] },
   'payment_request':        { create:['owner','admin','sales'], edit:['owner','admin','sales'], view:['owner','admin','sales'] },
   'receipt':                { create:['owner','admin','sales'], edit:['owner','admin','sales'], view:['owner','admin','sales'] },
@@ -3819,6 +4265,7 @@ function canAccessDoc(type, action) {
 const DOC_PREFIX = {
   'quotation_design':'QT-D','quotation_construction':'QT-C',
   'contract_design':'CD','contract_construction':'CC',
+  'invoice_design':'INV','receipt_design':'REC',
   'invoice':'IV','payment_request':'PR','receipt':'RC',
   'delivery':'DL','boq':'BOQ',
   'quotation':'QT','contract':'CT',
@@ -3828,6 +4275,7 @@ function getDefaultItems(type) {
   if(type==='quotation_design') return [{id:'1',desc:'ค่าบริการออกแบบภายใน',qty:1,unit:'งาน',price:0,total:0}];
   if(type==='quotation_construction') return [{id:'1',desc:'ค่าก่อสร้าง',qty:1,unit:'งาน',price:0,total:0}];
   if(type==='invoice'||type==='receipt') return [{id:'1',desc:'ค่าบริการตามสัญญา งวดที่',qty:1,unit:'งาน',price:0,total:0}];
+  if(type==='invoice_design'||type==='receipt_design') return [];
   if(type==='delivery') return [{id:'1',desc:'แบบ Concept Design',qty:1,unit:'ชุด',price:0,total:0}];
   return [{id:'1',desc:'รายการ',qty:1,unit:'งาน',price:0,total:0}];
 }
@@ -4119,16 +4567,70 @@ window.saveDoc=async function(){
 
 window.printDoc=function(){
   const d=docs.find(x=>x.id===currentDocId);
+  // Hide all special print sections first
+  ['qtDesignPrint','invDesignPrint','recDesignPrint'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
   if(d&&d.type==='quotation_design'){
     const sd=document.getElementById('qtDesignPrint');
-    if(sd){
-      sd.style.display='block';
-      populatePrintScope(d);
-    }
+    if(sd){sd.style.display='block';populatePrintScope(d);}
+  } else if(d&&d.type==='invoice_design'){
+    const sd=document.getElementById('invDesignPrint');
+    if(sd){sd.style.display='block';populateInvPrint(d);}
+  } else if(d&&d.type==='receipt_design'){
+    const sd=document.getElementById('recDesignPrint');
+    if(sd){sd.style.display='block';populateRecPrint(d);}
   }
   window.print();
-  setTimeout(()=>{const sd=document.getElementById('qtDesignPrint');if(sd)sd.style.display='none';},1500);
+  setTimeout(()=>{
+    ['qtDesignPrint','invDesignPrint','recDesignPrint'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
+    document.body.classList.remove('inv-rec-print-mode');
+  },1500);
 };
+
+function formatThaiDate(dateStr){
+  if(!dateStr)return'';
+  const d=new Date(dateStr);
+  if(isNaN(d.getTime()))return dateStr;
+  const months=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+  return`${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()+543}`;
+}
+
+function populateInvPrint(d){
+  document.body.classList.add('inv-rec-print-mode');
+  const fmt=n=>parseFloat(n||0).toLocaleString('th-TH',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v||'—';};
+  set('invPrintDate',formatThaiDate(d.date));
+  set('invPrintClient',d.clientName||'—');
+  set('invPrintDocNum',d.docNum||'—');
+  set('invPrintQtNum',d.refQtDocNum||'—');
+  set('invPrintProj',(d.projName||'—')+(d.projLocation?' ('+d.projLocation+')':''));
+  const desc=d.projDescription||'ออกแบบภายใน';
+  const area=d.contractArea?` พื้นที่ ${d.contractArea} ตารางเมตร`:'';
+  const total=d.contractFinal?` มูลค่างานรวม ${parseFloat(d.contractFinal).toLocaleString('th-TH',{minimumFractionDigits:2})} บาท`:'';
+  const el=document.getElementById('invPrintBody');
+  if(el)el.textContent=`ตามที่ท่านได้ลงนามอนุมัติใบเสนอราคาสำหรับงาน${desc}${area}${total} ทาง needmorespace.studio ขอแจ้งรายละเอียดการชำระเงิน${d.installmentLabel||''} ตามเงื่อนไขที่ระบุไว้ในสัญญาดังนี้`;
+  const items=document.getElementById('invPrintItems');
+  if(items)items.innerHTML=`<div>• รายการ: ${d.installmentDesc||d.installmentLabel||'—'}</div><div>• สัดส่วนการชำระ: ${d.installmentPct||0}% ของมูลค่างานรวม</div><div>• <strong>ยอดที่ต้องชำระทั้งสิ้น: ${fmt(d.installmentAmt)} บาท</strong></div>`;
+  const footer=document.getElementById('invPrintFooter');
+  if(footer)footer.textContent='เมื่อท่านได้ทำการชำระเงินเรียบร้อยแล้ว รบกวนส่งหลักฐานการโอนเงินกลับมาเพื่อเป็นหลักฐานยืนยันการรับชำระเงิน หลังจากนั้นทางสตูดิโอจะเริ่มดำเนินการในขั้นตอนถัดไป';
+  set('invPrintSubject',`แจ้งชำระค่าบริการ${desc} (${d.installmentLabel||''})`);
+}
+
+function populateRecPrint(d){
+  document.body.classList.add('inv-rec-print-mode');
+  const fmt=n=>parseFloat(n||0).toLocaleString('th-TH',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v||'—';};
+  set('recPrintDate',formatThaiDate(d.date));
+  set('recPrintClient',d.clientName||'—');
+  set('recPrintDocNum',d.docNum||'—');
+  set('recPrintQtNum',d.refQtDocNum||'—');
+  set('recPrintProj',(d.projName||'—')+(d.projLocation?' ('+d.projLocation+')':''));
+  const items=document.getElementById('recPrintItems');
+  const amt=parseFloat(d.installmentAmt||d.grandTotal||0);
+  const amtText=thaiAmountText(amt);
+  if(items)items.innerHTML=`<div>• รายการ: ${d.installmentDesc||d.installmentLabel||'—'} (${d.installmentPct||0}% ชำระ${d.installmentLabel?'เมื่อ'+d.installmentLabel:''})</div><div>• <strong>ยอดเงินที่ได้รับชำระทั้งสิ้น: ${fmt(amt)} บาท (${amtText})</strong></div>`;
+  const footer=document.getElementById('recPrintFooter');
+  if(footer)footer.textContent='ขอขอบพระคุณที่ท่านวางใจใช้บริการของ needmorespace.studio ทางเราจะเริ่มดำเนินการในขั้นตอนการสำรวจและวิเคราะห์พื้นที่ (Site Survey & Deep Briefing) ตามขอบเขตการทำงานต่อไป';
+}
 
 window.docFieldEdit=function(field,val){
   const d=docs.find(x=>x.id===currentDocId);if(!d)return;

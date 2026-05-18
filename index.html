@@ -1145,12 +1145,13 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
         </div>
       </div>
       <div class="proj-tabs">
-        <button class="ptab on" onclick="showPTab('info',this)">📋 ข้อมูลโปรเจกต์</button>
+        <button class="ptab on" onclick="showPTab('info',this)">📋 ข้อมูล</button>
+        <button class="ptab" onclick="showPTab('docs',this)">📁 เอกสาร</button>
+        <button class="ptab" onclick="showPTab('presentation',this)">🖼️ Presentation</button>
+        <button class="ptab" onclick="showPTab('drawing',this)">📐 Drawing</button>
         <button class="ptab" onclick="showPTab('timeline',this)">📅 Timeline</button>
-        <button class="ptab" onclick="showPTab('checklist',this)">✅ Checklist</button>
-        <button class="ptab" onclick="showPTab('files',this)">📁 ไฟล์แบบ</button>
+        <button class="ptab" onclick="showPTab('checklist',this)">☑️ Checklist</button>
         <button class="ptab" onclick="showPTab('contractor',this)">🏗️ ผู้รับเหมา</button>
-        <button class="ptab" onclick="showPTab('finance',this)">💰 การเงิน</button>
         <button class="ptab" id="ptabAccess" onclick="showPTab('access',this)" style="display:none">👥 สิทธิ์</button>
       </div>
       <!-- INFO TAB -->
@@ -1171,7 +1172,89 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
             <div class="prow2"><div class="field"><label>ดีไซเนอร์</label><select id="pd-designer"><option value="">— ไม่ระบุ —</option></select></div><div class="field"><label>คนเขียนแบบ</label><select id="pd-drafter"><option value="">— ไม่ระบุ —</option></select></div></div>
           </div>
         </div>
+
+        <!-- CONTRACT SETUP (merged into info tab) -->
+        <div id="ptabFinReadNote" style="display:none;background:#fef3c7;border:1px solid #fbbf24;border-radius:6px;padding:10px 14px;margin-top:12px;font-size:12px;color:#92400e">⚠️ คุณมีสิทธิ์ดูเท่านั้น — ติดต่อ Admin เพื่อแก้ไขข้อมูลการเงิน</div>
+        <div class="info-card" style="margin-top:16px">
+          <div class="info-card-title">📋 ข้อมูลสัญญาออกแบบ</div>
+          <div class="prow2">
+            <div class="field"><label>พื้นที่ออกแบบ (ตร.ม.)</label><input id="pd-area" type="number" placeholder="88" oninput="recalcContract()"></div>
+            <div class="field"><label>ราคาต่อ ตร.ม. (บาท)</label><input id="pd-ppm" type="number" placeholder="1000" oninput="recalcContract()"></div>
+          </div>
+          <div class="prow2">
+            <div class="field"><label>ราคารวม (บาท)</label><input id="pd-total" type="number" placeholder="0" oninput="recalcContract()"></div>
+            <div class="field">
+              <label>ส่วนลด</label>
+              <div style="display:flex;gap:6px;align-items:center">
+                <select id="pd-disc-type" onchange="recalcContract()" style="border:1px solid var(--border-md);border-radius:var(--r-sm);padding:8px;font-size:13px;font-family:inherit;flex:1">
+                  <option value="none">ไม่มีส่วนลด</option>
+                  <option value="pct">% จากราคารวม</option>
+                  <option value="fixed">ลดเป็นจำนวนเงิน</option>
+                </select>
+                <input id="pd-disc-val" type="number" placeholder="0" oninput="recalcContract()" style="width:90px;border:1px solid var(--border-md);border-radius:var(--r-sm);padding:8px;font-size:13px">
+              </div>
+            </div>
+          </div>
+          <div style="background:var(--gray-50);border-radius:var(--r);padding:12px 14px;margin-top:8px;display:flex;gap:24px;flex-wrap:wrap">
+            <div><div style="font-size:11px;color:var(--gray-400)">ส่วนลด</div><div id="pd-disc-amt" style="font-size:15px;font-weight:700;color:var(--red)">0 ฿</div></div>
+            <div><div style="font-size:11px;color:var(--gray-400)">ยอดสุดท้าย</div><div id="pd-final" style="font-size:18px;font-weight:700;color:var(--green)">0 ฿</div></div>
+          </div>
+          <div class="prow2" style="margin-top:12px">
+            <div class="field"><label>งบประมาณลูกค้า (บาท)</label><input id="pd-budget"></div>
+            <div class="field"><label>อ้างอิง QT-D ที่ลิงค์</label><select id="pd-qt-ref" style="width:100%;border:1px solid var(--border-md);border-radius:var(--r-sm);padding:8px 10px;font-size:13px;font-family:inherit"><option value="">— ยังไม่ลิงค์ —</option></select></div>
+          </div>
+        </div>
+
+        <!-- INSTALLMENT TABLE -->
+        <div class="info-card" style="margin-top:16px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+            <div class="info-card-title" style="margin-bottom:0">📅 ตารางงวดงาน</div>
+            <button class="btn btn-ghost btn-sm" onclick="addContractInstallment()">+ เพิ่มงวด</button>
+          </div>
+          <div id="contractInstTable"></div>
+          <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn btn-ghost btn-sm" onclick="resetDefaultInstallments()">↺ รีเซ็ตงวดมาตรฐาน (30/40/30%)</button>
+            <button class="btn btn-green btn-sm" onclick="saveContractSetup()">💾 บันทึกข้อมูลสัญญา</button>
+          </div>
+        </div>
+
+        <!-- P&L -->
+        <div class="info-card" style="margin-top:16px">
+          <div class="info-card-title">💹 รายรับ-รายจ่ายจริง</div>
+          <div class="prow2"><div class="field"><label>รายรับจริง (บาท)</label><input id="pd-revenue"></div><div class="field"><label>รายจ่ายจริง (บาท)</label><input id="pd-expense"></div></div>
+          <div class="fin-summary" id="pdFinCalc"></div>
+        </div>
       </div>
+
+      <!-- DOCS TAB -->
+      <div class="ptab-content" id="ptab-docs">
+        <div id="projDocsTab"><div style="padding:40px;text-align:center;color:var(--gray-400)">กำลังโหลด...</div></div>
+      </div>
+
+      <!-- PRESENTATION TAB -->
+      <div class="ptab-content" id="ptab-presentation">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+          <div style="font-size:13px;font-weight:600;color:var(--gray-700)">ไฟล์ Presentation</div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-ghost btn-sm" onclick="addProjFile('presentation','pdf')">+ PDF</button>
+            <button class="btn btn-ghost btn-sm" onclick="addProjFile('presentation','working')">+ ไฟล์งาน</button>
+          </div>
+        </div>
+        <div id="projPresentationList"></div>
+      </div>
+
+      <!-- DRAWING TAB -->
+      <div class="ptab-content" id="ptab-drawing">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+          <div style="font-size:13px;font-weight:600;color:var(--gray-700)">ไฟล์แบบก่อสร้าง</div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-ghost btn-sm" onclick="addProjFile('drawing','pdf')">+ PDF</button>
+            <button class="btn btn-ghost btn-sm" onclick="addProjFile('drawing','working')">+ ไฟล์งาน</button>
+          </div>
+        </div>
+        <div id="projDrawingList"></div>
+      </div>
+
       <!-- TIMELINE TAB -->
       <div class="ptab-content" id="ptab-timeline">
         <div style="display:flex;justify-content:flex-end;margin-bottom:14px">
@@ -1212,66 +1295,6 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
         </div>
         <div class="update-list" id="contractorUpdates"></div>
       </div>
-      <!-- FINANCE TAB -->
-      <div class="ptab-content" id="ptab-finance">
-        <div id="ptabFinReadNote" style="display:none;background:#fef3c7;border:1px solid #fbbf24;border-radius:6px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:#92400e">⚠️ คุณมีสิทธิ์ดูเท่านั้น — ติดต่อ Admin เพื่อแก้ไขข้อมูลการเงิน</div>
-
-        <!-- CONTRACT SETUP -->
-        <div class="info-card" style="margin-bottom:16px">
-          <div class="info-card-title">📋 ข้อมูลสัญญาออกแบบ</div>
-          <div class="prow2">
-            <div class="field"><label>พื้นที่ออกแบบ (ตร.ม.)</label><input id="pd-area" type="number" placeholder="88" oninput="recalcContract()"></div>
-            <div class="field"><label>ราคาต่อ ตร.ม. (บาท)</label><input id="pd-ppm" type="number" placeholder="1000" oninput="recalcContract()"></div>
-          </div>
-          <div class="prow2">
-            <div class="field"><label>ราคารวม (บาท)</label><input id="pd-total" type="number" placeholder="0" oninput="recalcContract()" style="background:var(--gray-50)"></div>
-            <div class="field">
-              <label>ส่วนลด</label>
-              <div style="display:flex;gap:6px;align-items:center">
-                <select id="pd-disc-type" onchange="recalcContract()" style="border:1px solid var(--border-md);border-radius:var(--r-sm);padding:8px 8px;font-size:13px;font-family:inherit;flex:1">
-                  <option value="none">ไม่มีส่วนลด</option>
-                  <option value="pct">% จากราคารวม</option>
-                  <option value="fixed">ลดเป็นจำนวนเงิน</option>
-                </select>
-                <input id="pd-disc-val" type="number" placeholder="0" oninput="recalcContract()" style="width:90px;border:1px solid var(--border-md);border-radius:var(--r-sm);padding:8px;font-size:13px">
-              </div>
-            </div>
-          </div>
-          <div style="background:var(--gray-50);border-radius:var(--r);padding:12px 14px;margin-top:8px;display:flex;gap:24px;flex-wrap:wrap">
-            <div><div style="font-size:11px;color:var(--gray-400)">ส่วนลด</div><div id="pd-disc-amt" style="font-size:15px;font-weight:700;color:var(--red)">0 ฿</div></div>
-            <div><div style="font-size:11px;color:var(--gray-400)">ยอดสุดท้าย</div><div id="pd-final" style="font-size:18px;font-weight:700;color:var(--green)">0 ฿</div></div>
-          </div>
-          <div class="prow2" style="margin-top:12px">
-            <div class="field"><label>งบประมาณลูกค้า (บาท)</label><input id="pd-budget"></div>
-            <div class="field"><label>อ้างอิง QT-D ที่ลิงค์</label><select id="pd-qt-ref" style="width:100%;border:1px solid var(--border-md);border-radius:var(--r-sm);padding:8px 10px;font-size:13px;font-family:inherit"><option value="">— ยังไม่ลิงค์ —</option></select></div>
-          </div>
-        </div>
-
-        <!-- INSTALLMENT TABLE -->
-        <div class="info-card" style="margin-bottom:16px">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-            <div class="info-card-title" style="margin-bottom:0">📅 ตารางงวดงาน</div>
-            <button class="btn btn-ghost btn-sm" onclick="addContractInstallment()">+ เพิ่มงวด</button>
-          </div>
-          <div id="contractInstTable"></div>
-          <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
-            <button class="btn btn-ghost btn-sm" onclick="resetDefaultInstallments()">↺ รีเซ็ตงวดมาตรฐาน (30/40/30%)</button>
-            <button class="btn btn-green btn-sm" onclick="saveContractSetup()">💾 บันทึกข้อมูลสัญญา</button>
-          </div>
-        </div>
-
-        <!-- RELATED DOCS -->
-        <div class="info-card" style="margin-bottom:16px">
-          <div class="info-card-title">📁 เอกสารที่เกี่ยวข้อง</div>
-          <div id="contractRelDocs" style="font-size:12px;color:var(--gray-400)">กำลังโหลด...</div>
-        </div>
-
-        <!-- ACTUAL P&L -->
-        <div class="info-card">
-          <div class="info-card-title">💹 รายรับ-รายจ่ายจริง</div>
-          <div class="prow2"><div class="field"><label>รายรับจริง (บาท)</label><input id="pd-revenue"></div><div class="field"><label>รายจ่ายจริง (บาท)</label><input id="pd-expense"></div></div>
-          <div class="fin-summary" id="pdFinCalc"></div>
-        </div>
       <!-- ACCESS TAB -->
       <div class="ptab-content" id="ptab-access">
         <div style="margin-bottom:14px">
@@ -3653,7 +3676,7 @@ window.openProjDetail = function(pid) {
     'pd-client':p.client,'pd-phone':p.phone,'pd-line':p.line,'pd-email':p.email,
     'pd-pain':p.pain,'pd-name':p.name,'pd-size':p.size,'pd-loc':p.loc,
     'pd-start':p.start,'pd-deadline':p.deadline,'pd-drive':p.drive,
-    'pd-budget':p.budget,'pd-dfee':p.designFee,'pd-mgmt':p.mgmtFee,
+    'pd-budget':p.budget,
     'pd-revenue':p.revenue,'pd-expense':p.expense,
     'pd-contractor':p.contractor,'pd-contractor-phone':p.contractorPhone
   };
@@ -3662,11 +3685,12 @@ window.openProjDetail = function(pid) {
     Object.entries(users).map(([k,u])=>`<option value="${k}">${u.name}</option>`).join('');
   const des=document.getElementById('pd-designer'); if(des){des.innerHTML=uOpts;des.value=p.designer||'';}
   const dra=document.getElementById('pd-drafter'); if(dra){dra.innerHTML=uOpts;dra.value=p.drafter||'';}
-  renderTimeline(p); renderProjChecklist(p); renderProjFiles(p);
+  renderTimeline(p); renderProjChecklist(p);
   renderContractorUpdates(p); renderProjFinCalc(p); renderProjFinanceTab(p);
-  const btnFL=document.getElementById('btnAddFileLink');
-  if(btnFL) btnFL.style.display=isAdmin()?'':'none';
-  // Lead link in project detail header
+  renderProjDocsTab(p);
+  renderProjFilesTab('presentation','projPresentationList',p);
+  renderProjFilesTab('drawing','projDrawingList',p);
+  // Lead link
   const pdLeadLink = document.getElementById('pdLeadLink');
   if (pdLeadLink) {
     const linkedLead = p.leadId ? leads.find(l=>l.id===p.leadId) : null;
@@ -3674,13 +3698,10 @@ window.openProjDetail = function(pid) {
       ? `<span style="font-size:12px;color:var(--blue);cursor:pointer;padding:4px 10px;background:var(--blue-light,#eff6ff);border-radius:20px;border:1px solid #bfdbfe" onclick="showPage('pipeline',document.getElementById('tabPipeline'));setTimeout(()=>openPanel('${linkedLead.id}'),300)">🔗 Lead: ${linkedLead.name}</span>`
       : '';
   }
-  // Finance tab visibility
-  const finTab = document.querySelector('.ptab[onclick*="finance"]');
-  if (finTab) finTab.style.display = canEditFin() ? '' : 'none';
   // Finance readonly note and input lock
   const finReadNote = document.getElementById('ptabFinReadNote');
   if (finReadNote) finReadNote.style.display = canEditFin() ? 'none' : 'block';
-  ['pd-budget','pd-dfee','pd-mgmt','pd-revenue','pd-expense'].forEach(id=>{
+  ['pd-budget','pd-area','pd-ppm','pd-total','pd-revenue','pd-expense'].forEach(id=>{
     const el=document.getElementById(id);
     if(el) el.readOnly = !canEditFin();
   });
@@ -3707,8 +3728,6 @@ window.saveProjDetail = async function() {
     start:gv('pd-start'),deadline:gv('pd-deadline'),drive:gv('pd-drive'),
     designer:gv('pd-designer'),drafter:gv('pd-drafter'),
     budget:canEditFin()?gv('pd-budget'):(existing_p.budget||''),
-    designFee:canEditFin()?gv('pd-dfee'):(existing_p.designFee||''),
-    mgmtFee:canEditFin()?gv('pd-mgmt'):(existing_p.mgmtFee||''),
     revenue:canEditFin()?gv('pd-revenue'):(existing_p.revenue||''),
     expense:canEditFin()?gv('pd-expense'):(existing_p.expense||''),
     contractor:gv('pd-contractor'),contractorPhone:gv('pd-contractor-phone'),
@@ -3845,6 +3864,100 @@ window.addFileLink=async function(){
   const p=projects.find(x=>x.id===currentProjId); if(!p)return;
   const files=[...(p.files||[]),{name,url,by:currentUser.name,date:today()}];
   await saveProjToCloud({...p,files}); renderProjFiles({...p,files}); toast('เพิ่มไฟล์ ✓','ok');
+};
+
+// ── Project Docs Tab (5 categories) ──────────────────────────────────────────
+function renderProjDocsTab(p){
+  const el=document.getElementById('projDocsTab');if(!el)return;
+  const projDocs=docs.filter(d=>d.projRef===p.id);
+  const cats=[
+    {key:'design', label:'🎨 บริการออกแบบ', types:['quotation_design','contract_design','invoice_design','receipt_design']},
+    {key:'construction', label:'🏗️ บริการก่อสร้าง', types:['quotation_construction','contract_construction']},
+    {key:'finance', label:'💰 รายรับ-รายจ่ายโครงการ', types:['invoice','payment_request','receipt']},
+    {key:'supplier', label:'🛒 ใบเสนอราคา Supplier', types:['boq','delivery']},
+    {key:'other', label:'📄 อื่นๆ', types:[]},
+  ];
+  el.innerHTML=cats.map(cat=>{
+    const catDocs=cat.types.length
+      ? projDocs.filter(d=>cat.types.includes(d.type))
+      : projDocs.filter(d=>!cats.flatMap(c=>c.types).includes(d.type));
+    const createTypes=cat.types.length?cat.types:['boq'];
+    const docsHtml=catDocs.length
+      ? catDocs.map(d=>`<div class="file-item" style="cursor:pointer" onclick="showPage('docs',document.getElementById('tabDocs'));setTimeout(()=>openDocEditor('${d.id}'),300)">
+          <div style="flex:1;min-width:0">
+            <div style="font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${d.docNum||'—'} <span style="font-weight:400;color:var(--gray-500)">${DOC_TYPE_LABEL[d.type]||d.type}</span></div>
+            <div style="font-size:11px;color:var(--gray-400);margin-top:2px">${d.date||''} · ${DOC_STATUS_LABEL[d.status]||'draft'}</div>
+          </div>
+          <span style="font-size:10px;padding:2px 8px;border-radius:4px;background:var(--gray-100);color:var(--gray-600)">${DOC_STATUS_LABEL[d.status]||'draft'}</span>
+        </div>`).join('')
+      : `<div style="padding:12px 0;font-size:12px;color:var(--gray-300)">ยังไม่มีเอกสาร</div>`;
+    const firstType=createTypes[0]||'';
+    return`<div style="margin-bottom:16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--gray-50);border-radius:var(--r);cursor:pointer" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'':'none'">
+        <div style="font-size:13px;font-weight:600;color:var(--gray-700)">${cat.label} <span style="font-size:11px;color:var(--gray-400);font-weight:400">${catDocs.length} รายการ</span></div>
+        <button class="btn btn-green btn-sm" style="font-size:11px;padding:3px 10px" onclick="event.stopPropagation();openNewDocModalFor('${firstType}','${p.id}')">+ สร้าง</button>
+      </div>
+      <div style="padding:0 4px">${docsHtml}</div>
+    </div>`;
+  }).join('');
+}
+
+window.openNewDocModalFor=function(type,projId){
+  openNewDocModal();
+  setTimeout(()=>{
+    const t=document.getElementById('nd-type');if(t){t.value=type;ndTypeChanged();}
+    const pSel=document.getElementById('nd-proj');if(pSel){pSel.value=projId;ndProjChanged();}
+  },50);
+};
+
+// ── Presentation / Drawing file tabs ─────────────────────────────────────────
+function renderProjFilesTab(category, containerId, p){
+  const el=document.getElementById(containerId);if(!el)return;
+  const files=(p.files||[]).filter(f=>f.category===category);
+  if(!files.length){el.innerHTML=`<div style="padding:32px;text-align:center;color:var(--gray-300);font-size:13px">ยังไม่มีไฟล์ — กด "+ PDF" หรือ "+ ไฟล์งาน" เพื่อเพิ่ม</div>`;return;}
+  // Group by date
+  const byDate={};
+  files.forEach(f=>{const d=f.date||'ไม่ระบุวันที่';if(!byDate[d])byDate[d]=[];byDate[d].push(f);});
+  const sorted=Object.entries(byDate).sort((a,b)=>b[0].localeCompare(a[0]));
+  el.innerHTML=sorted.map(([date,fs])=>`
+    <div style="margin-bottom:18px">
+      <div style="font-size:11px;font-weight:600;color:var(--gray-500);padding:4px 0;border-bottom:1px solid var(--border);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px">${date}</div>
+      ${fs.map(f=>`<div class="file-item">
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
+            ${f.fileType==='pdf'?'📄':'📐'} ${f.name||'ไฟล์'}
+            <span style="font-size:10px;padding:1px 6px;border-radius:3px;margin-left:4px;${f.fileType==='pdf'?'background:#fee2e2;color:#dc2626':'background:#dbeafe;color:#2563eb'}">${f.fileType==='pdf'?'PDF':'Working'}</span>
+          </div>
+          ${f.by?`<div style="font-size:10px;color:var(--gray-400);margin-top:2px">โดย ${f.by}</div>`:''}
+        </div>
+        <div style="display:flex;gap:6px;flex-shrink:0">
+          ${f.url?`<a href="${f.url}" target="_blank" class="btn btn-ghost btn-sm" style="font-size:11px">🔗 เปิด</a>`:''}
+          <button class="btn btn-ghost btn-sm" style="font-size:11px;color:var(--red)" onclick="removeProjFile('${f.id}')">✕</button>
+        </div>
+      </div>`).join('')}
+    </div>`).join('');
+}
+
+window.addProjFile=async function(category, fileType){
+  const p=projects.find(x=>x.id===currentProjId);if(!p)return;
+  const name=prompt(`ชื่อไฟล์ (${fileType==='pdf'?'PDF':'ไฟล์งาน'}):`);if(!name)return;
+  const url=prompt('ลิงก์ Google Drive:')||'';
+  const files=[...(p.files||[]),{id:Date.now().toString(),name,url,category,fileType,by:currentUser.name,date:today()}];
+  const updated={...p,files};
+  await saveProjToCloud(updated);
+  if(category==='presentation') renderProjFilesTab('presentation','projPresentationList',updated);
+  else renderProjFilesTab('drawing','projDrawingList',updated);
+  toast('เพิ่มไฟล์ ✓','ok');
+};
+
+window.removeProjFile=async function(fileId){
+  const p=projects.find(x=>x.id===currentProjId);if(!p)return;
+  const files=(p.files||[]).filter(f=>f.id!==fileId);
+  const updated={...p,files};
+  await saveProjToCloud(updated);
+  renderProjFilesTab('presentation','projPresentationList',updated);
+  renderProjFilesTab('drawing','projDrawingList',updated);
+  toast('ลบไฟล์แล้ว','ok');
 };
 
 function renderContractorUpdates(p){

@@ -2576,7 +2576,7 @@ function startSync(){
   setSyncUI(false,'กำลังเชื่อมต่อ...');
   unsubscribe=onSnapshot(collection(db,'leads'),
     snap=>{
-      const allLeads=snap.docs.map(d=>({id:d.id,...d.data()}));
+      const allLeads=snap.docs.map(d=>({...d.data(),id:d.id}));
       allLeads.sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
       // Filter by project access
       if(canSeeAll()){
@@ -3696,7 +3696,7 @@ function startProjSync() {
   if (projUnsubscribe) projUnsubscribe();
   projUnsubscribe = onSnapshot(collection(db, 'projects'),
     snap => {
-      projects = snap.docs.map(d => ({id: d.id, ...d.data()}));
+      projects = snap.docs.map(d => ({...d.data(), id: d.id}));
       projects.sort((a,b) => new Date(b._ts||0) - new Date(a._ts||0));
       renderProjGrid();
       calRender();
@@ -3903,10 +3903,12 @@ window.toggleProjArchive=function(){
 };
 
 window.archiveProject=async function(pid){
-  if(!pid){toast('ไม่พบโปรเจกต์','err');return;}
+  const _pid=pid||currentProjId;
+  if(!_pid){toast('ไม่พบโปรเจกต์','err');return;}
   if(!isOwner()){toast('เฉพาะ Owner เท่านั้น','err');return;}
-  const p=projects.find(x=>x.id===pid);if(!p)return;
-  if(!confirm(`ย้าย "${p.name||pid}" ไปยัง Archive? (ยังไม่ได้ลบถาวร)`))return;
+  const p=projects.find(x=>x.id===_pid);
+  if(!p){toast('โหลดข้อมูลโปรเจกต์ไม่ได้ — ลองรีเฟรชหน้า','err');return;}
+  if(!confirm(`ย้าย "${p.name||_pid}" ไปยัง Archive? (ยังไม่ได้ลบถาวร)`))return;
   try{
     await saveProjToCloud({...p,status:'archived',archivedAt:new Date().toISOString(),archivedBy:currentUser.name});
     closeProjDetail();toast('ย้ายโปรเจกต์ไป Archive แล้ว ✓','ok');
@@ -3915,7 +3917,8 @@ window.archiveProject=async function(pid){
 
 window.restoreProject=async function(pid){
   if(!isOwner()){toast('เฉพาะ Owner เท่านั้น','err');return;}
-  const p=projects.find(x=>x.id===pid);if(!p)return;
+  const p=projects.find(x=>x.id===pid);
+  if(!p){toast('โหลดข้อมูลโปรเจกต์ไม่ได้ — ลองรีเฟรชหน้า','err');return;}
   try{
     await saveProjToCloud({...p,status:'active',archivedAt:null,archivedBy:null});
     toast('กู้คืนโปรเจกต์แล้ว ✓','ok');
@@ -3924,7 +3927,8 @@ window.restoreProject=async function(pid){
 
 window.permanentDeleteProject=async function(pid){
   if(!isOwner()){toast('เฉพาะ Owner เท่านั้น','err');return;}
-  const p=projects.find(x=>x.id===pid);if(!p)return;
+  const p=projects.find(x=>x.id===pid);
+  if(!p){toast('โหลดข้อมูลโปรเจกต์ไม่ได้ — ลองรีเฟรชหน้า','err');return;}
   if(!confirm(`ลบโปรเจกต์ "${p.name||pid}" ถาวรหรือไม่? ข้อมูลทั้งหมดจะหายไป ไม่สามารถกู้คืนได้`))return;
   try{
     await deleteDoc(doc(db,'projects',pid));
@@ -4760,7 +4764,7 @@ function startDocSync(){
   if(docUnsubscribe)docUnsubscribe();
   docUnsubscribe=onSnapshot(collection(db,'documents'),
     snap=>{
-      docs=snap.docs.map(d=>({id:d.id,...d.data()}));
+      docs=snap.docs.map(d=>({...d.data(),id:d.id}));
       docs.sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0));
       renderDocGrid();
     },
@@ -5317,7 +5321,7 @@ let accBundles=[], accUnsubscribe=null;
 function startAccSync(){
   if(accUnsubscribe)return;
   accUnsubscribe=onSnapshot(collection(db,'acc_bundles'),snap=>{
-    accBundles=snap.docs.map(d=>({id:d.id,...d.data()}));
+    accBundles=snap.docs.map(d=>({...d.data(),id:d.id}));
     accBundles.sort((a,b)=>b.month?.localeCompare(a.month));
     renderAccDocs();
   });

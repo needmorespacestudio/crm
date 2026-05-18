@@ -921,7 +921,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
   body{background:white;font-size:12pt}
   .nav,.sync-bar,.bottom-nav,.imper-bar,.imper-spacer,#backupBanner,
   .page:not(.on),#docListView,.doc-toolbar,
-  button,select,input[type=checkbox],
+  button,select,input,textarea,
   #docExtras .doc-section{display:none !important}
   #docEditorView{display:block !important;padding:0 !important}
   .doc-editor{box-shadow:none !important;border:none !important;max-width:100% !important;padding:0 !important}
@@ -1163,7 +1163,8 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
             <div class="info-card-title">ข้อมูลลูกค้า</div>
             <div class="prow2"><div class="field"><label>ชื่อลูกค้า</label><input id="pd-client"></div><div class="field"><label>เบอร์โทร</label><input id="pd-phone" type="tel"></div></div>
             <div class="prow2"><div class="field"><label>Line ID</label><input id="pd-line"></div><div class="field"><label>อีเมล</label><input id="pd-email" type="email"></div></div>
-            <div class="prow1"><div class="field"><label>Pain Point / ความต้องการ</label><textarea id="pd-pain"></textarea></div></div>
+            <div class="prow1"><div class="field"><label>ที่อยู่สำหรับออกเอกสาร</label><textarea id="pd-address" rows="2" placeholder="บ้านเลขที่ / ถนน / แขวง / เขต / จังหวัด / รหัสไปรษณีย์" style="resize:vertical"></textarea></div></div>
+            <div class="prow2"><div class="field"><label>เลขประจำตัวผู้เสียภาษี / บัตรปชช.</label><input id="pd-taxid" placeholder="0-0000-00000-00-0"></div><div class="field"><label>Pain Point / ความต้องการ</label><input id="pd-pain"></div></div>
           </div>
           <div class="info-card">
             <div class="info-card-title">ข้อมูลโปรเจกต์</div>
@@ -1381,6 +1382,8 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
             <div class="doc-party-label">ผู้รับบริการ</div>
             <div class="doc-party-name" id="docClientName">—</div>
             <div class="doc-party-detail" id="docClientDetail">—</div>
+            <div class="doc-party-detail" id="docClientAddress" style="white-space:pre-line"></div>
+            <div class="doc-party-detail" id="docClientTaxId"></div>
           </div>
           <div>
             <div class="doc-party-label">โปรเจกต์</div>
@@ -3679,6 +3682,7 @@ window.openProjDetail = function(pid) {
   document.getElementById('pdSub').textContent=(p.projId||'')+(p.clientId?' · '+p.clientId:'')+(p.client?' · '+p.client:'');
   const fields={
     'pd-client':p.client,'pd-phone':p.phone,'pd-line':p.line,'pd-email':p.email,
+    'pd-address':p.address,'pd-taxid':p.taxId,
     'pd-pain':p.pain,'pd-name':p.name,'pd-size':p.size,'pd-loc':p.loc,
     'pd-start':p.start,'pd-deadline':p.deadline,'pd-drive':p.drive,
     'pd-budget':p.budget,
@@ -3730,6 +3734,7 @@ window.saveProjDetail = async function() {
   const existing_p = projects.find(x=>x.id===currentProjId)||{};
   const updated={...p,
     client:gv('pd-client'),phone:gv('pd-phone'),line:gv('pd-line'),email:gv('pd-email'),
+    address:gv('pd-address'),taxId:gv('pd-taxid'),
     pain:gv('pd-pain'),name:gv('pd-name'),size:gv('pd-size'),loc:gv('pd-loc'),
     start:gv('pd-start'),deadline:gv('pd-deadline'),drive:gv('pd-drive'),
     designer:gv('pd-designer'),drafter:gv('pd-drafter'),
@@ -4420,6 +4425,7 @@ window.confirmQuickGen=async function(){
     id:docId,docNum,type:_qgDocType,projRef:p.id,projId:p.projId||'',clientId:p.clientId||'',
     date,due:'',status:'draft',
     clientName:p.client||'',clientDetail:p.phone||'',
+    clientAddress:p.address||'',clientTaxId:p.taxId||'',
     projName:p.name||'',projLocation:p.loc||p.projLocation||'',
     projDescription:p.projDescription||'',
     contractFinal:final,contractArea:p.contractArea||0,
@@ -4706,6 +4712,7 @@ window.openDocEditor=function(docId){
   const tl={quotation:'ใบเสนอราคา',invoice:'ใบแจ้งหนี้',contract:'สัญญาออกแบบ',
     quotation_design:'ใบเสนอราคาออกแบบ',quotation_construction:'ใบเสนอราคาก่อสร้าง',
     contract_design:'สัญญาออกแบบ',contract_construction:'สัญญาก่อสร้าง',
+    invoice_design:'ใบวางบิล',receipt_design:'ใบเสร็จรับเงิน',
     receipt:'ใบรับเงิน',delivery:'ใบส่งงาน',payment_request:'ใบเบิกเงิน',boq:'BOQ'};
   document.getElementById('docTypeTitle').textContent=tl[d.type]||d.type;
   document.getElementById('docNumDisplay').textContent='เลขที่: '+(d.docNum||'—');
@@ -4713,6 +4720,8 @@ window.openDocEditor=function(docId){
   document.getElementById('docDueDateDisplay').textContent=d.due?'ครบกำหนด: '+d.due:'';
   document.getElementById('docClientName').textContent=d.clientName||'—';
   document.getElementById('docClientDetail').textContent=d.clientDetail||'—';
+  document.getElementById('docClientAddress').textContent=d.clientAddress||'';
+  document.getElementById('docClientTaxId').textContent=d.clientTaxId?'เลขผู้เสียภาษี: '+d.clientTaxId:'';
   document.getElementById('docProjName').textContent=d.projName||'—';
   document.getElementById('docProjDetail').textContent=(d.projId||d.clientId||'—');
   document.getElementById('docStatusSel').value=d.status||'draft';

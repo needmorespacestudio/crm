@@ -932,6 +932,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
   th{background:#f5f5f5 !important;-webkit-print-color-adjust:exact}
   .doc-total-row{font-weight:bold}
   .print-installments{display:block !important}
+  #qtDesignPrint{display:block !important}
   @page{size:A4;margin:15mm 20mm}
 }
 </style>
@@ -1378,6 +1379,90 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
             <div class="doc-sign-line"></div>
             <div class="doc-sign-label" id="docSignLabel2">ผู้อนุมัติ / ลูกค้า</div>
             <div style="font-size:12px;color:var(--gray-500);margin-top:4px" id="docClientSignName">—</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PRINT-ONLY: Terms + Scope (quotation_design) -->
+      <div id="qtDesignPrint" style="display:none">
+        <!-- Page break before terms -->
+        <div style="page-break-before:always"></div>
+        <!-- Terms of Service pages -->
+        <div style="font-family:'Sarabun',sans-serif;font-size:10.5pt;line-height:1.8;padding:0 4mm">
+          <div style="text-align:center;margin-bottom:18pt">
+            <div style="font-size:13pt;font-weight:700">เอกสารแนบท้ายใบเสนอราคา : ขอบเขตและเงื่อนไขการให้บริการ</div>
+            <div style="font-size:10pt;color:#666;margin-top:4pt">(เอกสารฉบับนี้ถือเป็นส่วนหนึ่งของใบเสนอราคาเลขที่: Quotation No: <span id="qtTermsDocNum"></span>)</div>
+          </div>
+          <div style="font-weight:700;margin-bottom:6pt">1. ขอบเขตงานบริการ (Scope of Services)</div>
+          <div style="margin-left:14pt;margin-bottom:10pt">ทาง needmorespace.studio มอบประสบการณ์การออกแบบภายในระดับพรีเมียม (Exclusive Service) ที่เน้นความสมบูรณ์แบบในทุกรายละเอียดและการดูแลอย่างใกล้ชิด โดยมีรายละเอียดดังนี้<br>
+            <div style="margin-left:14pt;margin-top:6pt">
+              <div style="margin-bottom:6pt"><strong>1.1 การสำรวจและวิเคราะห์เชิงลึก (Site Survey &amp; Deep Briefing):</strong> เข้าสำรวจวัดพื้นที่หน้างานจริงอย่างละเอียด (Detailed Survey) พร้อมบริการ Consultative Briefing การพูดคุยเจาะลึกไลฟ์สไตล์ ความต้องการ และงบประมาณ เพื่อสร้างสรรค์งานดีไซน์ที่มีเอกลักษณ์เฉพาะตัว</div>
+              <div style="margin-bottom:6pt"><strong>1.2 การออกแบบคอนเซปต์ (Concept Design):</strong> จัดทำ Mood &amp; Material Board นำเสนอโทนสีและตัวอย่างวัสดุจริงให้สัมผัส และจัดทำ Furniture Layout Plan ผังจัดวางเฟอร์นิเจอร์ที่คำนึงถึงหลักสรีรศาสตร์ (Ergonomics) และการไหลเวียนพื้นที่ (Flow)</div>
+              <div style="margin-bottom:6pt"><strong>1.3 ภาพจำลองสามมิติ (High-End 3D Visualization):</strong> จัดทำภาพ 3 มิติ ความละเอียดสูง แสดงบรรยากาศเสมือนจริง จำนวน 2 ภาพ/ห้อง</div>
+              <div style="margin-bottom:6pt"><strong>1.4 แบบก่อสร้าง (Construction Drawings):</strong> ชุดแบบก่อสร้างงานออกแบบภายในครบวงจร (Full Set) พร้อมแบบขยายงานตกแต่งพิเศษ และการวางตำแหน่งแสงสว่าง (Lighting Design)</div>
+            </div>
+          </div>
+          <div style="font-weight:700;margin-bottom:6pt">2. บริการบริหารโครงการ (Turnkey Project Management)</div>
+          <div style="margin-left:14pt;margin-bottom:10pt">สิทธิพิเศษสำหรับลูกค้าที่ใช้บริการ "ออกแบบและก่อสร้าง" (Design &amp; Build) กับทางสตูดิโอเท่านั้น
+            <div style="margin-top:6pt"><strong>2.1 การควบคุมงาน:</strong> ทีมงานเข้าตรวจสอบหน้างานสม่ำเสมอ เพื่อให้งานตรงตามแบบดีไซน์และมาตรฐาน</div>
+            <div style="margin-top:4pt"><strong>2.2 การรับประกัน:</strong> รับประกันงานตกแต่งอินทีเรียร์ 1 ปี (ตามเงื่อนไขสัญญาจ้างหมวดแต่งตกแต่ง)</div>
+          </div>
+          <div style="font-weight:700;margin-bottom:6pt">3. เงื่อนไขการชำระเงิน (Payment Terms)</div>
+          <div style="margin-left:14pt;margin-bottom:10pt">อ้างอิงงานตามมาตรฐานงานออกแบบ แบ่งชำระเป็น 3 งวด ดังนี้<br>
+            <div style="margin-top:6pt"><strong>งวดที่ 1 (มัดจำเริ่มงาน): 30%</strong> ชำระ ณ วันยืนยันใบเสนอราคา เพื่ออนุมัติให้เริ่มงาน</div>
+            <div style="margin-top:4pt"><strong>งวดที่ 2 (อนุมัติไซน์): 40%</strong> ชำระเมื่อผู้ออกแบบส่งมอบภาพ 3D Perspective และได้รับการอนุมัติแบบจากผู้ว่าจ้างเรียบร้อยแล้ว</div>
+            <div style="margin-top:4pt"><strong>งวดที่ 3 (ส่งมอบงาน): 30%</strong> ชำระเมื่อนำส่งแบบก่อสร้างเรียบร้อยแล้ว</div>
+          </div>
+          <div style="font-weight:700;margin-bottom:6pt">4. เงื่อนไขการแก้ไขแบบ (Premium Revisions)</div>
+          <div style="margin-left:14pt;margin-bottom:10pt">
+            <div><strong>4.1 ขั้นตอนแปลนจัดวาง (Layout):</strong> ปรับแก้ไขได้จนกว่าจะพอใจ (ไม่จำกัดจำนวนครั้ง / Unlimited) ภายในช่วงพัฒนาแบบ ภายในระยะเวลา 30 วัน</div>
+            <div style="margin-top:4pt"><strong>4.2 ขั้นตอนภาพ 3 มิติ (3D):</strong> สามารถปรับแก้ไขรายละเอียดดีไซน์ได้สูงสุด 3 รอบ</div>
+            <div style="margin-top:4pt"><strong>4.3 การแก้ไขส่วนเกิน:</strong> หากมีการแก้ไขเกินกว่า 3 รอบ ทางผู้ออกแบบขอสงวนสิทธิ์พิจารณาค่าบริการเพิ่มเติมตามความเหมาะสม</div>
+          </div>
+          <div style="font-weight:700;margin-bottom:6pt">5. ระยะเวลาและอายุโครงการ (Timeline &amp; Validity)</div>
+          <div style="margin-left:14pt;margin-bottom:10pt">
+            <div><strong>5.1 ระยะเวลาทำงาน:</strong> โดยประมาณ 45–60 วันทำการ</div>
+            <div style="margin-top:4pt"><strong>5.2 การพักโครงการชั่วคราว (Project Pause):</strong> กรณีผู้ว่าจ้างจำเป็นต้องใช้เวลาพิจารณานานหรือขาดการติดต่อเกินกว่า 30 วัน สถานะโครงการจะถูกปรับเป็น "พักโครงการ"</div>
+            <div style="margin-top:4pt"><strong>5.3 การยกเลิกสัญญา:</strong> กรณีผู้ว่าจ้างขอยกเลิกสัญญา ผู้ว่าจ้างยินยอมชำระค่าบริการเพิ่มเติมตามสัดส่วนของเนื้องานที่ผู้ออกแบบได้ดำเนินการเสร็จสิ้นแล้ว จนถึงวันที่แจ้งยกเลิก</div>
+          </div>
+          <div style="font-weight:700;margin-bottom:6pt">6. ลิขสิทธิ์และการรักษาความลับ (Copyrights &amp; Confidentiality)</div>
+          <div style="margin-left:14pt;margin-bottom:10pt">
+            ลิขสิทธิ์ในงานออกแบบและไฟล์ภาพ จะตกเป็นของผู้ว่าจ้างโดยสมบูรณ์ <strong>เมื่อมีการชำระค่าบริการครบถ้วนแล้วเท่านั้น</strong><br>
+            ผู้ออกแบบจะเก็บรักษาข้อมูลส่วนบุคคลและข้อมูลโครงการของผู้ว่าจ้างเป็นความลับ (Confidential)
+          </div>
+          <div style="font-weight:700;margin-bottom:6pt">7. สิ่งที่ไม่รวมในบริการ (Exclusions)</div>
+          <div style="margin-left:14pt;margin-bottom:10pt">
+            ค่าบริการนี้ <strong>ไม่รวม</strong> รายการดังต่อไปนี้:<br>
+            • งานออกแบบและคำนวณระบบวิศวกรรม (Engineering Design &amp; Calculation)<br>
+            • ค่าธรรมเนียมการขออนุญาตต่างๆ กับทางราชการหรือนิติบุคคล<br>
+            • การบริหารและควบคุมงานก่อสร้าง (Turnkey) สำหรับลูกค้าที่ไม่ได้ใช้บริการก่อสร้างกับทางสตูดิโอ
+          </div>
+        </div>
+        <!-- Page break before scope -->
+        <div style="page-break-before:always"></div>
+        <!-- Scope of Work -->
+        <div style="font-family:'Sarabun',sans-serif;font-size:10.5pt;line-height:1.8;padding:0 4mm">
+          <div style="text-align:center;margin-bottom:14pt">
+            <div style="font-size:13pt;font-weight:700">เอกสารแนบท้าย 2 : ผังแสดงขอบเขตพื้นที่ดำเนินการ</div>
+            <div style="font-size:10pt;color:#666">(Scope of Work Area Map)</div>
+          </div>
+          <div style="margin-bottom:10pt"><strong>อ้างอิงใบเสนอราคาเลขที่ :</strong> <span id="qtScopeDocNum">—</span> &nbsp;&nbsp;<strong>โครงการ:</strong> <span id="qtScopeProjName">—</span></div>
+          <div style="margin-bottom:14pt;font-size:10pt">เพื่อให้เกิดความเข้าใจที่ตรงกันในขอบเขตการทำงาน ทางผู้ออกแบบกำหนดพื้นที่ในการออกแบบตามรายละเอียดในผังดังนี้:</div>
+          <div id="qtScopeImgs" style="display:flex;flex-wrap:wrap;gap:16pt;justify-content:center;margin-bottom:16pt"></div>
+          <div style="margin-bottom:10pt"><strong>พื้นที่ในขอบเขตงาน (Included Area):</strong><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;รวมพื้นที่ดำเนินการประมาณ: <strong><span id="qtScopeArea">—</span> ตร.ม.</strong>
+          </div>
+          <div style="margin-bottom:10pt"><strong>พื้นที่นอกขอบเขตงาน (Excluded Area):</strong> พื้นที่ส่วนอื่นๆที่ไม่ได้ทำแรเงาไว้ ถือว่าอยู่นอกเหนือสัญญาจ้างฉบับปัจจุบันนี้</div>
+          <div style="margin-top:20pt;border-top:1px solid #ddd;padding-top:14pt">
+            <div style="font-weight:700;margin-bottom:8pt">หมายเหตุสำคัญ (Note):</div>
+            <div style="margin-left:14pt">
+              <div style="margin-bottom:6pt"><strong>การเชื่อมต่อพื้นที่:</strong> กรณีที่เป็นพื้นที่เปิดโล่ง (Open Plan) เชื่อมต่อกัน ขอบเขตงานจะสิ้นสุดตามเส้นแบ่งเขตที่ระบุในภาพเท่านั้น</div>
+              <div><strong>งานส่วนเพิ่ม:</strong> หากผู้ว่าจ้างต้องการให้ขยายขอบเขตการออกแบบไปยังพื้นที่นอกเหนือจากที่ระบุ ทางผู้ออกแบบยินดีให้บริการ โดยจะมีการประเมินค่าบริการเพิ่มเติมแยกเป็นกรณีไป</div>
+            </div>
+          </div>
+          <div style="text-align:center;margin-top:32pt">
+            <div style="font-weight:700;margin-bottom:20pt">(ลงชื่อกำกับเพื่อรับทราบขอบเขตพื้นที่)</div>
+            <div style="border-top:1px solid #333;width:200pt;margin:0 auto;padding-top:6pt">ลงชื่อลูกค้า:</div>
           </div>
         </div>
       </div>

@@ -53,17 +53,17 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
 
 /* ── NAV ── */
-.nav{background:var(--white);border-bottom:1px solid var(--border);padding:0 20px;display:flex;align-items:center;gap:8px;height:54px;position:sticky;top:0;z-index:30;box-shadow:var(--shadow-sm);flex-shrink:0}
+.nav{background:var(--white);border-bottom:1px solid var(--border);padding:0 16px;display:flex;align-items:center;gap:8px;height:54px;position:sticky;top:0;z-index:30;box-shadow:var(--shadow-sm);flex-shrink:0}
 .nav-brand{display:flex;align-items:center;gap:10px;cursor:pointer;flex-shrink:0}
 .nav-logo{font-family:'Instrument Serif',serif;font-size:17px;color:var(--gray-800)}
 .nav-dot{width:5px;height:5px;background:var(--gold);border-radius:50%}
 .nav-ver{font-size:11px;color:var(--gray-400);font-family:'DM Mono',monospace}
-.nav-tabs{display:flex;gap:2px;overflow-x:auto;scroll-behavior:smooth;scrollbar-width:none;flex:1;min-width:0}
+.nav-tabs{display:flex;gap:2px;flex:1;overflow-x:auto;scroll-behavior:smooth;scrollbar-width:none;-ms-overflow-style:none;min-width:0}
 .nav-tabs::-webkit-scrollbar{display:none}
-.ntab{background:none;border:none;padding:7px 10px;font-size:12.5px;color:var(--gray-500);cursor:pointer;border-radius:var(--r-sm);font-family:inherit;font-weight:500;transition:all 0.13s;white-space:nowrap;flex-shrink:0}
+.ntab{background:none;border:none;padding:7px 11px;font-size:12.5px;color:var(--gray-500);cursor:pointer;border-radius:var(--r-sm);font-family:inherit;font-weight:500;transition:all 0.13s;white-space:nowrap;flex-shrink:0}
 .ntab:hover{background:var(--gray-100);color:var(--gray-700)}
 .ntab.on{background:var(--gray-100);color:var(--gray-800);font-weight:600}
-.nav-right{display:flex;gap:8px;align-items:center;flex-shrink:0}
+.nav-right{display:flex;gap:6px;align-items:center;flex-shrink:0}
 .nav-user{display:flex;align-items:center;gap:7px}
 .nav-avatar{width:28px;height:28px;border-radius:50%;background:var(--gold);color:var(--white);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
 .nav-uname{font-size:12px;color:var(--gray-500)}
@@ -116,13 +116,23 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
 .notif-time{font-size:10px;color:var(--gray-400);font-family:'DM Mono',monospace;white-space:nowrap}
 
 /* ── PIPELINE ── */
-.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;padding:14px 20px 0}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;padding:14px 20px 0;max-width:1400px}
 .stat{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;box-shadow:var(--shadow-sm)}
 .stat-lbl{font-size:10px;color:var(--gray-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;font-family:'DM Mono',monospace}
 .stat-val{font-size:26px;font-weight:300;line-height:1}
 .stat-sub{font-size:11px;color:var(--gray-400);margin-top:4px}
 .c-gold{color:var(--gold)}.c-green{color:var(--green)}.c-blue{color:var(--blue)}.c-red{color:var(--red)}
-.fbar{display:flex;gap:8px;padding:12px 20px 0;flex-wrap:wrap;align-items:center}
+.fbar{display:flex;gap:8px;padding:12px 20px 0;flex-wrap:wrap;align-items:center;max-width:1400px}
+/* ── ARCHIVE ── */
+.archive-section{padding:20px;max-width:1100px;margin:0 auto}
+.archive-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.archive-title{font-family:'Instrument Serif',serif;font-size:18px;color:var(--gray-600)}
+.archive-lead-row{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--white);border:1px solid var(--border);border-radius:var(--r);margin-bottom:8px;opacity:.85}
+.archive-lead-row:hover{border-color:var(--border-md);opacity:1}
+.archive-lead-name{font-size:14px;font-weight:600;color:var(--gray-700);flex:1}
+.archive-lead-meta{font-size:11px;color:var(--gray-400);font-family:'DM Mono',monospace}
+.archive-proj-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px;box-shadow:var(--shadow-sm);opacity:.75;position:relative}
+.archive-proj-card:hover{opacity:1;border-color:var(--border-md)}
 .ftag{background:var(--white);border:1px solid var(--border-md);border-radius:20px;padding:5px 14px;font-size:12px;color:var(--gray-500);cursor:pointer;font-family:inherit;transition:all .13s;font-weight:500}
 .ftag:hover{border-color:var(--gray-300);color:var(--gray-700)}
 .ftag.on{background:var(--gray-800);color:var(--white);border-color:var(--gray-800)}
@@ -1042,11 +1052,10 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
     <div class="nav-right">
       <div class="nav-user" id="navUser"></div>
       <div class="nav-actions">
-        <button class="btn btn-ghost btn-sm" onclick="exportCSV()">⬇️ CSV</button>
-        <button class="btn btn-gold btn-sm" onclick="importJSON()">📂 Import</button>
-        <button class="btn btn-ghost btn-sm" onclick="manualSync()">🔄 Sync</button>
+        <button class="btn btn-ghost btn-sm" id="navBtnCSV" onclick="exportCSV()" style="display:none">⬇️ CSV</button>
+        <button class="btn btn-ghost btn-sm" id="navBtnSync" onclick="manualSync()" style="display:none">🔄</button>
         <button class="btn btn-dark btn-sm" onclick="newLead()" id="btnNew">+ Lead</button>
-        <button class="btn btn-ghost btn-sm" id="btnDriveConnect" onclick="connectGoogleDrive()" title="เชื่อมต่อ Google Drive เพื่อสร้างโฟลเดอร์อัตโนมัติ">🔗 Drive</button>
+        <button class="btn btn-ghost btn-sm" id="btnDriveConnect" onclick="connectGoogleDrive()" title="เชื่อมต่อ Google Drive" style="display:none">🔗 Drive</button>
         <button class="btn btn-ghost btn-sm" onclick="doLogout()">ออก</button>
       </div>
     </div>
@@ -1153,7 +1162,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
     </div>
     <div class="stats" id="statsRow"></div>
     <div class="fbar">
-      <button class="ftag on" onclick="setF('all',this)">ทั้งหมด</button>
+      <button class="ftag on" id="ftagAll" onclick="setF('all',this)">ทั้งหมด</button>
       <button class="ftag" onclick="setF('hot',this)">🔥 Hot</button>
       <button class="ftag" onclick="setF('warm',this)">☀️ Warm</button>
       <button class="ftag" onclick="setF('cold',this)">❄️ Cold</button>
@@ -1162,12 +1171,12 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
       <button class="ftag" id="ftagArchive" onclick="setF('archived',this)" style="display:none">🗂️ Archive <span id="archiveLeadCount"></span></button>
       <div class="fbar-r"><input class="fsrch" id="srch" placeholder="🔍 ค้นหา..." oninput="render()"></div>
     </div>
-    <div id="boardWrap" class="board-wrap"><div class="board" id="board"><div style="padding:40px;color:var(--gray-400);font-size:13px">กำลังโหลด...</div></div></div>
+    <div class="board-wrap" id="boardWrap"><div class="board" id="board"><div style="padding:40px;color:var(--gray-400);font-size:13px">กำลังโหลด...</div></div></div>
     <div id="archiveLeadSection" style="display:none">
-      <div style="padding:20px;max-width:1100px;margin:0 auto">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border)">
-          <div style="font-family:'Instrument Serif',serif;font-size:18px;color:var(--gray-600)">🗂️ Lead ที่ Archive แล้ว</div>
-          <div style="font-size:12px;color:var(--gray-400)">เฉพาะ Owner — กู้คืนหรือลบถาวรได้</div>
+      <div class="archive-section">
+        <div class="archive-header">
+          <div class="archive-title">🗂️ Lead ที่ Archive แล้ว</div>
+          <div style="font-size:12px;color:var(--gray-400)">เฉพาะ Owner เท่านั้นที่สามารถกู้คืนหรือลบถาวรได้</div>
         </div>
         <div id="archiveLeadList"></div>
       </div>
@@ -1188,6 +1197,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
         </div>
       </div>
       <div class="proj-grid" id="projGrid"><div style="padding:40px;color:var(--gray-400)">กำลังโหลด...</div></div>
+      <!-- Archived Projects (shown when toggled) -->
       <div id="projArchiveSection" style="display:none;margin-top:28px">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--border)">
           <span style="font-family:'Instrument Serif',serif;font-size:18px;color:var(--gray-500)">🗂️ โปรเจกต์ที่ Archive แล้ว</span>
@@ -1205,7 +1215,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
           <div id="pdLeadLink" style="margin-top:6px"></div>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
-          <button class="btn btn-ghost btn-sm" id="pdArchiveBtn" onclick="archiveProject(currentProjId)" style="color:var(--orange);border-color:rgba(192,92,26,.25);display:none">🗂️ Archive โปรเจกต์</button>
+          <button class="btn btn-ghost btn-sm" id="pdArchiveBtn" onclick="archiveProject(currentProjId)" style="color:var(--orange);border-color:rgba(192,92,26,.25);display:none">🗂️ Archive</button>
           <button class="btn btn-ghost btn-sm" onclick="convertProjToLead()">↔️ ดู Lead</button>
           <button class="btn btn-green btn-sm" onclick="saveProjDetail()">💾 บันทึก</button>
         </div>
@@ -2481,6 +2491,13 @@ function setupNavUI(){
   document.getElementById('tabMonthlyFin').style.display=canSeeMonthlyFin()?'':'none';
   document.getElementById('tabAccDocs').style.display=isOwner()?'':'none';
   document.getElementById('tabClients').style.display=canSeeClients?'':'none';
+  // Nav action buttons
+  const navCSV=document.getElementById('navBtnCSV');
+  if(navCSV) navCSV.style.display=isOwnerOrAdmin()?'':'none';
+  const navSync=document.getElementById('navBtnSync');
+  if(navSync) navSync.style.display=canAdd()?'':'none';
+  const navDrive=document.getElementById('btnDriveConnect');
+  if(navDrive) navDrive.style.display=isOwnerOrAdmin()?'':'none';
   const bnavFinBtn = document.getElementById('bnavFinBtn');
   if(bnavFinBtn) bnavFinBtn.style.display = canSeeFin()?'':'none';
   const bnavAdminBtn = document.getElementById('bnavAdminBtn');
@@ -2702,9 +2719,11 @@ function renderStats(){
 function getFiltered(){
   const q=(document.getElementById('srch')?.value||'').toLowerCase();
   const my=canSeeAll()?leads:leads.filter(l=>!l.assignedTo||l.assignedTo===currentUser.user);
-  if(filt==='archived') return my.filter(l=>l.status==='archived');
+  if(filt==='archived'){
+    return my.filter(l=>l.status==='archived');
+  }
   return my.filter(l=>{
-    if(l.status==='archived') return false;
+    if(l.status==='archived')return false; // exclude archived from all normal views
     if(filt==='hot'&&l.temp!=='hot')return false;
     if(filt==='warm'&&l.temp!=='warm')return false;
     if(filt==='cold'&&l.temp!=='cold')return false;
@@ -2724,14 +2743,14 @@ function renderArchivedLeads(){
     return;
   }
   el.innerHTML=archived.map(l=>`
-    <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--white);border:1px solid var(--border);border-radius:var(--r);margin-bottom:8px">
+    <div class="archive-lead-row">
       <div style="flex:1;min-width:0">
-        <div style="font-size:14px;font-weight:600;color:var(--gray-700)">${l.name||'(ไม่ระบุ)'}</div>
-        <div style="font-size:11px;color:var(--gray-400);font-family:'DM Mono',monospace">${l.proj||l.src||'—'} · เก็บเมื่อ ${l.archivedAt?new Date(l.archivedAt).toLocaleDateString('th-TH'):'ไม่ทราบ'}</div>
+        <div class="archive-lead-name">${l.name||'(ไม่ระบุ)'}</div>
+        <div class="archive-lead-meta">${l.proj||l.src||'—'} · เก็บเมื่อ ${l.archivedAt?new Date(l.archivedAt).toLocaleDateString('th-TH'):'ไม่ทราบ'}</div>
       </div>
       ${isOwner()?`
-        <button class="btn btn-ghost btn-sm" onclick="restoreLead('${l.id}')">↩ กู้คืน</button>
-        <button class="btn btn-ghost btn-sm" onclick="permanentDeleteLead('${l.id}')" style="color:var(--red)">🗑️ ลบถาวร</button>
+        <button class="btn btn-ghost btn-sm" onclick="restoreLead('${l.id}')" title="กู้คืน Lead">↩ กู้คืน</button>
+        <button class="btn btn-ghost btn-sm" onclick="permanentDeleteLead('${l.id}')" style="color:var(--red)" title="ลบถาวร">🗑️ ลบถาวร</button>
       `:''}
     </div>`).join('');
 }
@@ -2739,9 +2758,9 @@ function renderArchivedLeads(){
 function render(){
   renderStats();
   const archivedCount=leads.filter(l=>l.status==='archived').length;
-  const ftagArchive=document.getElementById('ftagArchive');
+  const archiveTag=document.getElementById('ftagArchive');
   const archiveCountEl=document.getElementById('archiveLeadCount');
-  if(ftagArchive) ftagArchive.style.display=(isOwner()&&archivedCount>0)?'':'none';
+  if(archiveTag) archiveTag.style.display=isOwner()&&archivedCount>0?'':'none';
   if(archiveCountEl) archiveCountEl.textContent=archivedCount>0?`(${archivedCount})`:'';
   const isArchiveView=filt==='archived';
   const boardWrap=document.getElementById('boardWrap');
@@ -2843,6 +2862,7 @@ window.openPanel=function(id){
   // Show IDs if exist
   const idBannerEl=document.getElementById('panelIdBanner');
   if(idBannerEl) idBannerEl.innerHTML=l?renderLeadIds(l):'';
+  // Archive button — owner only, only for existing leads
   const archBtn=document.getElementById('panelArchiveBtn');
   if(archBtn) archBtn.style.display=(l&&isOwner())?'':'none';
   document.getElementById('calStrip').style.display=l?'flex':'none';
@@ -2923,7 +2943,8 @@ window.saveLead=async function(){
   try{
     await saveToCloud(nl);eid=id;
     document.getElementById('panelTitle').textContent=form.name;
-    const archBtn2=document.getElementById('panelArchiveBtn'); if(archBtn2) archBtn2.style.display=isOwner()?'':'none';
+    const archBtn=document.getElementById('panelArchiveBtn');
+    if(archBtn) archBtn.style.display=isOwner()?'':'none';
     document.getElementById('calStrip').style.display='flex';
     document.getElementById('moveStrip').style.display=canEdit()?'flex':'none';
     document.getElementById('actSec').style.display='block';
@@ -2943,16 +2964,20 @@ window.archiveLead=async function(){
     closePanel();toast('ย้ายไป Archive แล้ว ✓','ok');
   }catch(err){toast('บันทึกไม่สำเร็จ: '+err.message,'err');}
 };
+
 window.restoreLead=async function(id){
   if(!isOwner()){toast('เฉพาะ Owner เท่านั้น','err');return;}
   const l=leads.find(x=>x.id===id);if(!l)return;
-  try{await saveToCloud({...l,status:'active',archivedAt:null,archivedBy:null});toast('กู้คืน Lead แล้ว ✓','ok');}
-  catch(err){toast('บันทึกไม่สำเร็จ: '+err.message,'err');}
+  try{
+    await saveToCloud({...l,status:'active',archivedAt:null,archivedBy:null});
+    toast('กู้คืน Lead แล้ว ✓','ok');
+  }catch(err){toast('บันทึกไม่สำเร็จ: '+err.message,'err');}
 };
+
 window.permanentDeleteLead=async function(id){
   if(!isOwner()){toast('เฉพาะ Owner เท่านั้น','err');return;}
   const l=leads.find(x=>x.id===id);if(!l)return;
-  if(!confirm(`ลบ "${l.name}" ถาวรหรือไม่? ไม่สามารถกู้คืนได้`))return;
+  if(!confirm(`ลบ "${l.name}" ถาวรหรือไม่? ข้อมูลจะหายไปทั้งหมด ไม่สามารถกู้คืนได้`))return;
   try{await deleteFromCloud(id);toast('ลบถาวรแล้ว');}catch(err){toast('ลบไม่สำเร็จ','err');}
 };
 
@@ -3766,13 +3791,14 @@ function renderProjGrid() {
     : projects.filter(p => !currentUser.projectAccess?.length || currentUser.projectAccess.includes(p.id));
   const visibleProj = allVisible.filter(p=>p.status!=='archived');
   const archivedProj = allVisible.filter(p=>p.status==='archived');
-  // Show/hide archive button
-  const btnShowProjArchive=document.getElementById('btnShowProjArchive');
-  if(btnShowProjArchive){
-    btnShowProjArchive.style.display=(isOwner()&&archivedProj.length>0)?'':'none';
-    const archiveProjCountEl=document.getElementById('archiveProjCount');
-    if(archiveProjCountEl) archiveProjCountEl.textContent=archivedProj.length>0?`(${archivedProj.length})`:'';
-  }
+  // Archive toggle button
+  const btnArchive=document.getElementById('btnShowProjArchive');
+  const archiveCountEl=document.getElementById('archiveProjCount');
+  if(btnArchive) btnArchive.style.display=isOwner()&&archivedProj.length>0?'':'none';
+  if(archiveCountEl) archiveCountEl.textContent=archivedProj.length>0?`(${archivedProj.length})`:'';
+  // Archive button on project detail
+  const pdArchBtn=document.getElementById('pdArchiveBtn');
+  if(pdArchBtn) pdArchBtn.style.display=isOwner()?'':'none';
   if(!visibleProj.length){
     grid.innerHTML='<div style="padding:40px;text-align:center;color:var(--gray-400)">ยังไม่มีโปรเจกต์ที่เข้าถึงได้</div>';
   } else {
@@ -3791,24 +3817,22 @@ function renderProjGrid() {
       </div>`).join('');
   }
   // Render archived projects grid
-  const archiveGrid=document.getElementById('projArchiveGrid');
-  if(archiveGrid){
-    const sl={active:'🟡 กำลังดำเนินการ',completed:'✅ เสร็จสิ้น',paused:'⏸️ หยุดชั่วคราว',cancelled:'❌ ยกเลิก'};
-    if(!archivedProj.length){
-      archiveGrid.innerHTML='<div style="padding:32px;text-align:center;color:var(--gray-400);font-size:13px">ยังไม่มีโปรเจกต์ใน Archive</div>';
-    } else {
-      archiveGrid.innerHTML=archivedProj.map(p=>`
-        <div class="proj-card" style="opacity:0.7">
-          <div class="proj-card-id">${p.projId||p.id}</div>
-          <div class="proj-card-name">${p.name||'—'}</div>
-          <div class="proj-card-client">👤 ${p.client||'—'}</div>
-          <div style="font-size:11px;color:var(--gray-400);margin-top:4px">เก็บเมื่อ ${p.archivedAt?new Date(p.archivedAt).toLocaleDateString('th-TH'):'ไม่ทราบ'}</div>
-          ${isOwner()?`<div style="display:flex;gap:6px;margin-top:8px">
-            <button class="btn btn-ghost btn-sm" onclick="restoreProject('${p.id}')">↩ กู้คืน</button>
-            <button class="btn btn-ghost btn-sm" onclick="permanentDeleteProject('${p.id}')" style="color:var(--red)">🗑️ ลบถาวร</button>
-          </div>`:''}
-        </div>`).join('');
-    }
+  const archGrid=document.getElementById('projArchiveGrid');
+  if(archGrid){
+    archGrid.innerHTML=archivedProj.length?archivedProj.map(p=>`
+      <div class="archive-proj-card">
+        <div class="proj-card-id" style="margin-bottom:4px">${p.projId||p.id}</div>
+        <div class="proj-card-name" style="font-size:15px;padding-right:0;margin-bottom:4px">${p.name||'—'}</div>
+        <div class="proj-card-client">👤 ${p.client||'—'}</div>
+        <div style="font-size:11px;color:var(--gray-400);margin-top:4px;font-family:'DM Mono',monospace">Archive เมื่อ ${p.archivedAt?new Date(p.archivedAt).toLocaleDateString('th-TH'):'ไม่ทราบ'}</div>
+        <div style="display:flex;gap:6px;margin-top:10px">
+          ${isOwner()?`
+            <button class="btn btn-ghost btn-sm" onclick="restoreProject('${p.id}')" style="flex:1;justify-content:center">↩ กู้คืน</button>
+            <button class="btn btn-ghost btn-sm" onclick="permanentDeleteProject('${p.id}')" style="color:var(--red);flex:1;justify-content:center">🗑️ ลบถาวร</button>
+          `:''}
+        </div>
+      </div>`).join('')
+      :'<div style="padding:32px;text-align:center;color:var(--gray-400);font-size:13px">ยังไม่มีโปรเจกต์ใน Archive</div>';
   }
 }
 
@@ -3874,28 +3898,38 @@ window.toggleProjArchive=function(){
   _projArchiveVisible=!_projArchiveVisible;
   const sec=document.getElementById('projArchiveSection');
   if(sec) sec.style.display=_projArchiveVisible?'block':'none';
+  const btn=document.getElementById('btnShowProjArchive');
+  if(btn) btn.textContent=_projArchiveVisible?'ซ่อน Archive':'🗂️ Archive '+document.getElementById('archiveProjCount').textContent;
 };
+
 window.archiveProject=async function(pid){
-  if(!pid||!isOwner()){toast('เฉพาะ Owner เท่านั้น','err');return;}
+  if(!pid){toast('ไม่พบโปรเจกต์','err');return;}
+  if(!isOwner()){toast('เฉพาะ Owner เท่านั้น','err');return;}
   const p=projects.find(x=>x.id===pid);if(!p)return;
-  if(!confirm(`ย้าย "${p.name||pid}" ไปยัง Archive?`))return;
+  if(!confirm(`ย้าย "${p.name||pid}" ไปยัง Archive? (ยังไม่ได้ลบถาวร)`))return;
   try{
     await saveProjToCloud({...p,status:'archived',archivedAt:new Date().toISOString(),archivedBy:currentUser.name});
     closeProjDetail();toast('ย้ายโปรเจกต์ไป Archive แล้ว ✓','ok');
   }catch(err){toast('บันทึกไม่สำเร็จ: '+err.message,'err');}
 };
+
 window.restoreProject=async function(pid){
   if(!isOwner()){toast('เฉพาะ Owner เท่านั้น','err');return;}
   const p=projects.find(x=>x.id===pid);if(!p)return;
-  try{await saveProjToCloud({...p,status:'active',archivedAt:null,archivedBy:null});toast('กู้คืนโปรเจกต์แล้ว ✓','ok');}
-  catch(err){toast('ไม่สำเร็จ: '+err.message,'err');}
+  try{
+    await saveProjToCloud({...p,status:'active',archivedAt:null,archivedBy:null});
+    toast('กู้คืนโปรเจกต์แล้ว ✓','ok');
+  }catch(err){toast('บันทึกไม่สำเร็จ: '+err.message,'err');}
 };
+
 window.permanentDeleteProject=async function(pid){
   if(!isOwner()){toast('เฉพาะ Owner เท่านั้น','err');return;}
   const p=projects.find(x=>x.id===pid);if(!p)return;
-  if(!confirm(`ลบโปรเจกต์ "${p.name||pid}" ถาวรหรือไม่? ไม่สามารถกู้คืนได้`))return;
-  try{await deleteDoc(doc(db,'projects',pid));toast('ลบโปรเจกต์ถาวรแล้ว');}
-  catch(err){toast('ลบไม่สำเร็จ: '+err.message,'err');}
+  if(!confirm(`ลบโปรเจกต์ "${p.name||pid}" ถาวรหรือไม่? ข้อมูลทั้งหมดจะหายไป ไม่สามารถกู้คืนได้`))return;
+  try{
+    await deleteDoc(doc(db,'projects',pid));
+    toast('ลบโปรเจกต์ถาวรแล้ว');
+  }catch(err){toast('ลบไม่สำเร็จ: '+err.message,'err');}
 };
 
 window.saveProjDetail = async function() {

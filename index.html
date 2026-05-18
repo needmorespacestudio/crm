@@ -1036,7 +1036,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
       <div class="nav-ver">Studio v12</div>
     </div>
     <div class="nav-tabs">
-      <button class="ntab on" id="tabHome" onclick="showPage('home',this)">🏠 Home</button>
+      <button class="ntab" id="tabHome" onclick="showPage('home',this)">🏠 Home</button>
       <button class="ntab" id="tabProjects" onclick="showPage('projects',this)">🗂️ โปรเจกต์</button>
       <button class="ntab" id="tabDocs" onclick="showPage('docs',this)">📄 เอกสาร</button>
       <button class="ntab" id="tabUpload" onclick="showPage('upload',this)">☁️ อัปโหลด</button>
@@ -1118,7 +1118,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
 </div>
 
   <!-- HOME -->
-  <div class="page on" id="page-home">
+  <div class="page" id="page-home">
     <div class="home-wrap">
       <div class="home-greeting">
         <div class="home-greeting-name" id="greetingName">สวัสดี</div>
@@ -2470,7 +2470,7 @@ async function startApp(){
   } else if(['owner','admin','sales','designer','drafter','contractor'].includes(role)){
     showClanding();
   } else {
-    renderHome();
+    showPage('home',document.getElementById('tabHome'));
     setInterval(renderHome,60000);
   }
 }
@@ -2529,6 +2529,7 @@ window.showPage=function(id,el){
   if(id==='admin'&&!isOwner()){toast('ไม่มีสิทธิ์เข้าถึงหน้านี้','err');return;}
   if(id==='finance'&&!canSeeFin()){toast('ไม่มีสิทธิ์เข้าถึงหน้านี้','err');return;}
   if(id==='monthlyfinance'&&!canSeeMonthlyFin()){toast('ไม่มีสิทธิ์เข้าถึงหน้านี้','err');return;}
+  window.scrollTo(0,0);
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
   document.getElementById('page-'+id).classList.add('on');
   document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('on'));
@@ -2545,6 +2546,7 @@ window.showPage=function(id,el){
 };
 
 function showClanding(){
+  window.scrollTo(0,0);
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
   document.getElementById('page-clanding').classList.add('on');
   document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('on'));

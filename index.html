@@ -937,6 +937,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
   @page{size:A4;margin:15mm 20mm}
 }
 </style>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
 
@@ -1005,6 +1006,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
         <button class="btn btn-gold btn-sm" onclick="importJSON()">📂 Import</button>
         <button class="btn btn-ghost btn-sm" onclick="manualSync()">🔄 Sync</button>
         <button class="btn btn-dark btn-sm" onclick="newLead()" id="btnNew">+ Lead</button>
+        <button class="btn btn-ghost btn-sm" id="btnDriveConnect" onclick="connectGoogleDrive()" title="เชื่อมต่อ Google Drive เพื่อสร้างโฟลเดอร์อัตโนมัติ">🔗 Drive</button>
         <button class="btn btn-ghost btn-sm" onclick="doLogout()">ออก</button>
       </div>
     </div>
@@ -1168,7 +1170,13 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
             <div class="prow1"><div class="field"><label>ชื่อโปรเจกต์</label><input id="pd-name"></div></div>
             <div class="prow2"><div class="field"><label>ขนาดพื้นที่ (ตร.ม.)</label><input id="pd-size"></div><div class="field"><label>ที่ตั้ง</label><input id="pd-loc"></div></div>
             <div class="prow2"><div class="field"><label>วันเริ่มโปรเจกต์</label><input id="pd-start" type="date"></div><div class="field"><label>วันส่งมอบ (เป้าหมาย)</label><input id="pd-deadline" type="date"></div></div>
-            <div class="prow1"><div class="field"><label>📁 Google Drive Folder</label><div class="drive-row"><input id="pd-drive" placeholder="https://drive.google.com/..."><button class="drive-btn" onclick="openProjDrive()">🔗 เปิด</button></div></div></div>
+            <div class="prow1"><div class="field"><label>📁 Google Drive Folder</label><div class="drive-row"><input id="pd-drive" placeholder="https://drive.google.com/..."><button class="drive-btn" onclick="openProjDrive()">🔗 เปิด</button><button class="drive-btn" id="btnCreateDriveFolder" onclick="createProjDriveFolders()" title="สร้างโฟลเดอร์ทั้งหมดใน Google Drive อัตโนมัติ" style="background:var(--green);color:#fff;border-color:var(--green)">🗂️ สร้างโฟลเดอร์</button></div></div></div>
+
+            <!-- Drive Folder Links (shown after creation) -->
+            <div id="pdDriveFolders" style="display:none;margin-top:12px">
+              <div style="font-size:11px;font-weight:600;color:var(--gray-500);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px">โฟลเดอร์ใน Drive</div>
+              <div style="display:flex;flex-wrap:wrap;gap:6px" id="pdDriveFolderLinks"></div>
+            </div>
             <div class="prow2"><div class="field"><label>ดีไซเนอร์</label><select id="pd-designer"><option value="">— ไม่ระบุ —</option></select></div><div class="field"><label>คนเขียนแบบ</label><select id="pd-drafter"><option value="">— ไม่ระบุ —</option></select></div></div>
           </div>
         </div>
@@ -1233,25 +1241,29 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
 
       <!-- PRESENTATION TAB -->
       <div class="ptab-content" id="ptab-presentation">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px">
           <div style="font-size:13px;font-weight:600;color:var(--gray-700)">ไฟล์ Presentation</div>
-          <div style="display:flex;gap:8px">
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <a id="drivePresLink" href="#" target="_blank" style="display:none" class="btn btn-ghost btn-sm">📂 เปิดโฟลเดอร์</a>
             <button class="btn btn-ghost btn-sm" onclick="addProjFile('presentation','pdf')">+ PDF</button>
             <button class="btn btn-ghost btn-sm" onclick="addProjFile('presentation','working')">+ ไฟล์งาน</button>
           </div>
         </div>
+        <div style="font-size:11px;color:var(--gray-400);margin-bottom:12px">เซฟไฟล์ลงโฟลเดอร์ใน Drive แล้ว paste link มาบันทึกไว้ที่นี่</div>
         <div id="projPresentationList"></div>
       </div>
 
       <!-- DRAWING TAB -->
       <div class="ptab-content" id="ptab-drawing">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px">
           <div style="font-size:13px;font-weight:600;color:var(--gray-700)">ไฟล์แบบก่อสร้าง</div>
-          <div style="display:flex;gap:8px">
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <a id="driveDrawLink" href="#" target="_blank" style="display:none" class="btn btn-ghost btn-sm">📂 เปิดโฟลเดอร์</a>
             <button class="btn btn-ghost btn-sm" onclick="addProjFile('drawing','pdf')">+ PDF</button>
             <button class="btn btn-ghost btn-sm" onclick="addProjFile('drawing','working')">+ ไฟล์งาน</button>
           </div>
         </div>
+        <div style="font-size:11px;color:var(--gray-400);margin-bottom:12px">เซฟไฟล์ลงโฟลเดอร์ใน Drive แล้ว paste link มาบันทึกไว้ที่นี่</div>
         <div id="projDrawingList"></div>
       </div>
 
@@ -3690,6 +3702,7 @@ window.openProjDetail = function(pid) {
   renderProjDocsTab(p);
   renderProjFilesTab('presentation','projPresentationList',p);
   renderProjFilesTab('drawing','projDrawingList',p);
+  renderDriveFolderLinks(p);
   // Lead link
   const pdLeadLink = document.getElementById('pdLeadLink');
   if (pdLeadLink) {
@@ -3745,6 +3758,157 @@ window.openProjDrive=function(){
   if(!url){toast('ใส่ลิงก์ Drive ก่อน','err');return;}
   window.open(url,'_blank');
 };
+
+// ══════════════════════════════════════════════════════════════════
+// GOOGLE DRIVE INTEGRATION
+// ══════════════════════════════════════════════════════════════════
+
+// ⚠️ ใส่ Client ID ที่ได้จาก Google Cloud Console ด้านล่าง:
+const GOOGLE_CLIENT_ID = 'YOUR_CLIENT_ID_HERE.apps.googleusercontent.com';
+const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.file';
+
+let _driveToken = null;
+let _driveTokenClient = null;
+
+function initDriveClient(){
+  if(!GOOGLE_CLIENT_ID || GOOGLE_CLIENT_ID.includes('YOUR_CLIENT_ID')){return;}
+  if(typeof google === 'undefined' || !google?.accounts?.oauth2){return;}
+  _driveTokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: GOOGLE_CLIENT_ID,
+    scope: DRIVE_SCOPE,
+    callback:(res)=>{
+      if(res.error){toast('Drive: '+res.error,'err');return;}
+      _driveToken=res.access_token;
+      updateDriveBtn(true);
+      toast('✅ เชื่อมต่อ Google Drive แล้ว','ok');
+    }
+  });
+  updateDriveBtn(false);
+}
+
+function updateDriveBtn(connected){
+  const btn=document.getElementById('btnDriveConnect');
+  if(!btn)return;
+  if(connected){
+    btn.textContent='✅ Drive';
+    btn.style.color='var(--green)';
+  } else {
+    btn.textContent='🔗 Drive';
+    btn.style.color='';
+  }
+}
+
+window.connectGoogleDrive=function(){
+  if(!GOOGLE_CLIENT_ID||GOOGLE_CLIENT_ID.includes('YOUR_CLIENT_ID')){
+    toast('ยังไม่ได้ตั้งค่า Client ID — แจ้ง Admin','err');return;
+  }
+  if(!_driveTokenClient){initDriveClient();}
+  if(!_driveTokenClient){toast('โหลด Google SDK ไม่สำเร็จ ลองรีเฟรชหน้า','err');return;}
+  if(_driveToken){toast('เชื่อมต่ออยู่แล้ว ✓','ok');return;}
+  _driveTokenClient.requestAccessToken();
+};
+
+async function driveCreateFolder(name, parentId){
+  const body={name,mimeType:'application/vnd.google-apps.folder'};
+  if(parentId) body.parents=[parentId];
+  const res=await fetch('https://www.googleapis.com/drive/v3/files?fields=id,webViewLink',{
+    method:'POST',
+    headers:{'Authorization':'Bearer '+_driveToken,'Content-Type':'application/json'},
+    body:JSON.stringify(body)
+  });
+  if(!res.ok){const e=await res.json();throw new Error(e.error?.message||'Drive API error');}
+  return await res.json();
+}
+
+window.createProjDriveFolders=async function(){
+  if(!_driveToken){
+    if(!GOOGLE_CLIENT_ID||GOOGLE_CLIENT_ID.includes('YOUR_CLIENT_ID')){
+      toast('ยังไม่ได้ตั้งค่า Client ID — แจ้ง Admin','err');return;
+    }
+    toast('กรุณากด 🔗 Drive ที่ด้านบนเพื่อเชื่อมต่อก่อน','err');return;
+  }
+  const p=projects.find(x=>x.id===currentProjId);if(!p)return;
+
+  const btn=document.getElementById('btnCreateDriveFolder');
+  if(btn){btn.disabled=true;btn.textContent='⏳ กำลังสร้าง...';}
+
+  try{
+    // Project folder name: P2024-001_ชื่อลูกค้า_ชื่อโปรเจกต์
+    const safeName=(s='')=>s.replace(/[/\\:*?"<>|]/g,'_').trim().slice(0,40);
+    const folderName=`${p.projId||p.id}_${safeName(p.client)}_${safeName(p.name)}`;
+
+    toast('กำลังสร้างโฟลเดอร์...','info');
+
+    const root        = await driveCreateFolder(folderName);
+    const pres        = await driveCreateFolder('01_Presentation', root.id);
+    const draw        = await driveCreateFolder('02_Drawing', root.id);
+    const docsFld     = await driveCreateFolder('03_Documents', root.id);
+    const expenses    = await driveCreateFolder('04_Expenses', root.id);
+    const presPDF     = await driveCreateFolder('PDF', pres.id);
+    const presWork    = await driveCreateFolder('Working-Files', pres.id);
+    const drawPDF     = await driveCreateFolder('PDF', draw.id);
+    const drawWork    = await driveCreateFolder('Working-Files', draw.id);
+    const docsDesign  = await driveCreateFolder('Design', docsFld.id);
+    const docsConst   = await driveCreateFolder('Construction', docsFld.id);
+
+    const driveFolders={
+      root:root.webViewLink,
+      presentation:pres.webViewLink,
+      presPDF:presPDF.webViewLink,
+      presWorking:presWork.webViewLink,
+      drawing:draw.webViewLink,
+      drawPDF:drawPDF.webViewLink,
+      drawWorking:drawWork.webViewLink,
+      documents:docsFld.webViewLink,
+      docsDesign:docsDesign.webViewLink,
+      docsConstruction:docsConst.webViewLink,
+      expenses:expenses.webViewLink,
+    };
+
+    const updated={...p, drive:root.webViewLink, driveFolders};
+    await saveProjToCloud(updated);
+    renderDriveFolderLinks(updated);
+    toast('✅ สร้างโฟลเดอร์ใน Drive เรียบร้อย','ok');
+
+  }catch(e){
+    toast('สร้างโฟลเดอร์ไม่สำเร็จ: '+e.message,'err');
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='🗂️ สร้างโฟลเดอร์';}
+  }
+};
+
+function renderDriveFolderLinks(p){
+  const df=p.driveFolders;
+  const el=document.getElementById('pdDriveFolders');
+  const links=document.getElementById('pdDriveFolderLinks');
+  if(!el||!links)return;
+  if(!df){el.style.display='none';return;}
+
+  const mkLink=(label,url)=>url?`<a href="${url}" target="_blank" style="font-size:11px;padding:4px 10px;border-radius:4px;background:var(--gray-100);color:var(--gray-700);text-decoration:none;display:inline-flex;align-items:center;gap:4px;border:1px solid var(--border)">📂 ${label}</a>`:'' ;
+
+  links.innerHTML=[
+    mkLink('โฟลเดอร์หลัก',df.root),
+    mkLink('Presentation',df.presentation),
+    mkLink('Pres/PDF',df.presPDF),
+    mkLink('Pres/Working',df.presWorking),
+    mkLink('Drawing',df.drawing),
+    mkLink('Draw/PDF',df.drawPDF),
+    mkLink('Draw/Working',df.drawWorking),
+    mkLink('Documents/Design',df.docsDesign),
+    mkLink('Documents/Construction',df.docsConstruction),
+    mkLink('Expenses',df.expenses),
+  ].filter(Boolean).join('');
+  el.style.display='block';
+
+  // Update shortcut links in Presentation/Drawing tabs
+  const presBtn=document.getElementById('drivePresLink');
+  if(presBtn&&df.presentation){presBtn.href=df.presentation;presBtn.style.display='';}
+  const drawBtn=document.getElementById('driveDrawLink');
+  if(drawBtn&&df.drawing){drawBtn.href=df.drawing;drawBtn.style.display='';}
+}
+
+// Call after GIS loads
+window.addEventListener('load',()=>{setTimeout(initDriveClient,1000);});
 
 window.showPTab=function(tab,el){
   document.querySelectorAll('.ptab').forEach(b=>b.classList.remove('on'));

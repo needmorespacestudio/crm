@@ -23,7 +23,7 @@
   --r:10px;--r-sm:6px;--r-lg:14px;
 }
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{height:100%}
+html,body{height:100%;overflow:hidden}
 body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var(--gray-800);font-size:14px}
 
 /* ── LOGIN ── */
@@ -42,7 +42,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
 .login-sync{font-size:11px;color:var(--gray-400);text-align:center;margin-top:12px;font-family:'DM Mono',monospace}
 
 /* ── APP SHELL ── */
-#appScreen{display:none;flex-direction:column;width:100%;overflow:hidden}
+#appScreen{display:none;flex-direction:column;width:100%;height:100%;overflow:hidden}
 #appScreen.active{display:flex}
 
 /* ── SYNC BAR ── */
@@ -971,7 +971,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
 /* ── PRINT / PDF ── */
 .print-installments{display:none}
 @media print{
-  html,body{height:auto!important}
+  html,body{height:auto!important;overflow:visible!important}
   #appScreen,#appScreen.active{position:static!important;height:auto!important;overflow:visible!important;min-height:0!important}
   #loginScreen{position:static!important}
   #main{overflow:visible!important;height:auto!important;padding-bottom:0!important}
@@ -2470,18 +2470,9 @@ async function saveUsersToCloud(){
 }
 
 // ── Start App ──
-function setAppHeight(){
-  const el=document.getElementById('appScreen');
-  if(el&&el.classList.contains('active'))el.style.height=window.innerHeight+'px';
-}
-window.addEventListener('resize',setAppHeight);
-window.addEventListener('orientationchange',()=>setTimeout(setAppHeight,200));
-
 async function startApp(){
   document.getElementById('loginScreen').className='';
-  const _app=document.getElementById('appScreen');
-  _app.className='active';
-  _app.style.height=window.innerHeight+'px';
+  document.getElementById('appScreen').className='active';
   await loadUsers();
   // อัปเดต session ถ้า role ใน users object ต่างจาก session ที่บันทึกไว้
   if(currentUser&&users[currentUser.user]){
@@ -6114,33 +6105,7 @@ window.importJSON = function(){
   input.click();
 };
 
-// ── Body scroll lock when any modal-ov is open (iOS fix) ──
-(function(){
-  let scrollY=0;
-  function lockBody(){
-    scrollY=window.scrollY;
-    document.body.style.overflow='hidden';
-    document.body.style.position='fixed';
-    document.body.style.top=`-${scrollY}px`;
-    document.body.style.width='100%';
-  }
-  function unlockBody(){
-    document.body.style.overflow='';
-    document.body.style.position='';
-    document.body.style.top='';
-    document.body.style.width='';
-    window.scrollTo(0,scrollY);
-  }
-  const obs=new MutationObserver(()=>{
-    const anyOpen=document.querySelector('.modal-ov.show,.ev-modal-ov.show');
-    if(anyOpen) lockBody(); else unlockBody();
-  });
-  document.addEventListener('DOMContentLoaded',()=>{
-    document.querySelectorAll('.modal-ov,.ev-modal-ov').forEach(el=>{
-      obs.observe(el,{attributes:true,attributeFilter:['class']});
-    });
-  });
-})();
+// Body is permanently overflow:hidden — no scroll lock needed.
 
 // ══════════════════════════════════════════
 // MONTHLY FINANCE ARCHIVE

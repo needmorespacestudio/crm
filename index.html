@@ -3825,7 +3825,18 @@ window.createProjDriveFolders=async function(){
     if(!GOOGLE_CLIENT_ID||GOOGLE_CLIENT_ID.includes('YOUR_CLIENT_ID')){
       toast('ยังไม่ได้ตั้งค่า Client ID — แจ้ง Admin','err');return;
     }
-    toast('กรุณากด 🔗 Drive ที่ด้านบนเพื่อเชื่อมต่อก่อน','err');return;
+    if(!_driveTokenClient){initDriveClient();}
+    if(!_driveTokenClient){toast('โหลด Google SDK ไม่สำเร็จ ลองรีเฟรชหน้า','err');return;}
+    // Auto-connect then retry
+    _driveTokenClient.callback=(res)=>{
+      if(res.error){toast('เชื่อมต่อ Drive ไม่สำเร็จ: '+res.error,'err');return;}
+      _driveToken=res.access_token;
+      updateDriveBtn(true);
+      toast('✅ เชื่อมต่อ Drive แล้ว — กำลังสร้างโฟลเดอร์...','ok');
+      setTimeout(window.createProjDriveFolders, 500);
+    };
+    _driveTokenClient.requestAccessToken();
+    return;
   }
   const p=projects.find(x=>x.id===currentProjId);if(!p)return;
 

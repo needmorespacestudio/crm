@@ -4008,6 +4008,12 @@ window.saveDoc=async function(){
     vatRate,
     refDocId:document.getElementById('docRefDocId')?.value||d.refDocId||'',
     status:document.getElementById('docStatusSel')?.value||d.status,
+    clientDetail:document.getElementById('docContactNum')?.value??d.clientDetail??'',
+    projLocation:document.getElementById('docQtLocation')?.value??d.projLocation??'',
+    projDescription:document.getElementById('docQtDesc')?.value??d.projDescription??'',
+    specialNote:document.getElementById('docQtNote')?.value??d.specialNote??'',
+    scopeArea:document.getElementById('docScopeArea')?.value??d.scopeArea??'',
+    scopeImages:d.scopeImages||[],
     updatedBy:currentUser.name,
     updatedAt:new Date().toISOString()
   };
@@ -4026,7 +4032,72 @@ window.saveDoc=async function(){
   }catch(e){toast('บันทึกไม่สำเร็จ: '+e.message,'err');}
 };
 
-window.printDoc=function(){window.print();};
+window.printDoc=function(){
+  const d=docs.find(x=>x.id===currentDocId);
+  if(d&&d.type==='quotation_design'){
+    const sd=document.getElementById('qtDesignPrint');
+    if(sd){
+      sd.style.display='block';
+      populatePrintScope(d);
+    }
+  }
+  window.print();
+  setTimeout(()=>{const sd=document.getElementById('qtDesignPrint');if(sd)sd.style.display='none';},1500);
+};
+
+window.docFieldEdit=function(field,val){
+  const d=docs.find(x=>x.id===currentDocId);if(!d)return;
+  d[field]=val;
+};
+
+window.handleScopeImages=async function(input){
+  const d=docs.find(x=>x.id===currentDocId);if(!d)return;
+  if(!d.scopeImages)d.scopeImages=[];
+  const files=Array.from(input.files).slice(0,4-d.scopeImages.length);
+  for(const file of files){
+    const b64=await compressImg(file,900);
+    d.scopeImages.push(b64);
+  }
+  renderDocExtras(d);
+  input.value='';
+};
+
+window.removeScopeImg=function(idx){
+  const d=docs.find(x=>x.id===currentDocId);if(!d)return;
+  d.scopeImages.splice(idx,1);
+  renderDocExtras(d);
+};
+
+function compressImg(file,maxPx){
+  return new Promise(res=>{
+    const r=new FileReader();
+    r.onload=e=>{
+      const img=new Image();
+      img.onload=()=>{
+        let w=img.width,h=img.height;
+        if(w>h&&w>maxPx){h=h*maxPx/w;w=maxPx;}
+        else if(h>maxPx){w=w*maxPx/h;h=maxPx;}
+        const c=document.createElement('canvas');
+        c.width=w;c.height=h;
+        c.getContext('2d').drawImage(img,0,0,w,h);
+        res(c.toDataURL('image/jpeg',0.8));
+      };
+      img.src=e.target.result;
+    };
+    r.readAsDataURL(file);
+  });
+}
+
+function populatePrintScope(d){
+  const el=document.getElementById('qtScopeImgs');if(!el)return;
+  const imgs=d.scopeImages||[];
+  el.innerHTML=imgs.length
+    ?imgs.map(s=>`<img src="${s}" style="max-width:48%;max-height:220px;object-fit:contain;border:1px solid #ddd;border-radius:4px">`).join('')
+    :'<p style="color:#aaa;font-size:11pt">ไม่มีรูปแปลน</p>';
+  const qa=document.getElementById('qtScopeArea');if(qa)qa.textContent=d.scopeArea||d.projSize||'—';
+  const qn=document.getElementById('qtScopeDocNum');if(qn)qn.textContent=d.docNum||'—';
+  const qp=document.getElementById('qtScopeProjName');if(qp)qp.textContent=d.projName||'—';
+}
 
 function renderDocExtras(d){
   const el=document.getElementById('docExtras'); if(!el)return;
@@ -4080,6 +4151,30 @@ function renderDocExtras(d){
         <span style="font-size:13px;color:var(--gray-700)">ลูกค้าจ้างก่อสร้างด้วย → <strong>ลด 35% ค่าออกแบบ</strong></span>
       </label>
       ${d.hasConstruction?`<div style="margin-top:8px;font-size:13px;color:var(--green);font-weight:600">ส่วนลด: ฿${(parseFloat(d.subtotal||0)*0.35).toLocaleString('th-TH')}</div>`:''}
+    </div>`;
+    // ── QUOTATION DESIGN: Extra fields (contact, location, description, special note, scope area) ──
+    html+=`<div class="doc-section" style="margin-top:16px;border:1px solid var(--border-md);border-radius:var(--r);padding:14px 16px">
+      <div style="font-size:12px;font-weight:700;color:var(--gray-700);text-transform:uppercase;letter-spacing:.06em;font-family:'DM Mono',monospace;margin-bottom:12px">📋 ข้อมูลเพิ่มเติมในเอกสาร</div>
+      <div class="prow2">
+        <div class="field"><label>เบอร์โทรลูกค้า</label><input id="docContactNum" value="${(d.clientDetail||'').replace(/"/g,'&quot;')}" placeholder="089-xxx-xxxx" oninput="docFieldEdit('clientDetail',this.value)" style="width:100%;border:1px solid var(--border-md);border-radius:var(--r-sm);padding:8px 10px;font-size:13px;font-family:inherit"></div>
+        <div class="field"><label>สถานที่โครงการ (Project Location)</label><input id="docQtLocation" value="${(d.projLocation||'').replace(/"/g,'&quot;')}" placeholder="เช่น ศุภาลัย พหลโยธิน 50" oninput="docFieldEdit('projLocation',this.value)" style="width:100%;border:1px solid var(--border-md);border-radius:var(--r-sm);padding:8px 10px;font-size:13px;font-family:inherit"></div>
+      </div>
+      <div class="field" style="margin-top:10px"><label>รายละเอียดโครงการ (Project Description)</label><input id="docQtDesc" value="${(d.projDescription||'').replace(/"/g,'&quot;')}" placeholder="เช่น ออกแบบภายในบ้านพักอาศัย 2 ชั้น" oninput="docFieldEdit('projDescription',this.value)" style="width:100%;border:1px solid var(--border-md);border-radius:var(--r-sm);padding:8px 10px;font-size:13px;font-family:inherit"></div>
+      <div class="field" style="margin-top:10px"><label>หมายเหตุพิเศษ <span style="color:var(--red)">(แสดงตัวอักษรสีแดงในเอกสาร)</span></label><textarea id="docQtNote" rows="3" placeholder="เช่น พิเศษ ! มอบส่วนลดค่าออกแบบสำหรับลูกค้า 35%..." oninput="docFieldEdit('specialNote',this.value)" style="width:100%;border:1px solid var(--border-md);border-radius:var(--r-sm);padding:8px 10px;font-size:13px;font-family:inherit;resize:vertical">${(d.specialNote||'')}</textarea></div>
+    </div>`;
+    // ── SCOPE OF WORK: images ──
+    const imgs=d.scopeImages||[];
+    html+=`<div class="doc-section" style="margin-top:16px;border:1px solid var(--border-md);border-radius:var(--r);padding:14px 16px">
+      <div style="font-size:12px;font-weight:700;color:var(--gray-700);text-transform:uppercase;letter-spacing:.06em;font-family:'DM Mono',monospace;margin-bottom:8px">🗺️ แปลนขอบเขตงาน — เอกสารแนบท้าย</div>
+      <div style="font-size:12px;color:var(--gray-500);margin-bottom:10px">อัปโหลดรูปแปลน (สูงสุด 4 รูป) • ระบบจะแนบหน้า "ขอบเขตงาน" เมื่อพิมพ์</div>
+      <div class="prow2">
+        <div class="field"><label>พื้นที่ขอบเขตงาน (ตร.ม.)</label><input id="docScopeArea" value="${(d.scopeArea||d.projSize||'').replace(/"/g,'&quot;')}" placeholder="88" oninput="docFieldEdit('scopeArea',this.value)" style="width:100%;border:1px solid var(--border-md);border-radius:var(--r-sm);padding:8px 10px;font-size:13px;font-family:inherit"></div>
+        <div class="field" style="display:flex;align-items:flex-end"><input type="file" id="scopeFileInput" accept="image/*" multiple style="display:none" onchange="handleScopeImages(this)"><button class="btn btn-ghost btn-sm" onclick="document.getElementById('scopeFileInput').click()" style="width:100%">📎 เพิ่มรูปแปลน</button></div>
+      </div>
+      <div id="scopeImgPreview" style="display:flex;flex-wrap:wrap;gap:10px;margin-top:10px">
+        ${imgs.map((img,i)=>`<div style="position:relative;display:inline-block"><img src="${img}" style="width:130px;height:100px;object-fit:cover;border-radius:var(--r-sm);border:1px solid var(--border)"><button onclick="removeScopeImg(${i})" style="position:absolute;top:-8px;right:-8px;background:var(--red);color:#fff;border:none;border-radius:50%;width:20px;height:20px;font-size:11px;cursor:pointer;line-height:1;padding:0">✕</button></div>`).join('')}
+        ${imgs.length===0?'<div style="font-size:12px;color:var(--gray-400);padding:8px">ยังไม่มีรูปแปลน</div>':''}
+      </div>
     </div>`;
   }
 

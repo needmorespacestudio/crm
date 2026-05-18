@@ -42,7 +42,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
 .login-sync{font-size:11px;color:var(--gray-400);text-align:center;margin-top:12px;font-family:'DM Mono',monospace}
 
 /* ── APP SHELL ── */
-#appScreen{display:none;position:fixed;inset:0;flex-direction:column}
+#appScreen{display:none;flex-direction:column;width:100%;overflow:hidden}
 #appScreen.active{display:flex}
 
 /* ── SYNC BAR ── */
@@ -972,7 +972,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
 .print-installments{display:none}
 @media print{
   html,body{height:auto!important}
-  #appScreen,#appScreen.active{position:static!important;height:auto!important;overflow:visible!important}
+  #appScreen,#appScreen.active{position:static!important;height:auto!important;overflow:visible!important;min-height:0!important}
   #loginScreen{position:static!important}
   #main{overflow:visible!important;height:auto!important;padding-bottom:0!important}
   body{background:white;font-size:12pt;color:#111}
@@ -2470,9 +2470,18 @@ async function saveUsersToCloud(){
 }
 
 // ── Start App ──
+function setAppHeight(){
+  const el=document.getElementById('appScreen');
+  if(el&&el.classList.contains('active'))el.style.height=window.innerHeight+'px';
+}
+window.addEventListener('resize',setAppHeight);
+window.addEventListener('orientationchange',()=>setTimeout(setAppHeight,200));
+
 async function startApp(){
   document.getElementById('loginScreen').className='';
-  document.getElementById('appScreen').className='active';
+  const _app=document.getElementById('appScreen');
+  _app.className='active';
+  _app.style.height=window.innerHeight+'px';
   await loadUsers();
   // อัปเดต session ถ้า role ใน users object ต่างจาก session ที่บันทึกไว้
   if(currentUser&&users[currentUser.user]){

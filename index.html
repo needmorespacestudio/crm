@@ -53,7 +53,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
 
 /* ── NAV ── */
-.nav{background:var(--white);border-bottom:1px solid var(--border);padding:0 16px;display:flex;align-items:center;gap:8px;height:54px;position:sticky;top:0;z-index:30;box-shadow:var(--shadow-sm);flex-shrink:0}
+.nav{background:var(--white);border-bottom:1px solid var(--border);padding:0 16px;display:flex;align-items:center;gap:8px;height:54px;z-index:30;box-shadow:var(--shadow-sm);flex-shrink:0}
 .nav-brand{display:flex;align-items:center;gap:10px;cursor:pointer;flex-shrink:0}
 .nav-logo{font-family:'Instrument Serif',serif;font-size:17px;color:var(--gray-800)}
 .nav-dot{width:5px;height:5px;background:var(--gold);border-radius:50%}
@@ -2368,7 +2368,7 @@ const DEFAULT_SOURCES = ['Meta Ads — N1 Cold','Meta Ads — R1 Hot','Meta Ads 
 // ── State ──
 let leads=[], users={...DEFAULT_USERS}, customSources=[...DEFAULT_SOURCES];
 let eid=null, curStep=STEPS[0].id, filt='all';
-let currentUser=null, unsubscribe=null, lastSync=null;
+let currentUser=null, unsubscribe=null, lastSync=null, homeInterval=null;
 let editingUserId=null;
 
 // ── Helpers ──
@@ -2391,14 +2391,15 @@ const isCL=()=>['owner','admin','designer','drafter','contractor'].includes(curr
 
 // ── Toast ──
 let tTimer;
-function toast(msg,type=''){clearTimeout(tTimer);const el=document.getElementById('toast');el.textContent=msg;el.className='toast show'+(type?' '+type:'');tTimer=setTimeout(()=>el.className='toast',3200);}
+function toast(msg,type=''){clearTimeout(tTimer);const el=document.getElementById('toast');if(!el)return;el.textContent=msg;el.className='toast show'+(type?' '+type:'');tTimer=setTimeout(()=>el.className='toast',3200);}
 
 // ── Sync UI ──
 function setSyncUI(on,msg=''){
   const dot=document.getElementById('sdot'),smsg=document.getElementById('smsg'),stime=document.getElementById('stime');
+  if(!dot||!smsg)return;
   dot.className='sdot '+(on?'sdot-on':'sdot-off');
   smsg.textContent=on?(msg||'Cloud Sync — Real-time'):(msg||'ออฟไลน์');
-  if(on&&lastSync)stime.textContent='อัปเดต '+new Date(lastSync).toLocaleTimeString('th-TH');
+  if(on&&lastSync&&stime)stime.textContent='อัปเดต '+new Date(lastSync).toLocaleTimeString('th-TH');
 }
 
 // ── Session ──
@@ -2427,6 +2428,7 @@ window.doLogin=function(){
 window.doLogout=function(){
   clearSession();currentUser=null;
   if(unsubscribe)unsubscribe();leads=[];
+  if(homeInterval){clearInterval(homeInterval);homeInterval=null;}
   document.getElementById('loginScreen').className='active';
   document.getElementById('appScreen').className='';
   document.getElementById('lu').value='';document.getElementById('lp').value='';
@@ -2494,7 +2496,7 @@ async function startApp(){
     showClanding();
   } else {
     showPage('home',document.getElementById('tabHome'));
-    setInterval(renderHome,60000);
+    homeInterval=setInterval(renderHome,60000);
   }
 }
 
@@ -2507,13 +2509,10 @@ function setupNavUI(){
   const role = currentUser?.role || '';
   const canSeeDocs = ['owner','admin','sales'].includes(role);
   const canSeeClients = ['owner','admin','sales'].includes(role);
-  document.getElementById('tabFin').style.display=canSeeFin()?'':'none';
-  document.getElementById('tabDocs').style.display=canSeeDocs?'':'none';
-  document.getElementById('tabAdmin').style.display=isOwner()?'':'none';
-  document.getElementById('btnNew').style.display=canAdd()?'':'none';
-  document.getElementById('tabMonthlyFin').style.display=canSeeMonthlyFin()?'':'none';
-  document.getElementById('tabAccDocs').style.display=isOwner()?'':'none';
-  document.getElementById('tabClients').style.display=canSeeClients?'':'none';
+  const _setDisp=(id,show)=>{const e=document.getElementById(id);if(e)e.style.display=show?'':'none';};
+  _setDisp('tabFin',canSeeFin());_setDisp('tabDocs',canSeeDocs);_setDisp('tabAdmin',isOwner());
+  _setDisp('btnNew',canAdd());_setDisp('tabMonthlyFin',canSeeMonthlyFin());
+  _setDisp('tabAccDocs',isOwner());_setDisp('tabClients',canSeeClients);
   // Nav action buttons
   const navCSV=document.getElementById('navBtnCSV');
   if(navCSV) navCSV.style.display=isOwnerOrAdmin()?'':'none';
@@ -2584,7 +2583,7 @@ function showClanding(){
   const now=new Date();
   const hr=now.getHours();
   const greet=hr<12?'สวัสดีตอนเช้า':hr<17?'สวัสดีตอนบ่าย':'สวัสดีตอนเย็น';
-  document.getElementById('clandingGreet').textContent=`${greet}, ${currentUser.name} 👋`;
+  const _cg=document.getElementById('clandingGreet');if(_cg)_cg.textContent=`${greet}, ${currentUser.name} 👋`;
   const role=currentUser?.role;
   const allCards=[
     {icon:'☁️',title:'อัพโหลดไฟล์',desc:'Smart Upload — ตั้งชื่อไฟล์อัตโนมัติ<br>& บันทึก log ลง Firebase',page:'upload',tab:'tabUpload'},
@@ -2594,9 +2593,10 @@ function showClanding(){
   const showLead=['owner','admin','sales'].includes(role);
   const cards=showLead?allCards:allCards.slice(0,2);
   const cardsEl=document.getElementById('clandingCards');
+  if(!cardsEl)return;
   cardsEl.style.cssText='';
   cardsEl.className='clanding-cards'+(cards.length===3?' clanding-cards-3':'');
-  document.getElementById('clandingCards').innerHTML=cards.map(c=>`
+  cardsEl.innerHTML=cards.map(c=>`
     <div class="clanding-card" onclick="showPage('${c.page}',document.getElementById('${c.tab}'))">
       <div class="clanding-card-icon">${c.icon}</div>
       <div class="clanding-card-title">${c.title}</div>

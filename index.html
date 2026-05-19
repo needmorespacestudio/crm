@@ -1104,31 +1104,31 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
   <div class="modal">
     <div style="font-size:16px;font-weight:700;color:var(--gray-800);margin-bottom:16px">เมนูทั้งหมด</div>
     <div class="more-menu-grid">
-      <button class="more-menu-item" onclick="showPage('analytics',document.getElementById('tabAnalytics'));closeMobileMenu();updateBNav('analytics')">
+      <button class="more-menu-item" onclick="navigateFromMenu('analytics','tabAnalytics')">
         <span class="more-menu-item-icon">📊</span>Analytics
       </button>
-      <button class="more-menu-item" onclick="showPage('finance',document.getElementById('tabFin'));closeMobileMenu();updateBNav('finance')" id="bnavFinBtn" style="display:none">
+      <button class="more-menu-item" onclick="navigateFromMenu('finance','tabFin')" id="bnavFinBtn" style="display:none">
         <span class="more-menu-item-icon">💰</span>การเงิน
       </button>
-      <button class="more-menu-item" onclick="showPage('docs',document.getElementById('tabDocs'));closeMobileMenu();updateBNav('docs')" id="bnavDocsBtn" style="display:none">
+      <button class="more-menu-item" onclick="navigateFromMenu('docs','tabDocs')" id="bnavDocsBtn" style="display:none">
         <span class="more-menu-item-icon">📄</span>เอกสาร
       </button>
-      <button class="more-menu-item" onclick="showPage('monthlyfinance',document.getElementById('tabMonthlyFin'));closeMobileMenu();updateBNav('monthlyfinance')" id="bnavMonthlyFinBtn" style="display:none">
+      <button class="more-menu-item" onclick="navigateFromMenu('monthlyfinance','tabMonthlyFin')" id="bnavMonthlyFinBtn" style="display:none">
         <span class="more-menu-item-icon">📊</span>งบรายเดือน
       </button>
-      <button class="more-menu-item" onclick="showPage('accdocs',document.getElementById('tabAccDocs'));closeMobileMenu();updateBNav('accdocs')" id="bnavAccDocsBtn" style="display:none">
+      <button class="more-menu-item" onclick="navigateFromMenu('accdocs','tabAccDocs')" id="bnavAccDocsBtn" style="display:none">
         <span class="more-menu-item-icon">📂</span>เอกสารบัญชี
       </button>
-      <button class="more-menu-item" onclick="showPage('clients',document.getElementById('tabClients'));closeMobileMenu();updateBNav('clients')" id="bnavClientsBtn" style="display:none">
+      <button class="more-menu-item" onclick="navigateFromMenu('clients','tabClients')" id="bnavClientsBtn" style="display:none">
         <span class="more-menu-item-icon">🪪</span>รหัสลูกค้า
       </button>
-      <button class="more-menu-item" onclick="showPage('cal',document.getElementById('tabCal'));closeMobileMenu();updateBNav('cal')">
+      <button class="more-menu-item" onclick="navigateFromMenu('cal','tabCal')">
         <span class="more-menu-item-icon">📅</span>ปฏิทิน
       </button>
-      <button class="more-menu-item" onclick="showPage('upload',document.getElementById('tabUpload'));closeMobileMenu();updateBNav('upload')">
+      <button class="more-menu-item" onclick="navigateFromMenu('upload','tabUpload')">
         <span class="more-menu-item-icon">☁️</span>อัปโหลด
       </button>
-      <button class="more-menu-item" onclick="showPage('admin',document.getElementById('tabAdmin'));closeMobileMenu();updateBNav('admin')" id="bnavAdminBtn" style="display:none">
+      <button class="more-menu-item" onclick="navigateFromMenu('admin','tabAdmin')" id="bnavAdminBtn" style="display:none">
         <span class="more-menu-item-icon">⚙️</span>Admin
       </button>
     </div>
@@ -5958,6 +5958,14 @@ window.toggleMobileMenu = function() {
 window.closeMobileMenu = function() {
   const m = document.getElementById('mobileMoreModal');
   if(m) m.classList.remove('show');
+};
+// Navigate from more menu: close first, then switch page after iOS processes the DOM change
+window.navigateFromMenu = function(page, tabId) {
+  const m = document.getElementById('mobileMoreModal');
+  if(m) m.classList.remove('show');
+  setTimeout(function() {
+    showPage(page, document.getElementById(tabId));
+  }, 50);
 };
 
 // ── Lead-Project Navigation ──

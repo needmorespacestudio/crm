@@ -23,8 +23,8 @@
   --r:10px;--r-sm:6px;--r-lg:14px;
 }
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{height:100%;overflow:hidden;overscroll-behavior:none}
-body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var(--gray-800);font-size:14px}
+html{overflow:hidden}
+body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var(--gray-800);font-size:14px;position:fixed;inset:0;overflow:hidden;overscroll-behavior:none}
 
 /* ── LOGIN ── */
 #loginScreen{position:fixed;inset:0;overflow-y:auto;display:none;align-items:center;justify-content:center;padding:24px;background:var(--gray-50)}
@@ -972,6 +972,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
 .print-installments{display:none}
 @media print{
   html,body{height:auto!important;overflow:visible!important;overscroll-behavior:auto!important}
+  body{position:static!important;inset:auto!important}
   #appScreen,#appScreen.active{position:static!important;height:auto!important;overflow:visible!important;min-height:0!important}
   #loginScreen{position:static!important}
   #main{overflow:visible!important;height:auto!important;padding-bottom:0!important}

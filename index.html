@@ -43,7 +43,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
 
 /* ── APP SHELL ── */
 #appScreen{display:none;flex-direction:column}
-#appScreen.active{display:flex;position:fixed;inset:0}
+#appScreen.active{display:flex;position:fixed;inset:0;z-index:1}
 
 /* ── SYNC BAR ── */
 .sync-bar{background:var(--gray-800);color:var(--white);padding:4px 20px;font-size:11px;font-family:'DM Mono',monospace;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
@@ -1101,6 +1101,43 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
   </button>
 </div>
 
+<!-- MOBILE MORE MENU -->
+<div class="modal-ov" id="mobileMoreModal" onclick="if(event.target===this)closeMobileMenu()">
+  <div class="modal">
+    <div style="font-size:16px;font-weight:700;color:var(--gray-800);margin-bottom:16px">เมนูทั้งหมด</div>
+    <div class="more-menu-grid">
+      <button class="more-menu-item" onclick="showPage('analytics',document.getElementById('tabAnalytics'));closeMobileMenu();updateBNav('analytics')">
+        <span class="more-menu-item-icon">📊</span>Analytics
+      </button>
+      <button class="more-menu-item" onclick="showPage('finance',document.getElementById('tabFin'));closeMobileMenu();updateBNav('finance')" id="bnavFinBtn" style="display:none">
+        <span class="more-menu-item-icon">💰</span>การเงิน
+      </button>
+      <button class="more-menu-item" onclick="showPage('docs',document.getElementById('tabDocs'));closeMobileMenu();updateBNav('docs')" id="bnavDocsBtn" style="display:none">
+        <span class="more-menu-item-icon">📄</span>เอกสาร
+      </button>
+      <button class="more-menu-item" onclick="showPage('monthlyfinance',document.getElementById('tabMonthlyFin'));closeMobileMenu();updateBNav('monthlyfinance')" id="bnavMonthlyFinBtn" style="display:none">
+        <span class="more-menu-item-icon">📊</span>งบรายเดือน
+      </button>
+      <button class="more-menu-item" onclick="showPage('accdocs',document.getElementById('tabAccDocs'));closeMobileMenu();updateBNav('accdocs')" id="bnavAccDocsBtn" style="display:none">
+        <span class="more-menu-item-icon">📂</span>เอกสารบัญชี
+      </button>
+      <button class="more-menu-item" onclick="showPage('clients',document.getElementById('tabClients'));closeMobileMenu();updateBNav('clients')" id="bnavClientsBtn" style="display:none">
+        <span class="more-menu-item-icon">🪪</span>รหัสลูกค้า
+      </button>
+      <button class="more-menu-item" onclick="showPage('cal',document.getElementById('tabCal'));closeMobileMenu();updateBNav('cal')">
+        <span class="more-menu-item-icon">📅</span>ปฏิทิน
+      </button>
+      <button class="more-menu-item" onclick="showPage('upload',document.getElementById('tabUpload'));closeMobileMenu();updateBNav('upload')">
+        <span class="more-menu-item-icon">☁️</span>อัปโหลด
+      </button>
+      <button class="more-menu-item" onclick="showPage('admin',document.getElementById('tabAdmin'));closeMobileMenu();updateBNav('admin')" id="bnavAdminBtn" style="display:none">
+        <span class="more-menu-item-icon">⚙️</span>Admin
+      </button>
+    </div>
+    <button class="btn btn-ghost" style="width:100%;margin-top:12px;justify-content:center" onclick="doLogout()">🚪 ออกจากระบบ</button>
+  </div>
+</div>
+
   <div id="main">
   <!-- HOME -->
   <div class="page" id="page-home">
@@ -2113,43 +2150,6 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
   </div>
   </div><!-- /main -->
 </div><!-- /appScreen -->
-
-<!-- MOBILE MORE MENU — outside #appScreen to avoid fixed-in-fixed iOS quirk -->
-<div class="modal-ov" id="mobileMoreModal" onclick="if(event.target===this)closeMobileMenu()">
-  <div class="modal">
-    <div style="font-size:16px;font-weight:700;color:var(--gray-800);margin-bottom:16px">เมนูทั้งหมด</div>
-    <div class="more-menu-grid">
-      <button class="more-menu-item" onclick="closeMobileMenu();showPage('analytics',document.getElementById('tabAnalytics'));updateBNav('analytics')">
-        <span class="more-menu-item-icon">📊</span>Analytics
-      </button>
-      <button class="more-menu-item" onclick="closeMobileMenu();showPage('finance',document.getElementById('tabFin'));updateBNav('finance')" id="bnavFinBtn" style="display:none">
-        <span class="more-menu-item-icon">💰</span>การเงิน
-      </button>
-      <button class="more-menu-item" onclick="closeMobileMenu();showPage('docs',document.getElementById('tabDocs'));updateBNav('docs')" id="bnavDocsBtn" style="display:none">
-        <span class="more-menu-item-icon">📄</span>เอกสาร
-      </button>
-      <button class="more-menu-item" onclick="closeMobileMenu();showPage('monthlyfinance',document.getElementById('tabMonthlyFin'));updateBNav('monthlyfinance')" id="bnavMonthlyFinBtn" style="display:none">
-        <span class="more-menu-item-icon">📊</span>งบรายเดือน
-      </button>
-      <button class="more-menu-item" onclick="closeMobileMenu();showPage('accdocs',document.getElementById('tabAccDocs'));updateBNav('accdocs')" id="bnavAccDocsBtn" style="display:none">
-        <span class="more-menu-item-icon">📂</span>เอกสารบัญชี
-      </button>
-      <button class="more-menu-item" onclick="closeMobileMenu();showPage('clients',document.getElementById('tabClients'));updateBNav('clients')" id="bnavClientsBtn" style="display:none">
-        <span class="more-menu-item-icon">🪪</span>รหัสลูกค้า
-      </button>
-      <button class="more-menu-item" onclick="closeMobileMenu();showPage('cal',document.getElementById('tabCal'));updateBNav('cal')">
-        <span class="more-menu-item-icon">📅</span>ปฏิทิน
-      </button>
-      <button class="more-menu-item" onclick="closeMobileMenu();showPage('upload',document.getElementById('tabUpload'));updateBNav('upload')">
-        <span class="more-menu-item-icon">☁️</span>อัปโหลด
-      </button>
-      <button class="more-menu-item" onclick="closeMobileMenu();showPage('admin',document.getElementById('tabAdmin'));updateBNav('admin')" id="bnavAdminBtn" style="display:none">
-        <span class="more-menu-item-icon">⚙️</span>Admin
-      </button>
-    </div>
-    <button class="btn btn-ghost" style="width:100%;margin-top:12px;justify-content:center" onclick="doLogout()">🚪 ออกจากระบบ</button>
-  </div>
-</div>
 
 <!-- ═══ LEAD PANEL ═══ -->
 <div class="panel-ov" id="panelOv" onclick="if(event.target===this)closePanel()"></div>

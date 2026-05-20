@@ -89,7 +89,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
 .btn:disabled{opacity:.4;cursor:not-allowed}
 
 /* ── PAGES ── */
-#main{flex:1;overflow-y:auto;overscroll-behavior-y:contain;min-height:0}
+#main{flex:1;overflow-y:auto;touch-action:pan-y;overscroll-behavior-y:contain;min-height:0}
 .page{display:none}
 .page.on{display:block}
 
@@ -2552,6 +2552,7 @@ window.showPage=function(id,el){
   const _mainEl=document.getElementById('main');
   if(_mainEl)_mainEl.scrollTop=0;
   closeNavMore();
+  if(window.closePanel) closePanel();
   document.querySelectorAll('.page').forEach(p=>{p.classList.remove('on');p.style.display='none';});
   const _pg=document.getElementById('page-'+id);
   if(_pg){_pg.classList.add('on');_pg.style.display='';}
@@ -2574,6 +2575,7 @@ window.showPage=function(id,el){
 function showClanding(){
   const _mainEl=document.getElementById('main');if(_mainEl)_mainEl.scrollTop=0;
   closeNavMore();
+  if(window.closePanel) closePanel();
   document.querySelectorAll('.page').forEach(p=>{p.classList.remove('on');p.style.display='none';});
   const _clanding=document.getElementById('page-clanding');
   if(_clanding){_clanding.classList.add('on');_clanding.style.display='';}
@@ -5968,6 +5970,8 @@ window.closeMobileMenu = function() {
 window.navigateFromMenu = function(page, tabId) {
   const m = document.getElementById('mobileMoreModal');
   if(m) m.classList.remove('show');
+  const _main = document.getElementById('main');
+  if(_main){ _main.style.overflowY='hidden'; void _main.offsetHeight; _main.style.overflowY=''; }
   requestAnimationFrame(function() {
     requestAnimationFrame(function() {
       showPage(page, document.getElementById(tabId));

@@ -2554,7 +2554,7 @@ window.showPage=function(id,el){
   closeNavMore();
   document.querySelectorAll('.page').forEach(p=>{p.classList.remove('on');p.style.display='none';});
   const _pg=document.getElementById('page-'+id);
-  if(_pg){_pg.classList.add('on');_pg.style.display='';void _pg.offsetHeight;}
+  if(_pg){_pg.classList.add('on');_pg.style.display='';}
   document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('on'));
   if(el)el.classList.add('on');
   const _secondaryPages=['docs','upload','cal','finance','admin','monthlyfinance','accdocs','clients'];
@@ -3705,10 +3705,16 @@ window.showPage=function(id,el){
   else if(id==='cal'){
     calGoToday();
     if(!calEvUnsubscribe)calStartSync();else calRender();
-    // Re-render after leads sync completes
     setTimeout(()=>calRender(), 800);
     setTimeout(()=>calRender(), 2000);
   }
+  // After all render functions complete, force a layout reflow so the
+  // browser (iOS and desktop) registers the populated page for touch/click routing
+  var _rafId=id;
+  requestAnimationFrame(function(){
+    var pg=document.getElementById('page-'+_rafId);
+    if(pg) void pg.offsetHeight;
+  });
 };
 
 // ══════════════════════════════════════════

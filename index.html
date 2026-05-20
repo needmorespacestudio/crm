@@ -1094,7 +1094,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
   <button class="bnav-btn" id="bnavProjects" onclick="showPage('projects',document.getElementById('tabProjects'));updateBNav('projects')">
     <span class="bnav-icon">🗂️</span>โปรเจกต์
   </button>
-  <button class="bnav-btn" id="bnavMore" onclick="showPage('more',this)">
+  <button class="bnav-btn" id="bnavMore" onclick="toggleMobileMenu()">
     <span class="bnav-icon">☰</span>เมนู
   </button>
 </div>
@@ -2109,44 +2109,45 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
       <div id="adminContent"></div>
     </div>
   </div>
-  <!-- MOBILE MORE MENU PAGE (replaces modal overlay) -->
-  <div class="page" id="page-more">
-    <div style="padding:20px 16px;max-width:600px;margin:0 auto">
-      <div style="font-size:16px;font-weight:700;color:var(--gray-800);margin-bottom:16px">เมนูทั้งหมด</div>
-      <div class="more-menu-grid">
-        <button class="more-menu-item" onclick="showPage('analytics',document.getElementById('tabAnalytics'))">
-          <span class="more-menu-item-icon">📊</span>Analytics
-        </button>
-        <button class="more-menu-item" onclick="showPage('finance',document.getElementById('tabFin'))" id="bnavFinBtn" style="display:none">
-          <span class="more-menu-item-icon">💰</span>การเงิน
-        </button>
-        <button class="more-menu-item" onclick="showPage('docs',document.getElementById('tabDocs'))" id="bnavDocsBtn" style="display:none">
-          <span class="more-menu-item-icon">📄</span>เอกสาร
-        </button>
-        <button class="more-menu-item" onclick="showPage('monthlyfinance',document.getElementById('tabMonthlyFin'))" id="bnavMonthlyFinBtn" style="display:none">
-          <span class="more-menu-item-icon">📊</span>งบรายเดือน
-        </button>
-        <button class="more-menu-item" onclick="showPage('accdocs',document.getElementById('tabAccDocs'))" id="bnavAccDocsBtn" style="display:none">
-          <span class="more-menu-item-icon">📂</span>เอกสารบัญชี
-        </button>
-        <button class="more-menu-item" onclick="showPage('clients',document.getElementById('tabClients'))" id="bnavClientsBtn" style="display:none">
-          <span class="more-menu-item-icon">🪪</span>รหัสลูกค้า
-        </button>
-        <button class="more-menu-item" onclick="showPage('cal',document.getElementById('tabCal'))">
-          <span class="more-menu-item-icon">📅</span>ปฏิทิน
-        </button>
-        <button class="more-menu-item" onclick="showPage('upload',document.getElementById('tabUpload'))">
-          <span class="more-menu-item-icon">☁️</span>อัปโหลด
-        </button>
-        <button class="more-menu-item" onclick="showPage('admin',document.getElementById('tabAdmin'))" id="bnavAdminBtn" style="display:none">
-          <span class="more-menu-item-icon">⚙️</span>Admin
-        </button>
-      </div>
-      <button class="btn btn-ghost" style="width:100%;margin-top:12px;justify-content:center" onclick="doLogout()">🚪 ออกจากระบบ</button>
-    </div>
-  </div>
   </div><!-- /main -->
 </div><!-- /appScreen -->
+
+<!-- MOBILE MORE MENU — outside #appScreen to avoid fixed-in-fixed iOS quirk -->
+<div class="modal-ov" id="mobileMoreModal" onclick="if(event.target===this)closeMobileMenu()">
+  <div class="modal">
+    <div style="font-size:16px;font-weight:700;color:var(--gray-800);margin-bottom:16px">เมนูทั้งหมด</div>
+    <div class="more-menu-grid">
+      <button class="more-menu-item" onclick="navigateFromMenu('analytics','tabAnalytics')">
+        <span class="more-menu-item-icon">📊</span>Analytics
+      </button>
+      <button class="more-menu-item" onclick="navigateFromMenu('finance','tabFin')" id="bnavFinBtn" style="display:none">
+        <span class="more-menu-item-icon">💰</span>การเงิน
+      </button>
+      <button class="more-menu-item" onclick="navigateFromMenu('docs','tabDocs')" id="bnavDocsBtn" style="display:none">
+        <span class="more-menu-item-icon">📄</span>เอกสาร
+      </button>
+      <button class="more-menu-item" onclick="navigateFromMenu('monthlyfinance','tabMonthlyFin')" id="bnavMonthlyFinBtn" style="display:none">
+        <span class="more-menu-item-icon">📊</span>งบรายเดือน
+      </button>
+      <button class="more-menu-item" onclick="navigateFromMenu('accdocs','tabAccDocs')" id="bnavAccDocsBtn" style="display:none">
+        <span class="more-menu-item-icon">📂</span>เอกสารบัญชี
+      </button>
+      <button class="more-menu-item" onclick="navigateFromMenu('clients','tabClients')" id="bnavClientsBtn" style="display:none">
+        <span class="more-menu-item-icon">🪪</span>รหัสลูกค้า
+      </button>
+      <button class="more-menu-item" onclick="navigateFromMenu('cal','tabCal')">
+        <span class="more-menu-item-icon">📅</span>ปฏิทิน
+      </button>
+      <button class="more-menu-item" onclick="navigateFromMenu('upload','tabUpload')">
+        <span class="more-menu-item-icon">☁️</span>อัปโหลด
+      </button>
+      <button class="more-menu-item" onclick="navigateFromMenu('admin','tabAdmin')" id="bnavAdminBtn" style="display:none">
+        <span class="more-menu-item-icon">⚙️</span>Admin
+      </button>
+    </div>
+    <button class="btn btn-ghost" style="width:100%;margin-top:12px;justify-content:center" onclick="doLogout()">🚪 ออกจากระบบ</button>
+  </div>
+</div>
 
 <!-- ═══ LEAD PANEL ═══ -->
 <div class="panel-ov" id="panelOv" onclick="if(event.target===this)closePanel()"></div>
@@ -2553,7 +2554,7 @@ window.showPage=function(id,el){
   closeNavMore();
   document.querySelectorAll('.page').forEach(p=>{p.classList.remove('on');p.style.display='none';});
   const _pg=document.getElementById('page-'+id);
-  if(_pg){_pg.classList.add('on');_pg.style.display='';}
+  if(_pg){_pg.classList.add('on');_pg.style.display='';void _pg.offsetHeight;}
   document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('on'));
   if(el)el.classList.add('on');
   const _secondaryPages=['docs','upload','cal','finance','admin','monthlyfinance','accdocs','clients'];
@@ -5951,9 +5952,22 @@ window.updateBNav = function(page) {
   const btn = map[page] ? document.getElementById(map[page]) : document.getElementById('bnavMore');
   if(btn) btn.classList.add('on');
 };
-window.toggleMobileMenu = function() { showPage('more', document.getElementById('bnavMore')); };
-window.closeMobileMenu = function() {};
-window.navigateFromMenu = function(page, tabId) { showPage(page, document.getElementById(tabId)); };
+window.toggleMobileMenu = function() {
+  document.getElementById('mobileMoreModal').classList.add('show');
+};
+window.closeMobileMenu = function() {
+  const m = document.getElementById('mobileMoreModal');
+  if(m) m.classList.remove('show');
+};
+window.navigateFromMenu = function(page, tabId) {
+  const m = document.getElementById('mobileMoreModal');
+  if(m) m.classList.remove('show');
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      showPage(page, document.getElementById(tabId));
+    });
+  });
+};
 
 // ── Lead-Project Navigation ──
 window.goToLinkedProject = function(pid) {

@@ -714,7 +714,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
   /* ─ Pipeline board ─ */
   .stats{grid-template-columns:repeat(2,1fr);padding:12px 14px 0}
   .fbar{padding:10px 14px 0;gap:8px}
-  .board-wrap{padding:10px 14px 28px;overflow-x:scroll;-webkit-overflow-scrolling:touch;touch-action:pan-x;scroll-snap-type:x proximity}
+  .board-wrap{padding:10px 14px 28px;overflow-x:scroll;-webkit-overflow-scrolling:touch;touch-action:manipulation;scroll-snap-type:x proximity}
   .col{width:200px;scroll-snap-align:start}
 
   /* ─ Project list ─ */
@@ -2553,6 +2553,7 @@ window.showPage=function(id,el){
   if(_mainEl)_mainEl.scrollTop=0;
   closeNavMore();
   if(window.closePanel) closePanel();
+  document.querySelectorAll('.modal-ov.show,.ev-modal-ov.show').forEach(m=>m.classList.remove('show'));
   document.querySelectorAll('.page').forEach(p=>{p.classList.remove('on');p.style.display='none';});
   const _pg=document.getElementById('page-'+id);
   if(_pg){_pg.classList.add('on');_pg.style.display='';}
@@ -3710,12 +3711,16 @@ window.showPage=function(id,el){
     setTimeout(()=>calRender(), 800);
     setTimeout(()=>calRender(), 2000);
   }
-  // After all render functions complete, force a layout reflow so the
-  // browser (iOS and desktop) registers the populated page for touch/click routing
+  // Double-RAF + forced reflow so iOS updates its touch/click hit-test tree
+  // after the page becomes visible and content is rendered
   var _rafId=id;
   requestAnimationFrame(function(){
-    var pg=document.getElementById('page-'+_rafId);
-    if(pg) void pg.offsetHeight;
+    requestAnimationFrame(function(){
+      var pg=document.getElementById('page-'+_rafId);
+      if(pg){ void pg.offsetHeight; }
+      var _m=document.getElementById('main');
+      if(_m){ _m.style.overflowY='hidden'; void _m.offsetHeight; _m.style.overflowY=''; }
+    });
   });
 };
 

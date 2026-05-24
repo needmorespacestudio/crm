@@ -2361,6 +2361,9 @@ const STEPS = [
   {id:'delivered',label:'ส่งมอบงาน',long:'ส่งมอบงาน ✓'},
 ];
 const ACTIVE_STEPS = STEPS.map(s=>s.id).filter(id=>id!=='delivered');
+// Snapshot of hardcoded labels — used to populate inputs and as reset target
+const STAGE_DEFAULTS = STEPS.map(s=>({id:s.id,label:s.label,long:s.long}));
+let stageSettingsUnsubscribe = null;
 const DEFAULT_SOURCES = ['Meta Ads — N1 Cold','Meta Ads — R1 Hot','Meta Ads — R2 Warm','Word of Mouth','IG Organic','Referral จากลูกค้าเก่า','Facebook Organic','TikTok','Website','Line OA','งานออกบูธ','อื่นๆ'];
 
 // ── State ──
@@ -2636,6 +2639,7 @@ function startSync(){
     }
   );
   loadSources();
+  startStageSettingsSync();
 }
 
 window.manualSync=function(){toast('🔄 Syncing...');startSync();};
@@ -5752,6 +5756,29 @@ function renderAdmin(){
         ⚠️ ${bkDays===null?'ยังไม่เคย Backup เลย — กรุณากด Backup เพื่อความปลอดภัยของข้อมูล':`ไม่ได้ Backup มา ${bkDays} วันแล้ว — แนะนำ Backup ทุก 7 วัน`}
       </div>`:''}
     </div>
+    <!-- PIPELINE STAGES SECTION -->
+    <div class="admin-section" style="margin-bottom:20px">
+      <div class="admin-section-hd">
+        <div>
+          <div class="admin-section-title">🔧 ตั้งค่าขั้นตอน Lead Pipeline</div>
+          <div class="admin-section-sub">แก้ชื่อแต่ละขั้นตอนได้เอง · บันทึกแล้วซิงค์ทุกอุปกรณ์ทันที</div>
+        </div>
+      </div>
+      <div style="padding:16px 20px">
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px">
+          ${STEPS.map((s,i)=>`<div style="display:flex;align-items:center;gap:8px">
+            <div style="width:24px;height:24px;border-radius:50%;background:var(--gold);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'DM Mono',monospace">${i+1}</div>
+            <input id="stage-inp-${s.id}" value="${s.label.replace(/"/g,'&quot;')}" maxlength="20"
+              style="flex:1;border:1px solid var(--border);border-radius:6px;padding:7px 10px;font-size:13px;font-family:inherit;color:var(--gray-800);background:var(--white);outline:none;transition:border-color .15s;-webkit-appearance:none"
+              onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--border)'" placeholder="ชื่อขั้นตอน">
+          </div>`).join('')}
+        </div>
+        <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
+          <button class="btn btn-ghost btn-sm" onclick="resetPipelineStages()">↩ รีเซ็ตค่าเริ่มต้น</button>
+          <button class="btn btn-gold" id="savePipelineBtn" onclick="savePipelineStages()">💾 บันทึก</button>
+        </div>
+      </div>
+    </div>
     <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px">
       ${Object.entries(roleCounts).map(([r,n])=>rcBadge(r,n)).join('')}
     </div>
@@ -5793,6 +5820,52 @@ function renderAdmin(){
       }).join('')}
     </div>`;
 }
+
+// ── Pipeline Stage Settings ──
+function applyStageLabels(data){
+  STEPS.forEach(s=>{
+    const custom=(data?.[s.id]||'').trim();
+    if(custom){
+      s.label=custom;
+      s.long=custom;
+    } else {
+      const def=STAGE_DEFAULTS.find(d=>d.id===s.id);
+      if(def){s.label=def.label;s.long=def.long;}
+    }
+  });
+  if(document.getElementById('page-pipeline')?.classList.contains('on')) render();
+}
+function startStageSettingsSync(){
+  if(stageSettingsUnsubscribe) return;
+  stageSettingsUnsubscribe=onSnapshot(doc(db,'settings','pipeline_stages'),snap=>{
+    applyStageLabels(snap.exists()?snap.data():{});
+  });
+}
+window.savePipelineStages=async function(){
+  const data={};let valid=true;
+  STEPS.forEach(s=>{
+    const inp=document.getElementById('stage-inp-'+s.id);
+    const val=(inp?.value||'').trim();
+    if(!val){valid=false;if(inp)inp.style.borderColor='var(--red)';}
+    else{if(inp)inp.style.borderColor='';data[s.id]=val;}
+  });
+  if(!valid){toast('กรอกชื่อให้ครบทุกขั้นตอน','err');return;}
+  const btn=document.getElementById('savePipelineBtn');
+  if(btn){btn.disabled=true;btn.textContent='⏳ กำลังบันทึก...';}
+  try{
+    await setDoc(doc(db,'settings','pipeline_stages'),data);
+    toast('บันทึกชื่อขั้นตอนแล้ว ✓','ok');
+  }catch(e){toast('บันทึกไม่สำเร็จ','err');}
+  if(btn){btn.disabled=false;btn.textContent='💾 บันทึก';}
+};
+window.resetPipelineStages=async function(){
+  if(!confirm('รีเซ็ตชื่อทุกขั้นตอนกลับค่าเริ่มต้น?'))return;
+  const data=Object.fromEntries(STAGE_DEFAULTS.map(s=>[s.id,s.label]));
+  try{
+    await setDoc(doc(db,'settings','pipeline_stages'),data);
+    toast('รีเซ็ตแล้ว ✓','ok');
+  }catch(e){toast('รีเซ็ตไม่สำเร็จ','err');}
+};
 
 window.openUserModal=function(uid){
   const targetUser=uid?users[uid]:null;

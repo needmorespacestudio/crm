@@ -274,7 +274,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--gray-50);color:var
 .fin-tbl tr:hover td{background:var(--gray-50)}
 
 /* ── ADMIN PANEL ── */
-.admin-wrap{padding:20px;max-width:1000px}
+.admin-wrap{padding:20px;max-width:1000px;touch-action:manipulation}
 .admin-section{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);margin-bottom:20px;overflow:hidden}
 .admin-section-hd{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--gray-50)}
 .admin-section-title{font-size:13px;font-weight:600;color:var(--gray-800)}
@@ -2348,11 +2348,11 @@ const ROLE_CLASS = { owner:'rp-owner', admin:'rp-admin', sales:'rp-sales', desig
 
 const STEPS = [
   {id:'waiting_contact',label:'รอติดต่อ',long:'รอติดต่อไป'},
-  {id:'contacted',label:'ติดต่อแล้ว',long:'ติดต่อแล้ว'},
+  {id:'contacted',label:'ไม่สนใจ',long:'ลูกค้าดูแล้วค่อยไม่สนใจ'},
   {id:'waiting_info',label:'รอข้อมูล',long:'รอลูกค้าส่งข้อมูล'},
-  {id:'site_survey',label:'นัดสำรวจ',long:'นัดสำรวจหน้างาน'},
-  {id:'waiting_decision',label:'รอตัดสินใจ',long:'รอลูกค้าตัดสินใจ'},
-  {id:'sending_info',label:'รอส่งข้อมูล',long:'รอผมส่งข้อมูล'},
+  {id:'site_survey',label:'รอนัดสำรวจ',long:'รอลูกค้านัดวันสำรวจ'},
+  {id:'waiting_decision',label:'ติดตามลูกค้า',long:'ติดตามลูกค้า'},
+  {id:'sending_info',label:'นัดสำรวจ',long:'นัดสำรวจ'},
   {id:'present_idea',label:'นำเสนอไอเดีย',long:'นำเสนอไอเดีย'},
   {id:'design_contract',label:'สัญญาออกแบบ',long:'เซ็นสัญญาออกแบบ'},
   {id:'designing',label:'กำลังออกแบบ',long:'เริ่มออกแบบ'},
